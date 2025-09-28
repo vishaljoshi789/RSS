@@ -27,7 +27,7 @@ import {
   MessageSquare,
   ExternalLink,
 } from "lucide-react";
-import { contactData, socialLinks } from "./ContactInfo";
+import { contactData } from "./ContactInfo";
 
 
 const contactFormSchema = z.object({
@@ -101,8 +101,8 @@ const Contact: React.FC = () => {
             Get in <span className="text-orange-600">Touch</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Have questions about our programs or want to get involved? We'd love
-            to hear from you. Reach out to us and let's start a conversation
+            Have questions about our programs or want to get involved? We&apos;d love
+            to hear from you. Reach out to us and let&apos;s start a conversation
             about making a positive impact together.
           </p>
         </div>
@@ -115,7 +115,7 @@ const Contact: React.FC = () => {
                 Send us a Message
               </CardTitle>
               <p className="text-gray-600">
-                Fill out the form below and we'll get back to you as soon as
+                Fill out the form below and we&apos;ll get back to you as soon as
                 possible.
               </p>
             </CardHeader>
@@ -127,7 +127,7 @@ const Contact: React.FC = () => {
                     Message Sent Successfully!
                   </h3>
                   <p className="text-gray-600">
-                    Thank you for reaching out. We'll get back to you within 24
+                    Thank you for reaching out. We&apos;ll get back to you within 24
                     hours.
                   </p>
                 </div>

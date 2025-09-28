@@ -17,7 +17,6 @@ import {
   Trophy
 } from 'lucide-react';
 import { 
-  pressData, 
   pressCategories, 
   getPressByCategory, 
   formatPressDate,
@@ -191,7 +190,7 @@ const PressCard: React.FC<PressCardProps> = ({ item, index, layout = 'grid' }) =
 
 const Press: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [layout, setLayout] = useState<'grid' | 'masonry'>('grid');
+  const [layout] = useState<'grid' | 'masonry'>('grid');
 
   const filteredPress = getPressByCategory(activeCategory);
   const recentPress = getRecentPress(3);

@@ -1,4 +1,4 @@
-import { LucideIcon, Home, Users, UserPlus, Heart, Newspaper, Info, Target, Award, FileText, Users2, LogIn, UserCheck, IdCard, DollarSign, BookOpen, Camera, Edit3 } from 'lucide-react';
+import { LucideIcon, Home, Users, UserPlus, Heart, Newspaper, Target, Award, FileText, Users2, LogIn, UserCheck, IdCard, BookOpen, Camera, Edit3 } from 'lucide-react';
 
 export interface NavItem {
   id: string;

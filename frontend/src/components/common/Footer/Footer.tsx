@@ -85,7 +85,7 @@ const Footer: React.FC = () => {
                   {organizationInfo.name}
                 </h3>
                 <p className="text-orange-400 text-sm font-medium italic">
-                  "{organizationInfo.tagline}"
+                  &ldquo;{organizationInfo.tagline}&rdquo;
                 </p>
               </div>
             </div>

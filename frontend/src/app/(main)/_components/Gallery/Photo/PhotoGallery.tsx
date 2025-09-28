@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { Search, ZoomIn} from 'lucide-react';
 import { 
-  photosData, 
   photoCategories, 
   getPhotosByCategory, 
   PhotoItem 

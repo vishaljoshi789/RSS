@@ -52,9 +52,9 @@ const AboutUsPage = () => {
             <CardContent className="p-6 sm:p-8 lg:p-16">
               <div className="text-center mb-8 sm:mb-12">
                 <blockquote className="text-lg sm:text-xl lg:text-3xl font-bold text-foreground mb-6 sm:mb-8 leading-relaxed px-2">
-                  "{aboutPageData.introduction.mainQuote}"
+                  &ldquo;{aboutPageData.introduction.mainQuote}&rdquo;
                 </blockquote>
-                <div className="flex justify-center hidden md:block items-center mt-4 sm:mt-6 px-4">
+                <div className="justify-center hidden md:flex items-center mt-4 sm:mt-6 px-4">
                   <Badge 
                     variant="secondary" 
                     className="px-2 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm lg:text-base font-semibold flex items-center justify-center bg-primary/10 text-primary border-primary/20 rounded-lg shadow-sm max-w-full break-words text-center leading-tight"
@@ -328,13 +328,13 @@ const AboutUsPage = () => {
             <CardContent className="p-6 sm:p-8 lg:p-16 text-center">
               <div className="max-w-4xl mx-auto">
                 <div className="mb-4 sm:mb-8">
-                  <div className="text-4xl sm:text-6xl lg:text-8xl font-bold text-primary-foreground/20 mb-2 sm:mb-4">"</div>
+                  <div className="text-4xl sm:text-6xl lg:text-8xl font-bold text-primary-foreground/20 mb-2 sm:mb-4">&ldquo;</div>
                 </div>
                 <h2 className="text-lg sm:text-2xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight">
                   {aboutPageData.finalMessage}
                 </h2>
                 <div className="mb-4 sm:mb-8">
-                  <div className="text-4xl sm:text-6xl lg:text-8xl font-bold text-primary-foreground/20 rotate-180">"</div>
+                  <div className="text-4xl sm:text-6xl lg:text-8xl font-bold text-primary-foreground/20 rotate-180">&rdquo;</div>
                 </div>
                 <div className="border-t border-primary-foreground/20 pt-4 sm:pt-6 lg:pt-8">
                   <p className="text-sm sm:text-base lg:text-xl text-primary-foreground/90 leading-relaxed mb-4 sm:mb-6 lg:mb-8">

@@ -169,7 +169,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
 
 const VideoGallery: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [scrollPosition, setScrollPosition] = useState(0);
   
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 

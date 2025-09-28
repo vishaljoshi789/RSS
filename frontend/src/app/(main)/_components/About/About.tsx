@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 import { aboutData } from "./AboutInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
 import Link from "next/link";

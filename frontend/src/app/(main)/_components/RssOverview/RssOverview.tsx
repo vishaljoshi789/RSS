@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NormalButton from "@/components/common/RssButton/RssButton";
 import { 
@@ -11,22 +11,18 @@ import {
   CheckCircle, 
   Flag, 
   Eye,
-  ArrowRight,
   Users,
   Target,
-  Sparkles,
-  X
+  Sparkles
 } from "lucide-react";
 import { 
   pageContent, 
   videoInfo, 
-  rssInfoData, 
-  modalContent 
+  rssInfoData 
 } from "./RssInfo";
 
 const RssOverview = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const getTabIcon = (iconName: string) => {
     switch (iconName) {
@@ -217,7 +213,6 @@ const RssOverview = () => {
               <button
                 onClick={() => {
                   setIsVideoModalOpen(false);
-                  setIsVideoPlaying(false);
                 }}
                 className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors"
               >
@@ -230,8 +225,6 @@ const RssOverview = () => {
                 autoPlay
                 className="w-full h-full"
                 poster={videoInfo.posterSrc}
-                onPlay={() => setIsVideoPlaying(true)}
-                onPause={() => setIsVideoPlaying(false)}
               >
                 <source src={videoInfo.videoSrc} type="video/mp4" />
                 Your browser does not support the video tag.

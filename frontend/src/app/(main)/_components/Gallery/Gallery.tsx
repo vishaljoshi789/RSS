@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PhotoGallery from './Photo/PhotoGallery';
 import VideoGallery from './Video/VideoGallery';
-import { Camera, Video, Images, Play } from 'lucide-react';
+import { Images, Play } from 'lucide-react';
 
 const Gallery = () => {
   const [activeTab, setActiveTab] = useState('photos');

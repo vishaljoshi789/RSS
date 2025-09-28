@@ -94,7 +94,7 @@ const Founder = () => {
             <div className="relative flex flex-col items-center text-center">
               <Quote className="w-8 h-8 lg:w-12 lg:h-12 text-primary/40 mb-4 lg:mb-6" />
               <blockquote className="text-lg lg:text-2xl xl:text-3xl font-bold text-foreground leading-relaxed mb-6 lg:mb-8 max-w-4xl px-2">
-                "{founderInfo.quote}"
+                &ldquo;{founderInfo.quote}&rdquo;
               </blockquote>
               <cite className="text-base lg:text-lg text-primary font-semibold">
                 - {founderInfo.name}
