@@ -30,7 +30,7 @@ const GalleryPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
+      
       <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex justify-center mb-8">
@@ -47,7 +47,7 @@ const GalleryPage = () => {
         </div>
       </section>
 
-      {/* Main Gallery Content */}
+      
       <section className="py-12 lg:py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue="photos" className="w-full">
@@ -66,9 +66,9 @@ const GalleryPage = () => {
               </TabsTrigger>
             </TabsList>
 
-            {/* Photos Tab */}
+            
             <TabsContent value="photos" className="space-y-8">
-              {/* Photo Filters */}
+              
               <div className="flex justify-center">
                 <Card className="p-6 bg-card backdrop-blur-sm border border-border">
                   <div className="flex items-center gap-3 mb-4">
@@ -98,7 +98,7 @@ const GalleryPage = () => {
                 </Card>
               </div>
 
-              {/* Photos Grid */}
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredPhotos.map((photo) => (
                   <Card
@@ -165,9 +165,9 @@ const GalleryPage = () => {
               )}
             </TabsContent>
 
-            {/* Videos Tab */}
+            
             <TabsContent value="videos" className="space-y-8">
-              {/* Video Filters */}
+              
               <div className="flex justify-center">
                 <Card className="p-6 bg-card backdrop-blur-sm border border-border">
                   <div className="flex items-center gap-3 mb-4">
@@ -197,7 +197,7 @@ const GalleryPage = () => {
                 </Card>
               </div>
 
-              {/* Videos Grid */}
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredVideos.map((video) => (
                   <Card
@@ -266,7 +266,7 @@ const GalleryPage = () => {
         </div>
       </section>
 
-      {/* Photo Dialog */}
+      
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] p-0 bg-background text-foreground border-primary-foreground/30">
           {selectedPhoto && (
@@ -311,7 +311,7 @@ const GalleryPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Video Dialog */}
+      
       <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] p-0 bg-background text-foreground border-primary-foreground/30">
           {selectedVideo && (

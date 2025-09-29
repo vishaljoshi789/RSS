@@ -37,7 +37,7 @@ const Navbar = () => {
 
           <div className="flex items-center justify-center relative gap-4">
             <ButtonRSS
-              href="https://app.joinrss.org.in/registration"
+              href="/auth/register"
               variant="primary"
               size="md"
               rounded="left-br"
