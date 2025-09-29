@@ -1,0 +1,11 @@
+export { default as HeroSection } from './HeroSection';
+export { default as PrimaryImageSection } from './PrimaryImageSection';
+export { default as IntroductionSection } from './IntroductionSection';
+export { default as WhoWeAreSection } from './WhoWeAreSection';
+export { default as WhyDifferentSection } from './WhyDifferentSection';
+export { default as WhyWeExistSection } from './WhyWeExistSection';
+export { default as TempleServiceSection } from './TempleServiceSection';
+export { default as OurCallSection } from './OurCallSection';
+export { default as CommunityServiceSection } from './CommunityServiceSection';
+export { default as GoalsSection } from './GoalsSection';
+export { default as FinalCTASection } from './FinalCTASection';

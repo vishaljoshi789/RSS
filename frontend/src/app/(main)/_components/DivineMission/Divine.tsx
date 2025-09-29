@@ -31,7 +31,7 @@ const getIcon = (id: number) => {
 
 const Divine = () => {
   return (
-    <section className="py-16 px-4 bg-gradient-to-b from-background via-muted/20 to-background">
+    <section className="py-16 px-4 bg-gradient-to-b from-background via-muted/20 to-background" id='our-work'>
       <div className="max-w-7xl mx-auto">
         
         <div className="text-center mb-16">

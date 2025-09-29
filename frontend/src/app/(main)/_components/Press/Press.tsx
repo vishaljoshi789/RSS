@@ -196,7 +196,7 @@ const Press: React.FC = () => {
   const recentPress = getRecentPress(3);
 
   return (
-    <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50" id='press-release'>
       <div className="max-w-7xl mx-auto">
         
         <div className="text-center mb-12">

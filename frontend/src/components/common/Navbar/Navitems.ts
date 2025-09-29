@@ -1,4 +1,4 @@
-import { LucideIcon, Home, Users, UserPlus, Heart, Newspaper, Target, Award, FileText, Users2, LogIn, UserCheck, IdCard, BookOpen, Camera, Edit3 } from 'lucide-react';
+import { LucideIcon, Home, Users, UserPlus, Heart, Newspaper, Target, Award, FileText, Users2, LogIn, UserCheck, IdCard, BookOpen, Camera, Edit3, PhoneCall } from 'lucide-react';
 
 export interface NavItem {
   id: string;
@@ -48,7 +48,7 @@ export const navigationItems: NavItem[] = [
       {
         id: "our-work",
         title: "Our Works",
-        href: "/#divine-mission",
+        href: "/#our-work",
         icon: Award,
         description: "हमारे कार्य और उपलब्धियां",
       },
@@ -93,8 +93,8 @@ export const navigationItems: NavItem[] = [
   },
   {
     id: "donate-support",
-    title: "Support Us",
-    href: "https://app.joinrss.org.in/donate_now",
+    title: "Support",
+    href: "/donate-now",
     icon: Heart,
     description: "दान करें और हमारा समर्थन करें"
   },
@@ -127,5 +127,11 @@ export const navigationItems: NavItem[] = [
         description: "ब्लॉग और लेख",
       },
     ],
-  }
+  },{
+    id: "contact",
+    title: "Contact",
+    href: "/contact-us",
+    icon: PhoneCall,
+    description: "हमसे संपर्क करें"
+  },
 ];
