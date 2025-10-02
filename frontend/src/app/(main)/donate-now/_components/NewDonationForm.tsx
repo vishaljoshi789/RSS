@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -11,10 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 import {
   Heart,
   Phone,
@@ -24,23 +24,17 @@ import {
   AlertCircle,
   Shield,
   Lock,
-  Award,
   Gift,
-  CreditCard,
   Download,
   Loader2,
   IndianRupee,
-  Eye,
-  EyeOff,
-  Info,
-  Banknote,
   Users,
   Building,
   BookOpen,
   Stethoscope,
   Wrench,
 } from "lucide-react";
-import { donationAmounts, donationTypes } from "./donationSchema";
+import { donationAmounts } from "./donationSchema";
 import {
   useDonationPayment,
   useCurrency,
@@ -56,11 +50,8 @@ const NewDonationForm = () => {
     email: "",
     phone: "",
     amount: 0,
-    donationType: "general",
-    anonymous: false,
-    panCard: "", // Keep for backend compatibility but don't show
-    address: "", // Keep for backend compatibility but don't show
-    message: "",
+    payment_for: "general",
+    notes: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -69,13 +60,11 @@ const NewDonationForm = () => {
     isProcessing,
     error,
     success,
-    donationId,
-    receiptUrl,
+    currentStep,
     reset,
   } = useDonationPayment();
   const { formatCurrency } = useCurrency();
 
-  // Enhanced donation types with icons
   const enhancedDonationTypes = [
     {
       value: "general",
@@ -136,11 +125,25 @@ const NewDonationForm = () => {
 
     if (!formData.amount || formData.amount < 1) {
       newErrors.amount = "Please select or enter a donation amount";
+      toast.error("Please select a donation amount");
     } else if (formData.amount > 500000) {
       newErrors.amount = "Maximum donation amount is ₹5,00,000";
+      toast.error("Maximum donation amount is ₹5,00,000");
+    }
+
+    if (!formData.payment_for) {
+      newErrors.payment_for = "Please select what your donation is for";
+      toast.error("Please select what your donation is for");
     }
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      const firstError = Object.values(newErrors)[0];
+      if (!newErrors.amount && !newErrors.payment_for) {
+        toast.error(firstError);
+      }
+    }
+
     return Object.keys(newErrors).length === 0;
   };
 
@@ -152,15 +155,16 @@ const NewDonationForm = () => {
     }
 
     try {
+      toast.loading("Initiating payment...", { duration: 2000 });
       await processPayment(formData);
     } catch (error: any) {
       console.error("Payment submission error:", error);
+      toast.error("Failed to initiate payment. Please try again.");
     }
   };
 
   const handleAmountSelect = (amount: number) => {
     if (amount === -1) {
-      // Custom amount
       setIsCustomAmount(true);
       setSelectedAmount(null);
       setFormData((prev) => ({ ...prev, amount: 0 }));
@@ -169,7 +173,7 @@ const NewDonationForm = () => {
       setSelectedAmount(amount);
       setFormData((prev) => ({ ...prev, amount }));
     }
-    // Clear amount error
+
     if (errors.amount) {
       setErrors((prev) => ({ ...prev, amount: "" }));
     }
@@ -177,7 +181,7 @@ const NewDonationForm = () => {
 
   const handleInputChange = (field: keyof DonationFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear field error
+
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -190,22 +194,13 @@ const NewDonationForm = () => {
       email: "",
       phone: "",
       amount: 0,
-      donationType: "general",
-      anonymous: false,
-      panCard: "",
-      address: "",
-      message: "",
+      payment_for: "general",
+      notes: "",
     });
     setErrors({});
     setIsCustomAmount(false);
     setSelectedAmount(null);
     setShowSecurityInfo(false);
-  };
-
-  const handleDownloadReceipt = () => {
-    if (receiptUrl) {
-      window.open(receiptUrl, "_blank");
-    }
   };
 
   if (success) {
@@ -230,12 +225,6 @@ const NewDonationForm = () => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <p className="flex justify-between">
-                  <span className="text-muted-foreground">Donation ID:</span>
-                  <span className="font-mono font-semibold text-primary">
-                    {donationId}
-                  </span>
-                </p>
-                <p className="flex justify-between">
                   <span className="text-muted-foreground">Amount:</span>
                   <span className="font-semibold text-primary">
                     {formatCurrency(formData.amount)}
@@ -244,7 +233,7 @@ const NewDonationForm = () => {
                 <p className="flex justify-between">
                   <span className="text-muted-foreground">Type:</span>
                   <span className="capitalize text-primary">
-                    {formData.donationType}
+                    {formData.payment_for}
                   </span>
                 </p>
                 <p className="flex justify-between">
@@ -256,28 +245,7 @@ const NewDonationForm = () => {
               </div>
             </div>
 
-            <div className="bg-muted/50 border border-border p-4 rounded-lg space-y-2">
-              <p className="text-sm text-foreground flex items-center gap-2">
-                <Mail className="h-4 w-4" />A receipt has been sent to your
-                email address
-              </p>
-              <p className="text-sm text-foreground flex items-center gap-2">
-                <Download className="h-4 w-4" />
-                You can download your receipt anytime
-              </p>
-            </div>
-
             <div className="flex flex-col gap-4">
-              {receiptUrl && (
-                <Button
-                  onClick={handleDownloadReceipt}
-                  variant="outline"
-                  className="w-full h-12 text-lg"
-                >
-                  <Download className="h-5 w-5 mr-2" />
-                  Download Receipt
-                </Button>
-              )}
               <Button
                 onClick={handleStartNewDonation}
                 className="w-full h-12 text-lg btn-primary"
@@ -463,15 +431,13 @@ const NewDonationForm = () => {
 
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-foreground">
-                    Message (Optional)
+                    Notes (Optional)
                   </Label>
                   <Input
                     className="h-12 border-2 focus-ring rounded-lg"
-                    placeholder="Add a personal message"
-                    value={formData.message}
-                    onChange={(e) =>
-                      handleInputChange("message", e.target.value)
-                    }
+                    placeholder="Add a personal note"
+                    value={formData.notes}
+                    onChange={(e) => handleInputChange("notes", e.target.value)}
                   />
                 </div>
               </div>
@@ -489,27 +455,23 @@ const NewDonationForm = () => {
                       <div
                         key={type.value}
                         className={`border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                          formData.donationType === type.value
+                          formData.payment_for === type.value
                             ? "border-primary bg-primary/5 shadow-lg"
                             : "border-border hover:border-primary/30 hover:bg-primary/5 hover:shadow-md"
                         }`}
                         onClick={() =>
-                          handleInputChange("donationType", type.value)
+                          handleInputChange("payment_for", type.value)
                         }
                       >
                         <div className="flex items-center space-x-3">
                           <input
                             type="radio"
                             id={type.value}
-                            name="donationType"
+                            name="payment_for"
                             value={type.value}
-                            checked={formData.donationType === type.value}
+                            checked={formData.payment_for === type.value}
                             onChange={(e) =>
-                              handleInputChange(
-                                "donationType",
-                                e.target
-                                  .value as DonationFormData["donationType"]
-                              )
+                              handleInputChange("payment_for", e.target.value)
                             }
                             className="w-4 h-4 text-primary focus:ring-primary/20"
                           />
@@ -537,27 +499,6 @@ const NewDonationForm = () => {
               <Separator className="my-8" />
 
               <div className="space-y-4">
-                <div className="flex items-center justify-center space-x-3 p-4 bg-muted/50 rounded-xl">
-                  <Checkbox
-                    id="anonymous"
-                    checked={formData.anonymous}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("anonymous", checked)
-                    }
-                  />
-                  <div className="text-center">
-                    <Label
-                      htmlFor="anonymous"
-                      className="text-sm font-medium cursor-pointer text-foreground"
-                    >
-                      Make this donation anonymous
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Your name will not be displayed publicly
-                    </p>
-                  </div>
-                </div>
-
                 <div className="bg-primary/5 p-4 rounded-xl border border-primary/20">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <Shield className="h-5 w-5 text-primary" />
@@ -588,7 +529,11 @@ const NewDonationForm = () => {
                 {isProcessing ? (
                   <>
                     <Loader2 className="h-6 w-6 mr-3 animate-spin" />
-                    Processing Payment...
+                    {currentStep === "creating-order" && "Creating Order..."}
+                    {currentStep === "waiting-payment" &&
+                      "Opening Payment Gateway..."}
+                    {currentStep === "verifying" && "Verifying Payment..."}
+                    {!currentStep && "Processing Payment..."}
                   </>
                 ) : (
                   <>

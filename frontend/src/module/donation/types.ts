@@ -1,17 +1,17 @@
-// Core donation system types
+
 export interface DonationFormData {
   name: string;
   email: string;
   phone: string;
   amount: number;
-  donationType: 'general' | 'education' | 'health' | 'infrastructure' | 'other';
-  anonymous: boolean;
-  panCard?: string;
-  address?: string;
-  message?: string;
+  payment_for: string;
+  notes?: string;
 }
 
-// Server action response types
+
+export type PaymentStep = 'idle' | 'creating-order' | 'waiting-payment' | 'verifying' | 'completed';
+
+
 export interface CreateOrderResponse {
   success: boolean;
   orderId?: string;
@@ -32,13 +32,14 @@ export interface VerifyPaymentData {
 export interface PaymentVerificationResponse {
   success: boolean;
   paymentVerified?: boolean;
-  donationId?: string;
-  receiptUrl?: string;
   message?: string;
   error?: string;
+  payment_id?: string;
+  order_id?: string;
+  status?: string;
 }
 
-// Database record types
+
 export interface DonationRecord {
   id: string;
   donorName: string;
@@ -60,7 +61,7 @@ export interface DonationRecord {
   panCard?: string;
 }
 
-// Razorpay integration types
+
 export interface RazorpayOptions {
   key: string;
   amount: number;
@@ -90,7 +91,7 @@ export interface PaymentResponse {
   razorpay_signature: string;
 }
 
-// Hook state types
+
 export interface DonationPaymentState {
   isProcessing: boolean;
   error: string | null;
@@ -118,7 +119,7 @@ export interface RazorpayState {
   error: string | null;
 }
 
-// UI component types
+
 export interface DonationAmountOption {
   value: number;
   label: string;
@@ -131,7 +132,7 @@ export interface DonationTypeOption {
   description: string;
 }
 
-// Statistics and analytics types
+
 export interface DonationStats {
   totalDonations: number;
   donationCount: number;
@@ -150,7 +151,7 @@ export interface RecentDonation {
   date: string;
 }
 
-// Admin management types
+
 export interface RefundRequest {
   donationId: string;
   reason: string;
@@ -165,7 +166,7 @@ export interface RefundResponse {
   error?: string;
 }
 
-// Receipt types
+
 export interface ReceiptData {
   donationId: string;
   donorName: string;
@@ -188,7 +189,7 @@ export interface ReceiptDownloadResponse {
   error?: string;
 }
 
-// Local storage types
+
 export interface LocalDonation {
   id: string;
   name: string;
@@ -200,7 +201,7 @@ export interface LocalDonation {
   type: string;
 }
 
-// Error types
+
 export interface DonationError {
   code: string;
   message: string;
@@ -208,7 +209,7 @@ export interface DonationError {
   timestamp: string;
 }
 
-// Configuration types
+
 export interface DonationConfig {
   minAmount: number;
   maxAmount: number;
@@ -221,7 +222,7 @@ export interface DonationConfig {
   supportPhone: string;
 }
 
-// API response wrapper types
+
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
@@ -230,7 +231,7 @@ export interface ApiResponse<T = any> {
   timestamp?: string;
 }
 
-// Validation types
+
 export interface ValidationResult {
   isValid: boolean;
   errors: Record<string, string>;
@@ -242,9 +243,9 @@ export interface AmountValidation {
   error?: string;
 }
 
-// Export all types
+
 export type {
-  // Re-export for convenience
+ 
   DonationFormData as FormData,
   DonationRecord as Record,
   PaymentResponse as RazorpayResponse,
