@@ -2,8 +2,7 @@ from rest_framework.serializers import ModelSerializer
 
 from account.models import User
 
-class UserSerializer(ModelSerializer):
+class UserInfoSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
         exclude = ['password']  # Exclude password from being serialized
