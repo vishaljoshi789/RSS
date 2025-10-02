@@ -42,7 +42,7 @@ class OrderVerifyView(APIView):
             payment.status = 'COMPLETED'
             payment.payment_id = data['payment_id']
             payment.save()
-            return Response({"message": "Payment verified successfully."}, status=status.HTTP_200_OK)
+            return Response({"message": "Payment verified successfully.", "payment_id": payment.payment_id, "order_id": payment.order_id, "status": payment.status}, status=status.HTTP_200_OK)
         except razorpay.errors.SignatureVerificationError:
             payment.status = 'FAILED'
             payment.save()
