@@ -28,6 +28,7 @@ class UserJoinView(APIView):
             return Response({"error": "Phone number is required."}, status=status.HTTP_400_BAD_REQUEST)
         password = data["dob"].replace("-", "")  # Example: dob '1990-01-01' -> password '19900101'
         data["password"] = make_password(password)
+        data["username"] = data["email"]
         user_id = generate_user_id()
         while User.objects.filter(user_id=user_id).exists():
             user_id = generate_user_id()
