@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.filters import SearchFilter
 from .permissions import IsAdmin
 
 from account.models import User
@@ -11,6 +12,8 @@ class UserListView(ListAPIView):
     permission_classes = [IsAdmin]
     queryset = User.objects.all()
     serializer_class = UserInfoSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name', 'email', 'phone', 'user_id']
 
 class UserDetailView(APIView):
     permission_classes = [IsAdmin]
