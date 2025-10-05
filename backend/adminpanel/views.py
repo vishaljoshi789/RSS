@@ -7,7 +7,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .permissions import IsAdmin
 
 from account.models import User
+from payment.models import Payment
 from dashboard.serializers import UserInfoSerializer
+from dashboard.serializers import PaymentSerializer
+from dashboard.filters import PaymentFilter
 
 class UserListView(ListAPIView):
     permission_classes = [IsAdmin]
@@ -49,3 +52,11 @@ class UserDetailView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PaymentListView(ListAPIView):
+    permission_classes = [IsAdmin]
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    filterset_class = PaymentFilter
+    search_fields = ['payment_id', 'order_id', 'name', 'email', 'phone']
