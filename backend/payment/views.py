@@ -41,12 +41,83 @@ class OrderVerifyView(APIView):
 
         try:
             razorpay_client.utility.verify_payment_signature(params_dict)
-            payment_details = razorpay_client.payment.fetch(data['payment_id'])
-            payment.payment_details = payment_details
+            
+            # Fetch full payment details from Razorpay
+            razorpay_payment = razorpay_client.payment.fetch(data['payment_id'])
+            
+            # Extract only necessary fields into structured JSON
+            structured_payment_details = {
+                'payment_id': razorpay_payment.get('id'),
+                'order_id': razorpay_payment.get('order_id'),
+                'amount': razorpay_payment.get('amount'),
+                'currency': razorpay_payment.get('currency'),
+                'status': razorpay_payment.get('status'),
+                'method': razorpay_payment.get('method'),
+                
+                # Payment method specific details
+                'method_details': {
+                    # Card details
+                    'card': {
+                        'network': razorpay_payment.get('card', {}).get('network') if razorpay_payment.get('method') == 'card' else None,
+                        'type': razorpay_payment.get('card', {}).get('type') if razorpay_payment.get('method') == 'card' else None,
+                        'last4': razorpay_payment.get('card', {}).get('last4') if razorpay_payment.get('method') == 'card' else None,
+                        'issuer': razorpay_payment.get('card', {}).get('issuer') if razorpay_payment.get('method') == 'card' else None,
+                    } if razorpay_payment.get('method') == 'card' else None,
+                    
+                    # UPI details
+                    'upi': {
+                        'vpa': razorpay_payment.get('vpa'),
+                    } if razorpay_payment.get('method') == 'upi' else None,
+                    
+                    # Net Banking details
+                    'netbanking': {
+                        'bank': razorpay_payment.get('bank'),
+                    } if razorpay_payment.get('method') == 'netbanking' else None,
+                    
+                    # Wallet details
+                    'wallet': {
+                        'wallet': razorpay_payment.get('wallet'),
+                    } if razorpay_payment.get('method') == 'wallet' else None,
+                },
+                
+                # Bank transaction details from acquirer_data
+                'acquirer_data': {
+                    'bank_transaction_id': razorpay_payment.get('acquirer_data', {}).get('bank_transaction_id'),
+                    'rrn': razorpay_payment.get('acquirer_data', {}).get('rrn'),
+                    'auth_code': razorpay_payment.get('acquirer_data', {}).get('auth_code'),
+                    'upi_transaction_id': razorpay_payment.get('acquirer_data', {}).get('upi_transaction_id'),
+                },
+                
+                # Contact info
+                'contact': razorpay_payment.get('contact'),
+                'email': razorpay_payment.get('email'),
+                
+                # Additional info
+                'description': razorpay_payment.get('description'),
+                'notes': razorpay_payment.get('notes'),
+                'created_at': razorpay_payment.get('created_at'),
+                'fee': razorpay_payment.get('fee'),
+                'tax': razorpay_payment.get('tax'),
+            }
+            
+            # Remove None values and empty dicts from method_details
+            if structured_payment_details['method_details'].get('card') and all(v is None for v in structured_payment_details['method_details']['card'].values()):
+                structured_payment_details['method_details']['card'] = None
+            
+            # Store structured payment details
+            payment.payment_details = structured_payment_details
+            payment.method = razorpay_payment.get('method')
             payment.status = 'COMPLETED'
             payment.payment_id = data['payment_id']
             payment.save()
-            return Response({"message": "Payment verified successfully.", "payment_id": payment.payment_id, "order_id": payment.order_id, "status": payment.status}, status=status.HTTP_200_OK)
+            
+            return Response({
+                "message": "Payment verified successfully.", 
+                "payment_id": payment.payment_id, 
+                "order_id": payment.order_id, 
+                "status": payment.status
+            }, status=status.HTTP_200_OK)
+            
         except razorpay.errors.SignatureVerificationError:
             payment.status = 'FAILED'
             payment.save()
