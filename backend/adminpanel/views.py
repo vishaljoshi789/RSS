@@ -3,6 +3,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from .permissions import IsAdmin
 
 from account.models import User
@@ -12,7 +13,8 @@ class UserListView(ListAPIView):
     permission_classes = [IsAdmin]
     queryset = User.objects.all()
     serializer_class = UserInfoSerializer
-    filter_backends = [SearchFilter]
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    filterset_fields = ['is_verified', 'is_blocked', 'is_member_account', 'is_volunteer', 'is_business_account', 'is_staff_account', 'is_admin_account']
     search_fields = ['name', 'email', 'phone', 'user_id']
 
 class UserDetailView(APIView):
