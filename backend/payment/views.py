@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
+from django.db.models import Sum
+from django.utils.timezone import now
 
 from .models import Payment
 from .serializers import PaymentSerializer
@@ -122,3 +124,46 @@ class OrderVerifyView(APIView):
             payment.status = 'FAILED'
             payment.save()
             return Response({"error": "Payment verification failed."}, status=status.HTTP_400_BAD_REQUEST)
+
+class PaymentStatView(APIView):
+    def get(self, request):
+        current_month = now().month
+        current_year = now().year
+
+        total_revenue = (
+            Payment.objects.filter(status='COMPLETED')
+            .aggregate(total=Sum('amount'))['total'] or 0
+        )
+
+        monthly_revenue = (
+            Payment.objects.filter(
+                status='COMPLETED',
+                timestamp__year=current_year,
+                timestamp__month=current_month
+            ).aggregate(total=Sum('amount'))['total'] or 0
+        )
+
+        total_transactions = Payment.objects.count()
+        successful_transactions = Payment.objects.filter(status='COMPLETED').count()
+        failed_transactions = Payment.objects.filter(status='FAILED').count()
+        pending_transactions = Payment.objects.filter(status='PENDING').count()
+
+        active_subscribers = Payment.objects.filter(payment_for__icontains='subscription').count()
+        this_month_donations = Payment.objects.filter(
+            payment_for__icontains='donation',
+            timestamp__year=current_year,
+            timestamp__month=current_month
+        ).count()
+
+        stats = {
+            "totalRevenue": float(total_revenue),
+            "monthlyRevenue": float(monthly_revenue),
+            "totalTransactions": total_transactions,
+            "successfulTransactions": successful_transactions,
+            "failedTransactions": failed_transactions,
+            "pendingTransactions": pending_transactions,
+            "activeSubscribers": active_subscribers,
+            "thisMonthDonations": this_month_donations,
+        }
+
+        return Response(stats)

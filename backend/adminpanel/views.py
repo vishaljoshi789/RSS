@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from .permissions import IsAdmin
+from django.db.models import Count
 
 from account.models import User
 from payment.models import Payment
@@ -14,7 +15,7 @@ from dashboard.filters import PaymentFilter
 
 class UserListView(ListAPIView):
     permission_classes = [IsAdmin]
-    queryset = User.objects.all()
+    queryset = User.objects.annotate(referral_count=Count('referrals'))
     serializer_class = UserInfoSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
     filterset_fields = ['is_verified', 'is_blocked', 'is_member_account', 'is_volunteer', 'is_business_account', 'is_staff_account', 'is_admin_account']
@@ -72,3 +73,4 @@ class PaymentDetailView(APIView):
         
         serializer = PaymentSerializer(payment)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
