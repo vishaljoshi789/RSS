@@ -1,66 +1,7 @@
-"use server";
+// This file is no longer used since we moved to direct axios calls in hooks
+// Keeping minimal exports for backward compatibility
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-
-export interface DonationFormData {
-  name: string;
-  email: string;
-  phone: string;
-  amount: number;
-  donationType: 'general' | 'education' | 'health' | 'infrastructure' | 'other';
-  anonymous: boolean;
-  panCard?: string;
-  address?: string;
-  message?: string;
-}
-
-export interface CreateOrderResponse {
-  success: boolean;
-  orderId?: string;
-  amount?: number;
-  currency?: string;
-  razorpayKey?: string;
-  error?: string;
-  message?: string;
-}
-
-export interface VerifyPaymentData {
-  razorpayPaymentId: string;
-  razorpayOrderId: string;
-  razorpaySignature: string;
-  donationDetails: DonationFormData;
-}
-
-export interface PaymentVerificationResponse {
-  success: boolean;
-  paymentVerified?: boolean;
-  donationId?: string;
-  receiptUrl?: string;
-  message?: string;
-  error?: string;
-}
-
-export interface DonationRecord {
-  id: string;
-  donorName: string;
-  donorEmail: string;
-  donorPhone: string;
-  amount: number;
-  currency: string;
-  donationType: string;
-  anonymous: boolean;
-  razorpayOrderId: string;
-  razorpayPaymentId?: string;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
-  createdAt: string;
-  completedAt?: string;
-  receiptGenerated: boolean;
-  taxExemption: boolean;
-  message?: string;
-  address?: string;
-  panCard?: string;
-}
+export * from '../types';
 
 async function validateDonationSession() {
   try {
@@ -98,7 +39,7 @@ async function validateDonationSession() {
 
 async function createDonationOrder(formData: DonationFormData): Promise<CreateOrderResponse> {
   try {
-
+    // Step 1: Validate form data
     if (!formData.name || !formData.email || !formData.phone || !formData.amount) {
       return {
         success: false,
@@ -113,7 +54,7 @@ async function createDonationOrder(formData: DonationFormData): Promise<CreateOr
       };
     }
 
-
+    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       return {
@@ -122,7 +63,7 @@ async function createDonationOrder(formData: DonationFormData): Promise<CreateOr
       };
     }
 
-
+    // Validate phone format
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(formData.phone.replace(/[^0-9]/g, ''))) {
       return {
@@ -131,41 +72,49 @@ async function createDonationOrder(formData: DonationFormData): Promise<CreateOr
       };
     }
 
-    const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    const donationRecord: DonationRecord = {
-      id: `DON${Date.now()}`,
-      donorName: formData.name,
-      donorEmail: formData.email,
-      donorPhone: formData.phone,
-      amount: formData.amount,
-      currency: 'INR',
-      donationType: formData.donationType,
-      anonymous: formData.anonymous,
-      razorpayOrderId: orderId,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      receiptGenerated: false,
-      taxExemption: false,
-      message: formData.message,
-      address: formData.address,
-      panCard: formData.panCard,
-    };
+    // Step 2: Call backend API to create Razorpay order
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/payment/create-order/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        amount: formData.amount,
+        payment_for: formData.payment_for,
+        notes: formData.notes,
+      }),
+    });
 
-    return {
-      success: true,
-      orderId: orderId,
-      amount: formData.amount,
-      currency: 'INR',
-      razorpayKey: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_key',
-      message: 'Order created successfully'
-    };
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const orderData = await response.json();
+
+    // Step 3: Return order data for frontend
+    if (orderData.success && orderData.order_id) {
+      return {
+        success: true,
+        orderId: orderData.order_id,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        razorpayKey: orderData.razorpay_key || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        message: 'Order created successfully'
+      };
+    } else {
+      throw new Error(orderData.message || 'Failed to create order');
+    }
 
   } catch (error) {
     console.error('Create order error:', error);
     return {
       success: false,
-      error: 'Failed to create donation order. Please try again.'
+      error: error instanceof Error ? error.message : 'Failed to create donation order. Please try again.'
     };
   }
 }
@@ -174,7 +123,7 @@ async function verifyDonationPayment(paymentData: VerifyPaymentData): Promise<Pa
   try {
     const { razorpayPaymentId, razorpayOrderId, razorpaySignature, donationDetails } = paymentData;
 
-
+    // Step 1: Validate payment data
     if (!razorpayPaymentId || !razorpayOrderId || !razorpaySignature) {
       return {
         success: false,
@@ -182,48 +131,56 @@ async function verifyDonationPayment(paymentData: VerifyPaymentData): Promise<Pa
       };
     }
 
-    const crypto = require('crypto');
-    const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'test_secret')
-      .update(razorpayOrderId + '|' + razorpayPaymentId)
-      .digest('hex');
-
-
-    const isSignatureValid = true
-
-    if (!isSignatureValid) {
-      return {
-        success: false,
-        error: 'Payment verification failed. Invalid signature.'
-      };
-    }
-
-
-    const donationId = `DON${Date.now()}`;
-    const receiptUrl = `/receipts/${donationId}.pdf`;
-
-
-    console.log('Payment verified successfully:', {
-      donationId,
-      razorpayPaymentId,
-      razorpayOrderId,
-      amount: donationDetails.amount,
-      donor: donationDetails.name
+    // Step 2: Call backend API to verify payment
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/payment/verify/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        razorpay_payment_id: razorpayPaymentId,
+        razorpay_order_id: razorpayOrderId,
+        razorpay_signature: razorpaySignature,
+        donation_details: {
+          name: donationDetails.name,
+          email: donationDetails.email,
+          phone: donationDetails.phone,
+          amount: donationDetails.amount,
+          payment_for: donationDetails.payment_for,
+          notes: donationDetails.notes,
+        }
+      }),
     });
 
-    return {
-      success: true,
-      paymentVerified: true,
-      donationId: donationId,
-      receiptUrl: receiptUrl,
-      message: 'Payment successful! Thank you for your donation. A receipt has been sent to your email.'
-    };
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const verificationResult = await response.json();
+
+    // Step 3: Process verification result
+    if (verificationResult.success && verificationResult.payment_verified) {
+      return {
+        success: true,
+        paymentVerified: true,
+        donationId: verificationResult.donation_id,
+        receiptUrl: verificationResult.receipt_url,
+        message: verificationResult.message || 'Payment successful! Thank you for your donation.'
+      };
+    } else {
+      return {
+        success: false,
+        error: verificationResult.error || 'Payment verification failed'
+      };
+    }
 
   } catch (error) {
     console.error('Payment verification error:', error);
     return {
       success: false,
-      error: 'Payment verification failed. Please contact support if amount was debited.'
+      error: error instanceof Error ? error.message : 'Payment verification failed. Please contact support if amount was debited.'
     };
   }
 }
