@@ -60,3 +60,4 @@ class PaymentListView(ListAPIView):
     filter_backends = [SearchFilter, DjangoFilterBackend]
     filterset_class = PaymentFilter
     search_fields = ['payment_id', 'order_id', 'name', 'email', 'phone']
+

@@ -41,6 +41,8 @@ class OrderVerifyView(APIView):
 
         try:
             razorpay_client.utility.verify_payment_signature(params_dict)
+            payment_details = razorpay_client.payment.fetch(data['payment_id'])
+            payment.payment_details = payment_details
             payment.status = 'COMPLETED'
             payment.payment_id = data['payment_id']
             payment.save()
