@@ -70,7 +70,7 @@ export function ViewPaymentModal({
         iconColor: "text-orange-600",
       },
     };
-    return configs[status];
+    return configs[status] || configs.PENDING;
   };
 
   const getPaymentMethodDisplay = () => {
@@ -204,7 +204,7 @@ export function ViewPaymentModal({
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-medium text-lg">{payment.name}</div>
+                  <div className="font-medium text-lg">{payment.name || "N/A"}</div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                     <div className="flex items-center gap-1">
                       <Mail className="h-3 w-3" />

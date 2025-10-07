@@ -1,0 +1,138 @@
+import type { LucideIcon } from "lucide-react";
+import { Calendar, Heart, Home, Settings, Users } from "lucide-react";
+
+import type { User } from "@/types/auth.types";
+
+export type DashboardRole =
+  | "guest"
+  | "admin"
+  | "staff"
+  | "volunteer"
+  | "member"
+  | "audience";
+
+export interface NavItemConfig {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  description?: string;
+  badge?: string;
+  roles?: DashboardRole[] | "all";
+}
+
+interface RoleDefinition {
+  role: DashboardRole;
+  flags?: Array<keyof User>;
+  predicate?: (user: User) => boolean;
+}
+
+export const DASHBOARD_ROLE_DEFINITIONS: RoleDefinition[] = [
+  {
+    role: "admin",
+    flags: ["is_admin_account", "is_superuser"],
+  },
+  {
+    role: "staff",
+    flags: ["is_staff_account", "is_staff"],
+  },
+  {
+    role: "volunteer",
+    flags: ["is_volunteer"],
+  },
+  {
+    role: "member",
+    flags: ["is_member_account"],
+  },
+];
+
+export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
+  {
+    title: "Home",
+    url: "/dashboard",
+    icon: Home,
+    description: "Overview & Analytics",
+    roles: "all",
+  },
+  {
+    title: "Payment",
+    url: "/dashboard/payments",
+    icon: Heart,
+    description: "Manage payments",
+    badge: "New",
+    roles: ["admin", "staff"],
+  },
+  {
+    title: "Users",
+    url: "/dashboard/users",
+    icon: Users,
+    description: "User management",
+    roles: ["admin", "staff"],
+  },
+  {
+    title: "Events",
+    url: "/dashboard/events",
+    icon: Calendar,
+    description: "Event planning",
+    roles: ["admin", "staff", "volunteer"],
+  },
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Settings,
+    description: "System settings",
+    roles: ["admin", "staff"],
+  },
+];
+
+export const deriveDashboardRoles = (user: User | null): DashboardRole[] => {
+  const roles: Set<DashboardRole> = new Set(["audience"]);
+
+  if (!user) {
+    return Array.from(roles);
+  }
+
+  DASHBOARD_ROLE_DEFINITIONS.forEach(({ role, flags, predicate }) => {
+    if (roles.has(role)) return;
+
+    const matchesFlag = flags?.some((flag) => Boolean(user[flag]));
+    const matchesPredicate = predicate ? predicate(user) : false;
+
+    if (matchesFlag || matchesPredicate) {
+      roles.add(role);
+    }
+  });
+
+  if (
+    !roles.has("admin") &&
+    !roles.has("staff") &&
+    !roles.has("volunteer") &&
+    !roles.has("member")
+  ) {
+    roles.add("audience");
+  }
+
+  return Array.from(roles);
+};
+
+export const filterNavItemsForRoles = (
+  items: NavItemConfig[],
+  roles: DashboardRole[]
+): NavItemConfig[] => {
+  const roleSet = new Set(roles);
+
+  return items.filter((item) => {
+    if (!item.roles || item.roles === "all") {
+      return true;
+    }
+
+    return item.roles.some((role) => roleSet.has(role));
+  });
+};
+
+/**
+ * Helper for extending the navigation with new roles or menu items.
+ * Example usage when adding a new role "reporting":
+ *   1. Add the role to the DashboardRole union.
+ *   2. Update deriveDashboardRoles to push the role based on a user flag.
+ *   3. Add the role name to any NavItemConfig.roles arrays that should see the menu item.
+ */

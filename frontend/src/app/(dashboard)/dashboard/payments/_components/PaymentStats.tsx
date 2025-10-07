@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   DollarSign, 
@@ -14,29 +14,11 @@ import {
   Loader2
 } from "lucide-react";
 import { usePaymentStats } from "@/module/dashboard/Payments/hooks";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
-export const PaymentStats = memo(function PaymentStats() {
-  const { stats: apiStats, loading, error } = usePaymentStats();
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  
-  const stats = error ? {
-    total_revenue: 0,
-    monthly_revenue: 0,
-    total_transactions: 0,
-    successful_transactions: 0,
-    failed_transactions: 0,
-    pending_transactions: 0,
-    active_subscribers: 0,
-    this_month_donations: 0,
-  } : apiStats;
+export function PaymentStats() {
+  const { stats, loading, error, refetch } = usePaymentStats();
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -117,38 +99,60 @@ export const PaymentStats = memo(function PaymentStats() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {statsConfig.map((stat, index) => {
-        const Icon = stat.icon;
-        return (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                <Icon className={`h-4 w-4 ${stat.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">
-                  {stat.description}
-                </p>
-                {stat.change && (
-                  <span className={`text-xs font-medium ${
-                    stat.change.startsWith('+') ? 'text-green-600' : 'text-muted-foreground'
-                  }`}>
-                    {stat.change}
-                  </span>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+    <div className="space-y-4">
+      {error && (
+        <Alert variant="destructive">
+          <AlertTitle>Unable to load payment stats</AlertTitle>
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span>{error}</span>
+            <Button size="sm" variant="outline" onClick={refetch}>
+              Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {statsConfig.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={index} className="hover:shadow-lg transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {stat.title}
+                </CardTitle>
+                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
+                  <Icon className={`h-4 w-4 ${stat.color}`} />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">
+                    {stat.description}
+                  </p>
+                  {stat.change && (
+                    <span className={`text-xs font-medium ${
+                      stat.change.startsWith('+') ? 'text-green-600' : 'text-muted-foreground'
+                    }`}>
+                      {stat.change}
+                    </span>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
-});
+}

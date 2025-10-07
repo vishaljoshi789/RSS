@@ -4,18 +4,11 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PaymentStats } from "./_components/PaymentStats";
 import { TransactionTable } from "./_components/TransactionTable";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+
 
 export default function PaymentsPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(20);
+  const pageSize = 20;
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -42,6 +35,7 @@ export default function PaymentsPage() {
           <TransactionTable 
             page={currentPage}
             pageSize={pageSize}
+            onPageChange={handlePageChange}
           />
         </CardContent>
       </Card>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,6 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Search,
   Download,
@@ -40,49 +49,166 @@ import { ViewPaymentModal } from "@/module/dashboard/Payments/components/view-pa
 import { usePayments, type Payment } from "@/module/dashboard/Payments/hooks";
 
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
+const STATUS_FILTER_MAP: Record<string, string | undefined> = {
+  all: undefined,
+  success: "COMPLETED",
+  failed: "FAILED",
+  pending: "PENDING",
+  refunded: "REFUNDED",
+};
+
+const TYPE_FILTER_MAP: Record<string, string | undefined> = {
+  all: undefined,
+  donation: "donation",
+  subscription: "subscription",
+  membership: "membership",
+  general: "general",
+};
 
 interface TransactionTableProps {
   page: number;
   pageSize: number;
+  onPageChange: (page: number) => void;
 }
 
-export function TransactionTable({ page, pageSize }: TransactionTableProps) {
+export function TransactionTable({
+  page,
+  pageSize,
+  onPageChange,
+}: TransactionTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [filterType, setFilterType] = useState<string>("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loadingPaymentDetails, setLoadingPaymentDetails] = useState(false);
-  
-  // Use the payments hook
-  const { payments, loading, error, getPaymentById } = usePayments(page, pageSize);
+  const [loadingPaymentId, setLoadingPaymentId] = useState<number | null>(null);
+
+  const {
+    payments,
+    loading,
+    error,
+    pagination,
+    getPaymentById,
+    updateFilters,
+    resetFilters,
+  } = usePayments(page, pageSize);
+
+  const handleStatusFilterChange = (value: string) => {
+    setFilterStatus(value);
+    onPageChange(1);
+    updateFilters({ status: STATUS_FILTER_MAP[value] });
+  };
+
+  const handleTypeFilterChange = (value: string) => {
+    setFilterType(value);
+    onPageChange(1);
+    updateFilters({ payment_for: TYPE_FILTER_MAP[value] });
+  };
+
+  useEffect(() => {
+    return () => {
+      resetFilters();
+    };
+  }, [resetFilters]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const trimmed = searchTerm.trim();
+      onPageChange(1);
+      updateFilters({ search: trimmed || undefined });
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm, updateFilters, onPageChange]);
+
+  const currentPage = pagination.current_page ?? page;
+  const totalPages = Math.max(1, pagination.total_pages ?? 1);
+  const totalCount = pagination.count ?? payments.length;
+  const canGoToPrevious = currentPage > 1;
+  const canGoToNext = currentPage < totalPages;
+  const showPagination = totalPages >= 1;
+
+  const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endItem =
+    totalCount === 0
+      ? 0
+      : Math.min(startItem + payments.length - 1, totalCount);
+
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const pages: Array<number | "ellipsis"> = [];
+    const windowSize = 2;
+    const firstPage = 1;
+    const lastPage = totalPages;
+    const windowStart = Math.max(firstPage + 1, currentPage - windowSize);
+    const windowEnd = Math.min(lastPage - 1, currentPage + windowSize);
+
+    pages.push(firstPage);
+
+    if (windowStart > firstPage + 1) {
+      pages.push("ellipsis");
+    }
+
+    for (
+      let pageNumber = windowStart;
+      pageNumber <= windowEnd;
+      pageNumber += 1
+    ) {
+      pages.push(pageNumber);
+    }
+
+    if (windowEnd < lastPage - 1) {
+      pages.push("ellipsis");
+    }
+
+    pages.push(lastPage);
+
+    return pages;
+  }, [currentPage, totalPages]);
+
+  const handlePageChange = (nextPage: number) => {
+    if (loading) return;
+    if (nextPage === currentPage) return;
+    if (nextPage < 1 || nextPage > totalPages) return;
+    onPageChange(nextPage);
+  };
 
   const handleViewPayment = async (payment: Payment) => {
+    if (payment.payment_details) {
+      setSelectedPayment(payment);
+      setIsModalOpen(true);
+      return;
+    }
+
     try {
-      setLoadingPaymentDetails(true);
-      
-      // Fetch fresh payment details from the API
+      setLoadingPaymentId(payment.id);
+
       const paymentDetails = await getPaymentById(payment.id);
-      
+
       if (paymentDetails) {
         setSelectedPayment(paymentDetails);
         setIsModalOpen(true);
       } else {
         toast("Failed to load payment details", {
-          description: "Unable to fetch payment information. Please try again."
+          description: "Unable to fetch payment information. Please try again.",
         });
       }
     } catch (error: any) {
       console.error("Error fetching payment details:", error);
-      // Show error toast
-      const toast = await import("sonner");
-      toast.toast.error("Failed to load payment details", {
-        description: error.message || "An error occurred while fetching payment information."
+
+      toast.error("Failed to load payment details", {
+        description:
+          error.message ||
+          "An error occurred while fetching payment information.",
       });
     } finally {
-      setLoadingPaymentDetails(false);
+      setLoadingPaymentId(null);
     }
   };
 
@@ -171,14 +297,15 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
     ];
 
     const rows = sortedPayments.map((payment) => {
-      // Get payment method details
       const method = payment.payment_details?.method || payment.method || "N/A";
       let methodDetail = "";
-      
+
       if (payment.payment_details?.method_details) {
         const details = payment.payment_details.method_details;
         if (details.card && details.card.network) {
-          methodDetail = `${details.card.network} ${details.card.type || ""} ****${details.card.last4 || ""}`.trim();
+          methodDetail = `${details.card.network} ${
+            details.card.type || ""
+          } ****${details.card.last4 || ""}`.trim();
         } else if (details.upi && details.upi.vpa) {
           methodDetail = details.upi.vpa;
         } else if (details.netbanking && details.netbanking.bank) {
@@ -187,7 +314,7 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
           methodDetail = details.wallet.wallet;
         }
       }
-      
+
       return [
         payment.order_id,
         payment.payment_id,
@@ -210,13 +337,11 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
       ];
     });
 
-    
     const csvContent = [
       headers.join(","),
       ...rows.map((row) =>
         row
           .map((cell) => {
-            
             const cellStr = String(cell);
             if (
               cellStr.includes(",") ||
@@ -231,12 +356,10 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
       ),
     ].join("\n");
 
-    
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
 
-    
     const fileName = `transactions_${
       new Date().toISOString().split("T")[0]
     }.csv`;
@@ -250,16 +373,14 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
   };
 
   const getPaymentMethodIcon = (payment: Payment) => {
-    // Get method from payment_details or fallback to method field
     const method = payment.payment_details?.method || payment.method;
-    
+
     if (!method) {
       return <span className="text-sm text-muted-foreground">N/A</span>;
     }
 
     const methodLower = method.toLowerCase();
 
-    // UPI Payment
     if (methodLower === "upi") {
       const vpa = payment.payment_details?.method_details?.upi?.vpa;
       return (
@@ -275,20 +396,21 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-medium">UPI</span>
-            {vpa && <span className="text-xs text-muted-foreground">{vpa}</span>}
+            {vpa && (
+              <span className="text-xs text-muted-foreground">{vpa}</span>
+            )}
           </div>
         </div>
       );
     }
 
-    // Card Payment
     if (methodLower === "card") {
       const cardDetails = payment.payment_details?.method_details?.card;
       const cardInfo = cardDetails
         ? `${cardDetails.network || ""} ${cardDetails.type || ""}`.trim()
         : "Card";
       const last4 = cardDetails?.last4;
-      
+
       return (
         <div className="flex items-center gap-2">
           <div className="h-6 w-6 relative flex items-center justify-center">
@@ -312,7 +434,6 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
       );
     }
 
-    // Net Banking
     if (methodLower === "netbanking") {
       const bank = payment.payment_details?.method_details?.netbanking?.bank;
       return (
@@ -332,9 +453,9 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
       );
     }
 
-    // Wallet Payment
     if (methodLower === "wallet") {
-      const walletName = payment.payment_details?.method_details?.wallet?.wallet;
+      const walletName =
+        payment.payment_details?.method_details?.wallet?.wallet;
       return (
         <div className="flex items-center gap-2">
           <Wallet className="h-6 w-6 text-orange-600" />
@@ -350,12 +471,7 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
       );
     }
 
-    // Default fallback
-    return (
-      <span className="text-sm capitalize">
-        {method}
-      </span>
-    );
+    return <span className="text-sm capitalize">{method}</span>;
   };
 
   return (
@@ -377,7 +493,7 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
           )}
         </div>
 
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
+  <Select value={filterStatus} onValueChange={handleStatusFilterChange}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
@@ -390,7 +506,7 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
           </SelectContent>
         </Select>
 
-        <Select value={filterType} onValueChange={setFilterType}>
+  <Select value={filterType} onValueChange={handleTypeFilterChange}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
@@ -399,6 +515,7 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
             <SelectItem value="donation">Donation</SelectItem>
             <SelectItem value="subscription">Subscription</SelectItem>
             <SelectItem value="membership">Membership</SelectItem>
+            <SelectItem value="general">General</SelectItem>
           </SelectContent>
         </Select>
 
@@ -412,6 +529,12 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
           Export CSV
         </Button>
       </div>
+
+      {error && (
+        <div className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
       <div className="rounded-md border">
         <Table>
@@ -466,9 +589,7 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">
-                          {payment.name}
-                        </div>
+                        <div className="font-medium">{payment.name}</div>
                         <div className="text-xs text-muted-foreground">
                           {payment.email}
                         </div>
@@ -479,9 +600,7 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
                     {formatCurrency(payment.amount, "INR")}
                   </TableCell>
                   <TableCell>{getTypeBadge(payment.payment_for)}</TableCell>
-                  <TableCell>
-                    {getPaymentMethodIcon(payment)}
-                  </TableCell>
+                  <TableCell>{getPaymentMethodIcon(payment)}</TableCell>
                   <TableCell>{getStatusBadge(payment.status)}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {formatDate(payment.timestamp)}
@@ -495,9 +614,11 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
                             size="icon"
                             className="h-8 w-8"
                             onClick={() => handleViewPayment(payment)}
-                            disabled={loadingPaymentDetails}
+                            disabled={
+                              loading || loadingPaymentId === payment.id
+                            }
                           >
-                            {loadingPaymentDetails ? (
+                            {loadingPaymentId === payment.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
                               <Eye className="h-4 w-4" />
@@ -515,6 +636,88 @@ export function TransactionTable({ page, pageSize }: TransactionTableProps) {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-muted-foreground whitespace-nowrap">
+          {totalCount > 0
+            ? `Showing ${startItem.toLocaleString()} - ${endItem.toLocaleString()} of ${totalCount.toLocaleString()} results`
+            : "No results to display"}
+        </p>
+
+        {showPagination && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (canGoToPrevious) {
+                      handlePageChange(currentPage - 1);
+                    }
+                  }}
+                  aria-disabled={!canGoToPrevious || loading}
+                  tabIndex={!canGoToPrevious || loading ? -1 : undefined}
+                  className={cn(
+                    !canGoToPrevious || loading
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  )}
+                />
+              </PaginationItem>
+
+              {pageNumbers.map((pageToken, index) => (
+                <PaginationItem
+                  key={
+                    typeof pageToken === "number"
+                      ? `page-${pageToken}`
+                      : `ellipsis-${index}`
+                  }
+                >
+                  {pageToken === "ellipsis" ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      href="#"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        handlePageChange(pageToken);
+                      }}
+                      isActive={pageToken === currentPage}
+                      aria-disabled={loading}
+                      tabIndex={loading ? -1 : undefined}
+                      className={cn(
+                        loading ? "pointer-events-none opacity-50" : ""
+                      )}
+                    >
+                      {pageToken}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (canGoToNext) {
+                      handlePageChange(currentPage + 1);
+                    }
+                  }}
+                  aria-disabled={!canGoToNext || loading}
+                  tabIndex={!canGoToNext || loading ? -1 : undefined}
+                  className={cn(
+                    !canGoToNext || loading
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  )}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
 
       <ViewPaymentModal

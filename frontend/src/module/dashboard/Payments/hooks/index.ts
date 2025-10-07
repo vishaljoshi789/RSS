@@ -64,6 +64,93 @@ interface PaginationData {
   previous: string | null;
 }
 
+type PaymentsQuery = {
+  search?: string;
+  status?: string;
+  payment_for?: string;
+  method?: string;
+};
+
+const normalizePayment = (payment: any): Payment => ({
+  id: Number(payment.id),
+  name: payment.name ?? "",
+  email: payment.email ?? "",
+  phone: payment.phone ?? "",
+  amount: Number(payment.amount ?? 0),
+  timestamp: payment.timestamp ?? "",
+  payment_for: payment.payment_for ?? "",
+  status: (payment.status ?? "PENDING") as Payment["status"],
+  notes: payment.notes ?? null,
+  order_id: payment.order_id ?? "",
+  payment_id: payment.payment_id ?? "",
+  method: payment.method ?? null,
+  payment_details: payment.payment_details
+    ? {
+        ...payment.payment_details,
+        amount: Number(payment.payment_details.amount ?? payment.amount ?? 0),
+      }
+    : null,
+});
+
+const extractPayments = (
+  data: any,
+  fallbackPage: number
+): { items: Payment[]; meta: PaginationData } => {
+  const emptyMeta: PaginationData = {
+    count: 0,
+    total_pages: 1,
+    current_page: fallbackPage,
+    next: null,
+    previous: null,
+  };
+
+  if (!data) {
+    return { items: [], meta: emptyMeta };
+  }
+
+  if (Array.isArray(data)) {
+    return {
+      items: data.map(normalizePayment),
+      meta: {
+        count: data.length,
+        total_pages: 1,
+        current_page: fallbackPage,
+        next: null,
+        previous: null,
+      },
+    };
+  }
+
+  if (Array.isArray(data.results)) {
+    return {
+      items: data.results.map(normalizePayment),
+      meta: {
+        count: Number(data.count ?? data.results.length ?? 0),
+        total_pages: Number(data.total_pages ?? 1),
+        current_page: Number(data.current_page ?? fallbackPage),
+        next: data.next ?? null,
+        previous: data.previous ?? null,
+      },
+    };
+  }
+
+  if (Array.isArray(data.data)) {
+    return {
+      items: data.data.map(normalizePayment),
+      meta: {
+        count: Number(data.count ?? data.data.length ?? 0),
+        total_pages: Number(data.total_pages ?? 1),
+        current_page: Number(data.current_page ?? fallbackPage),
+        next: data.next ?? null,
+        previous: data.previous ?? null,
+      },
+    };
+  }
+
+  console.warn("Unexpected API response format:", data);
+  return { items: [], meta: emptyMeta };
+};
+
 export interface PaymentStats {
   total_revenue: number;
   monthly_revenue: number;
@@ -86,162 +173,120 @@ export function usePayments(page: number = 1, page_size: number = 20) {
     next: null,
     previous: null,
   });
+  const [filters, setFilters] = useState<PaymentsQuery>({});
   const axios = useAxios();
 
-  const fetchPayments = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await axios.get("/admin/payments/", {
-        params: { page, page_size }
-      });
-      
-      const paymentData = response.data;
-      if (Array.isArray(paymentData)) {
-        setPayments(paymentData);
-        setPagination({
-          count: paymentData.length,
-          total_pages: 1,
-          current_page: 1,
-          next: null,
-          previous: null,
+  const loadPayments = useCallback(
+    async (overrides: Partial<PaymentsQuery & { page?: number }> = {}) => {
+      const params = {
+        page,
+        page_size,
+        ...filters,
+        ...overrides,
+      };
+
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get("/admin/payments/", {
+          params,
         });
-      } else if (paymentData && Array.isArray(paymentData.results)) {
-        setPayments(paymentData.results);
-        setPagination({
-          count: paymentData.count || paymentData.results.length,
-          total_pages: paymentData.total_pages || 1,
-          current_page: paymentData.current_page || page,
-          next: paymentData.next || null,
-          previous: paymentData.previous || null,
-        });
-      } else if (paymentData && Array.isArray(paymentData.data)) {
-        setPayments(paymentData.data);
-        setPagination({
-          count: paymentData.count || paymentData.data.length,
-          total_pages: paymentData.total_pages || 1,
-          current_page: paymentData.current_page || page,
-          next: paymentData.next || null,
-          previous: paymentData.previous || null,
-        });
-      } else {
-        console.warn("Unexpected API response format:", paymentData);
+
+        const { items, meta } = extractPayments(
+          response.data,
+          Number(params.page ?? page)
+        );
+
+        setPayments(items);
+        setPagination(meta);
+      } catch (err: any) {
+        const errorMessage =
+          err.response?.data?.message || err.message || "Failed to fetch payments";
+        setError(errorMessage);
+        console.error("Error fetching payments:", err);
         setPayments([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || "Failed to fetch payments";
-      setError(errorMessage);
-      console.error("Error fetching payments:", err);
-      setPayments([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [axios, page, page_size]);
+    },
+    [axios, filters, page, page_size]
+  );
 
   useEffect(() => {
-    fetchPayments();
-  }, [fetchPayments]);
+    loadPayments();
+  }, [loadPayments]);
 
-  const searchPayments = async (searchTerm: string) => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/admin/payments/", {
-        params: { search: searchTerm, page, page_size }
+  const updateFilters = useCallback((updates: PaymentsQuery) => {
+    setFilters((prev) => {
+      const next = { ...prev, ...updates };
+
+      Object.keys(next).forEach((key) => {
+        const typedKey = key as keyof PaymentsQuery;
+        const value = next[typedKey];
+        if (value === undefined || value === null || value === "" || value === "all") {
+          delete next[typedKey];
+        }
       });
-      
-      const paymentData = response.data;
-      if (Array.isArray(paymentData)) {
-        setPayments(paymentData);
-      } else if (paymentData && Array.isArray(paymentData.results)) {
-        setPayments(paymentData.results);
-        setPagination({
-          count: paymentData.count || paymentData.results.length,
-          total_pages: paymentData.total_pages || 1,
-          current_page: paymentData.current_page || page,
-          next: paymentData.next || null,
-          previous: paymentData.previous || null,
-        });
-      } else if (paymentData && Array.isArray(paymentData.data)) {
-        setPayments(paymentData.data);
-      }
-    } catch (err: any) {
-      console.error("Error searching payments:", err);
-      setError(err.response?.data?.message || "Failed to search payments");
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const filterPayments = async (filters: {
-    status?: string;
-    payment_for?: string;
-    method?: string;
-  }) => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/admin/payments/", {
-        params: { ...filters, page, page_size }
-      });
-      
-      const paymentData = response.data;
-      if (Array.isArray(paymentData)) {
-        setPayments(paymentData);
-      } else if (paymentData && Array.isArray(paymentData.results)) {
-        setPayments(paymentData.results);
-        setPagination({
-          count: paymentData.count || paymentData.results.length,
-          total_pages: paymentData.total_pages || 1,
-          current_page: paymentData.current_page || page,
-          next: paymentData.next || null,
-          previous: paymentData.previous || null,
-        });
-      } else if (paymentData && Array.isArray(paymentData.data)) {
-        setPayments(paymentData.data);
-      }
-    } catch (err: any) {
-      console.error("Error filtering payments:", err);
-      setError(err.response?.data?.message || "Failed to filter payments");
-    } finally {
-      setLoading(false);
-    }
-  };
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
 
-  
+      const isSameLength = prevKeys.length === nextKeys.length;
+      const hasSameEntries = isSameLength
+        ? nextKeys.every((key) => prev[key as keyof PaymentsQuery] === next[key as keyof PaymentsQuery])
+        : false;
+
+      if (isSameLength && hasSameEntries) {
+        return prev;
+      }
+
+      return next;
+    });
+  }, []);
+
+  const resetFilters = useCallback(() => setFilters({}), []);
+
   const getPaymentById = async (paymentId: number): Promise<Payment | null> => {
     try {
       const response = await axios.get(`/admin/payment/${paymentId}`);
-      return response.data;
+      return normalizePayment(response.data);
     } catch (err: any) {
       console.error("Error fetching payment by ID:", err);
       throw new Error(err.response?.data?.message || "Failed to fetch payment details");
     }
   };
 
-  const refetch = () => {
-    fetchPayments();
-  };
+  const refetch = useCallback(() => {
+    loadPayments();
+  }, [loadPayments]);
 
   return {
     payments,
     loading,
     error,
     pagination,
-    searchPayments,
-    filterPayments,
+    filters,
+    updateFilters,
+    resetFilters,
     getPaymentById,
     refetch,
+    loadPayments,
   };
-}export function usePaymentStats() {
-  const [stats, setStats] = useState<PaymentStats>({
-    total_revenue: 0,
-    monthly_revenue: 0,
-    total_transactions: 0,
-    successful_transactions: 0,
-    failed_transactions: 0,
-    pending_transactions: 0,
-    active_subscribers: 0,
-    this_month_donations: 0,
-  });
+}
+
+const defaultStats: PaymentStats = {
+  total_revenue: 0,
+  monthly_revenue: 0,
+  total_transactions: 0,
+  successful_transactions: 0,
+  failed_transactions: 0,
+  pending_transactions: 0,
+  active_subscribers: 0,
+  this_month_donations: 0,
+};
+
+export function usePaymentStats() {
+  const [stats, setStats] = useState<PaymentStats>(defaultStats);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const axios = useAxios();
@@ -249,11 +294,16 @@ export function usePayments(page: number = 1, page_size: number = 20) {
   const fetchStats = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/admin/payments/stats/");
-      setStats(response.data);
+      const response = await axios.get("/payment/stats/");
+      setStats({
+        ...defaultStats,
+        ...(response.data as Partial<PaymentStats>),
+      });
+      setError(null);
     } catch (err: any) {
       console.error("Error fetching payment stats:", err);
       setError(err.response?.data?.message || "Failed to fetch payment stats");
+      setStats(defaultStats);
     } finally {
       setLoading(false);
     }

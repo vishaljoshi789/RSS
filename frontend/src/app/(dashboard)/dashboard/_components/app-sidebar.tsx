@@ -4,15 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  LogOut,
-  Settings,
-  ChevronUp,
-  Users,
-  Calendar,
-  Heart,
-} from "lucide-react";
+import { ChevronUp, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -37,44 +29,24 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-const navItems = [
-  {
-    title: "Home",
-    url: "/dashboard",
-    icon: Home,
-    description: "Overview & Analytics",
-  },
-  {
-    title: "Payment",
-    url: "/dashboard/payments",
-    icon: Heart,
-    description: "Manage payments",
-    badge: "New",
-  },
-  {
-    title: "Users",
-    url: "/dashboard/users",
-    icon: Users,
-    description: "User management",
-  },
-  {
-    title: "Events",
-    url: "/dashboard/events",
-    icon: Calendar,
-    description: "Event planning",
-  },
-  {
-    title: "Settings",
-    url: "/dashboard/settings",
-    icon: Settings,
-    description: "System settings",
-  },
-];
+import {
+  DASHBOARD_NAV_ITEMS,
+  type NavItemConfig,
+  deriveDashboardRoles,
+  filterNavItemsForRoles,
+} from "./nav-config";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [mounted, setMounted] = React.useState(false);
+
+  const roles = React.useMemo(() => deriveDashboardRoles(user), [user]);
+
+  const navItems = React.useMemo<NavItemConfig[]>(
+    () => filterNavItemsForRoles(DASHBOARD_NAV_ITEMS, roles),
+    [roles]
+  );
 
   React.useEffect(() => {
     setMounted(true);
@@ -131,13 +103,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupLabel>
           <SidebarGroupContent className="mt-2">
             <SidebarMenu className="space-y-1">
-              {navItems.map((item) => {
-                const active = isActive(item.url);
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className={`
+              {navItems.length === 0 ? (
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="h-12 cursor-default text-muted-foreground">
+                    No navigation available for your role yet.
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ) : (
+                navItems.map((item) => {
+                  const active = isActive(item.url);
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        className={`
                         group relative h-12 px-3
                         transition-all duration-200
                         hover:bg-sidebar-accent hover:text-sidebar-accent-foreground
@@ -148,12 +127,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         }
                       `}
                     >
-                      <Link
-                        href={item.url}
-                        className="flex items-center gap-3 w-full"
-                      >
-                        <div
-                          className={`
+                        <Link
+                          href={item.url}
+                          className="flex items-center gap-3 w-full"
+                        >
+                          <div
+                            className={`
                           flex items-center justify-center h-9 w-9 rounded-lg
                           transition-colors duration-200
                           ${
@@ -162,37 +141,38 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                               : "bg-sidebar-accent/50 group-hover:bg-sidebar-accent"
                           }
                         `}
-                        >
-                          <item.icon className="h-4 w-4" />
-                        </div>
-                        <div className="flex-1 flex items-center justify-between">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium leading-none">
-                              {item.title}
-                            </span>
-                            {item.description && (
-                              <span className="text-xs text-muted-foreground mt-1">
-                                {item.description}
+                          >
+                            <item.icon className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1 flex items-center justify-between">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium leading-none">
+                                {item.title}
                               </span>
+                              {item.description && (
+                                <span className="text-xs text-muted-foreground mt-1">
+                                  {item.description}
+                                </span>
+                              )}
+                            </div>
+                            {item.badge && (
+                              <Badge
+                                variant="secondary"
+                                className="ml-auto text-[10px] px-1.5 py-0 h-5 bg-orange-500/20 text-orange-600 dark:bg-orange-500/30 dark:text-orange-400 border-0"
+                              >
+                                {item.badge}
+                              </Badge>
                             )}
                           </div>
-                          {item.badge && (
-                            <Badge
-                              variant="secondary"
-                              className="ml-auto text-[10px] px-1.5 py-0 h-5 bg-orange-500/20 text-orange-600 dark:bg-orange-500/30 dark:text-orange-400 border-0"
-                            >
-                              {item.badge}
-                            </Badge>
+                          {active && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-orange-500 rounded-r-full" />
                           )}
-                        </div>
-                        {active && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-orange-500 rounded-r-full" />
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
