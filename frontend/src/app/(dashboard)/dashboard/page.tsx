@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default function Page() {
   return (
     <div className="space-y-6">
-      {/* Welcome Section */}
+      
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Welcome to Dashboard</h1>
         <p className="text-muted-foreground">
@@ -15,7 +15,7 @@ export default function Page() {
         </p>
       </div>
 
-      {/* Stats Cards */}
+      
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

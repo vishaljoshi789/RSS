@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -25,7 +25,6 @@ import {
   Shield,
   Lock,
   Gift,
-  Download,
   Loader2,
   IndianRupee,
   Users,
@@ -155,8 +154,9 @@ const NewDonationForm = () => {
     }
 
     try {
-      toast.loading("Initiating payment...", { duration: 2000 });
+      const toastId = toast.loading("Initiating payment...");
       await processPayment(formData);
+      toast.dismiss(toastId);
     } catch (error: any) {
       console.error("Payment submission error:", error);
       toast.error("Failed to initiate payment. Please try again.");

@@ -3,6 +3,7 @@ import { Lato, Poppins, Nunito } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import Provider from "./Provider";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const lato = Lato({
@@ -255,6 +256,7 @@ export default function RootLayout({
           Skip to main content
         </Link>
         <Provider>{children}</Provider>
+        <Toaster richColors/>
       </body>
     </html>
   );

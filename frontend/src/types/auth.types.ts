@@ -1,4 +1,3 @@
-export type UserRole = 'admin' | 'staff' | 'volunteer';
 
 export interface User {
   id: number;
@@ -43,9 +42,9 @@ export interface User {
   date_joined: string;
   last_login?: string;
   
- 
-  roles: UserRole[];
 }
+
+
 export interface AuthTokens {
   access: string;
   refresh: string;
@@ -96,21 +95,7 @@ export interface AuthContextType extends AuthState {
   setUserData: (userData: User) => void;
   clearError: () => void;
   checkAuth: () => Promise<void>;
-  hasRole: (role: UserRole) => boolean;
-  hasAnyRole: (roles: UserRole[]) => boolean;
   isAdmin: () => boolean;
   isStaff: () => boolean;
   isVolunteer: () => boolean;
-}
-
-// Permission utilities
-export interface PermissionConfig {
-  roles: UserRole[];
-  requireAll?: boolean;
-}
-
-export interface RoutePermission {
-  path: string;
-  permissions: PermissionConfig;
-  fallback?: string;
 }

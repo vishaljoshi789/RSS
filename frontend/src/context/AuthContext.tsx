@@ -13,7 +13,6 @@ import {
   AuthContextType,
   LoginResponse,
   RegisterRequest,
-  UserRole,
   AuthState,
 } from "@/types/auth.types";
 
@@ -63,16 +62,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const setUserData = useCallback((userData: User) => {
     localStorage.setItem('user_data', JSON.stringify(userData));
     
-    const roles: UserRole[] = [];
-    if (userData.is_admin_account || userData.is_superuser) roles.push("admin");
-    if (userData.is_staff_account || userData.is_staff) roles.push("staff");
-    if (userData.is_volunteer) roles.push("volunteer");
-    
-    const userWithRoles = { ...userData, roles };
-    
     setAuthState((prev) => ({
       ...prev,
-      user: userWithRoles,
+      user: userData,
       isAuthenticated: true,
       loading: false,
       error: null,
@@ -99,7 +91,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     is_active: true,
     is_superuser: false,
     date_joined: new Date().toISOString(),
-    roles: ["volunteer"] as UserRole[],
   }), []);
 
   const checkAuth = useCallback(async (): Promise<void> => {
@@ -351,33 +342,17 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     router.push("/auth/login");
   }, [apiCall, router]);
 
-  const hasRole = useCallback(
-    (role: UserRole): boolean => {
-      return authState.user?.roles.includes(role) || false;
-    },
-    [authState.user]
-  );
-
-  const hasAnyRole = useCallback(
-    (roles: UserRole[]): boolean => {
-      return roles.some((role) => hasRole(role));
-    },
-    [hasRole]
-  );
-
   const isAdmin = useCallback((): boolean => {
-    return hasRole("admin") || authState.user?.is_superuser || false;
-  }, [hasRole, authState.user]);
+    return authState.user?.is_admin_account || authState.user?.is_superuser || false;
+  }, [authState.user]);
 
   const isStaff = useCallback((): boolean => {
-    return (
-      hasRole("staff") || hasRole("admin") || authState.user?.is_staff || false
-    );
-  }, [hasRole, authState.user]);
+    return authState.user?.is_staff_account || authState.user?.is_staff || false;
+  }, [authState.user]);
 
   const isVolunteer = useCallback((): boolean => {
-    return hasRole("volunteer");
-  }, [hasRole]);
+    return authState.user?.is_volunteer || false;
+  }, [authState.user]);
 
   useEffect(() => {
     checkAuth();
@@ -435,8 +410,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     clearError,
     checkAuth,
     verifyToken,
-    hasRole,
-    hasAnyRole,
     isAdmin,
     isStaff,
     isVolunteer,

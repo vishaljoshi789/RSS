@@ -80,7 +80,7 @@ export function useDonationPayment() {
   
   const createOrder = useCallback(async (formData: DonationFormData): Promise<OrderCreateResponse> => {
     try {
-      console.log('🚀 Making API call to /payment/init/', formData);
+      
       const response = await axios.post('/payment/init/', {
         name: formData.name,
         email: formData.email,
@@ -115,8 +115,6 @@ export function useDonationPayment() {
     razorpaySignature: string
   ): Promise<PaymentVerificationResponse> => {
     try {
-      console.log('🔐 Making API call to /payment/verify/', { order_id: razorpayOrderId, payment_id: razorpayPaymentId });
-      // Backend expects: order_id, payment_id, signature  
       const response = await axios.post('/payment/verify/', {
         order_id: razorpayOrderId,
         payment_id: razorpayPaymentId,
@@ -149,11 +147,8 @@ export function useDonationPayment() {
       setCurrentStep('creating-order');
 
       
-      console.log('Step 1: Creating order...');
       const orderResponse = await createOrder(formData);
 
-      console.log(orderResponse)
-      
       if (!orderResponse.success) {
         throw new Error(orderResponse.error || 'Failed to create payment order');
       }
@@ -164,10 +159,8 @@ export function useDonationPayment() {
 
       setOrderData(orderResponse);
       setCurrentStep('waiting-payment');
-      console.log('Step 1 Complete: Order created successfully', orderResponse);
+      setIsProcessing(false);
 
-      
-      console.log('Step 2: Opening Razorpay...');
       const options: RazorpayOptions = {
         key: orderResponse.razorpay_key || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
         amount: (orderResponse.amount || 0) * 100, 
@@ -179,7 +172,6 @@ export function useDonationPayment() {
         handler: async (response: PaymentResponse) => {
           try {
             setCurrentStep('verifying');
-            console.log('Step 2 Complete: Payment captured', response);
             
             
             const verificationResponse = await verifyPayment(
@@ -193,7 +185,6 @@ export function useDonationPayment() {
               setDonationId(verificationResponse.donation_id || null);
               setReceiptUrl(verificationResponse.receipt_url || null);
               setCurrentStep('completed');
-              console.log('Step 3 Complete: Payment verified successfully', verificationResponse);
             } else {
               throw new Error(verificationResponse.error || 'Payment verification failed');
             }
