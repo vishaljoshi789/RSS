@@ -51,12 +51,21 @@ class UserMemberView(APIView):
         password = data["dob"].replace("-", "")
         data["password"] = make_password(password)
         data["username"] = data["email"]
+        user = User.objects.filter(email=data["email"]).first()
+        if user:
+            serializer = UserMemberSerializer(user, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
         referral_code = data.get("referred_by", None)
-        if referral_code and not User.objects.filter(user_id=referral_code).exists():
-            pass
-        else:
-            referred_by = User.objects.get(user_id=referral_code)
-            data["referred_by"] = referred_by
+        if referral_code:
+            try:
+                referred_by = User.objects.get(user_id=referral_code)
+                data["referred_by"] = referred_by
+            except User.DoesNotExist:
+                pass
         while User.objects.filter(user_id=user_id).exists():
             user_id = generate_user_id()
         data["user_id"] = user_id
