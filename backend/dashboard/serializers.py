@@ -14,3 +14,8 @@ class PaymentSerializer(ModelSerializer):
     class Meta:
         model = Payment
         fields = '__all__'
+
+class ReferralSerializer(serializers.Serializer):
+    class Meta:
+        model = User
+        fields = ['id', 'name', 'image', 'gender', 'profession', 'email', 'is_verified', 'is_blocked', 'is_member_account', 'is_volunteer', 'is_business_account', 'is_staff_account', 'is_admin_account', 'date_joined']

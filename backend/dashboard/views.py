@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from account.models import User
 
-from .serializers import UserInfoSerializer
+from .serializers import UserInfoSerializer, ReferralSerializer
 
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
@@ -39,3 +39,12 @@ class UserCountView(APIView):
             "blocked_user": blocked_user,
         }
         return Response(data, status=status.HTTP_200_OK)
+    
+class ReferralListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        referrals = User.objects.filter(referred_by=user)
+        serializer = ReferralSerializer(referrals, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
