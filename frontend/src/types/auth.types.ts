@@ -35,7 +35,10 @@ export interface User {
   is_staff_account: boolean;
   is_member_account: boolean;
   
- 
+  // Referral
+  referred_by?: string | null;
+  
+  // System fields
   is_staff: boolean;
   is_active: boolean;
   is_superuser?: boolean;
@@ -61,6 +64,7 @@ export interface RegisterRequest {
   phone: string;
   dob: string;
   password?: string;
+  referred_by?: string | null;
 }
 
 export interface LoginResponse {

@@ -178,7 +178,7 @@ export default function UsersPage() {
             </span>
           </div>
 
-          {/* Center: Pagination controls */}
+          
           <Pagination>
             <PaginationContent className="gap-1">
               <PaginationItem>
@@ -271,7 +271,7 @@ export default function UsersPage() {
             </PaginationContent>
           </Pagination>
 
-          {/* Right: Page size selector */}
+          
           <select
             value={pageSize}
             onChange={(e) => {

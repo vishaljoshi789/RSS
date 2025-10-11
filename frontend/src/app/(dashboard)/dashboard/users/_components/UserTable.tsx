@@ -349,6 +349,14 @@ export function UserTable({
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
                         {user.name}
+                        {user.referred_by && (
+                          <Badge 
+                            variant="outline" 
+                            className="bg-pink-50 text-pink-700 border-pink-200 text-xs px-1.5 py-0.5"
+                          >
+                            Referred
+                          </Badge>
+                        )}
                         {user.is_verified && (
                           <TooltipProvider>
                             <Tooltip>

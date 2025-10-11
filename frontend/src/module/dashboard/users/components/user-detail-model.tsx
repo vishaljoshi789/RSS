@@ -174,6 +174,9 @@ export function UserDetailModal({
               <InfoRow icon={Mail} label="Email" value={user.email} />
               <InfoRow icon={Phone} label="Phone" value={user.phone} />
               <InfoRow icon={IdCard} label="User ID" value={user.user_id} />
+              {user.referred_by && (
+                <InfoRow icon={UserIcon} label="Referred By" value={user.referred_by} />
+              )}
             </div>
           </div>
 
