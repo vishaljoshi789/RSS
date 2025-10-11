@@ -30,15 +30,6 @@ class UserJoinView(APIView):
         data["password"] = make_password(password)
         data["username"] = data["email"]
         user_id = generate_user_id()
-        referral_code = data.get("referred_by", None)
-        if referral_code:
-            try:
-                referred_by = User.objects.get(user_id=referral_code)
-                data["referred_by"] = referred_by
-            except User.DoesNotExist:
-                data["referred_by"] = None
-        else:
-            data["referred_by"] = None
         while User.objects.filter(user_id=user_id).exists():
             user_id = generate_user_id()
         data["user_id"] = user_id
@@ -61,16 +52,6 @@ class UserMemberView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        referral_code = data.get("referred_by", None)
-        if referral_code:
-            try:
-                referred_by = User.objects.get(user_id=referral_code)
-                data["referred_by"] = referred_by
-            except User.DoesNotExist:
-                data["referred_by"] = None
-        else:
-            data["referred_by"] = None
         user_id = generate_user_id()
         while User.objects.filter(user_id=user_id).exists():
             user_id = generate_user_id()
