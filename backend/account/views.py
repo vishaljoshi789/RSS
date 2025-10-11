@@ -31,11 +31,14 @@ class UserJoinView(APIView):
         data["username"] = data["email"]
         user_id = generate_user_id()
         referral_code = data.get("referred_by", None)
-        if referral_code and not User.objects.filter(user_id=referral_code).exists():
-            pass
+        if referral_code:
+            try:
+                referred_by = User.objects.get(user_id=referral_code)
+                data["referred_by"] = referred_by
+            except User.DoesNotExist:
+                data["referred_by"] = None
         else:
-            referred_by = User.objects.get(user_id=referral_code)
-            data["referred_by"] = referred_by
+            data["referred_by"] = None
         while User.objects.filter(user_id=user_id).exists():
             user_id = generate_user_id()
         data["user_id"] = user_id
