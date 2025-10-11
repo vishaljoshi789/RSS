@@ -10,7 +10,7 @@ from django.db.models import Count
 from account.models import User
 from payment.models import Payment
 from dashboard.serializers import UserInfoSerializer
-from dashboard.serializers import PaymentSerializer
+from dashboard.serializers import PaymentSerializer, ReferralSerializer
 from dashboard.filters import PaymentFilter
 
 class UserListView(ListAPIView):
@@ -74,3 +74,13 @@ class PaymentDetailView(APIView):
         serializer = PaymentSerializer(payment)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+class ReferralListView(ListAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = ReferralSerializer
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        try:
+            user = User.objects.get(user_id=user_id)
+        except User.DoesNotExist:
+            return User.objects.none()
+        return User.objects.filter(referred_by=user).order_by('-date_joined')
