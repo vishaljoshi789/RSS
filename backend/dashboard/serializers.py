@@ -16,6 +16,7 @@ class PaymentSerializer(ModelSerializer):
         fields = '__all__'
 
 class ReferralSerializer(ModelSerializer):
+    referral_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'user_id', 'name', 'image', 'gender', 'profession', 'email', 'is_verified', 'is_blocked', 'is_member_account', 'is_volunteer', 'is_business_account', 'is_staff_account', 'is_admin_account', 'date_joined']
+        fields = ['id', 'user_id', 'name', 'image', 'gender', 'profession', 'email', 'is_verified', 'is_blocked', 'is_member_account', 'is_volunteer', 'is_business_account', 'is_staff_account', 'is_admin_account', 'date_joined', 'referral_count']
