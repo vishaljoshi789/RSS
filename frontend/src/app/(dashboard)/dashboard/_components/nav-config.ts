@@ -110,6 +110,13 @@ export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
     description: "Manage ID cards",
     roles: ["member"],
   },
+   {
+    title: "Referral",
+    url: "/dashboard/referrals",
+    icon: Settings,
+    description: "Manage referrals",
+    roles: ["admin","staff"],
+  },
 ];
 
 export const deriveDashboardRoles = (user: User | null): DashboardRole[] => {

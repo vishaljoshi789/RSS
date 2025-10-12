@@ -176,10 +176,6 @@ const useAxios = (): AxiosInstance => {
           config.headers.Authorization = `Bearer ${accessToken}`;
         }
         
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`);
-        }
-        
         return config;
       },
       handleRequestError
