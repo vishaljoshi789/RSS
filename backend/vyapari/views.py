@@ -38,7 +38,6 @@ class CategoryDetailView(APIView):
         except Category.DoesNotExist:
             return None
 
-    # Retrieve (GET)
     def get(self, request, pk):
         category = self.get_object(pk)
         if not category:
@@ -46,24 +45,20 @@ class CategoryDetailView(APIView):
         serializer = CategorySerializer(category)
         return Response(serializer.data)
 
-    # Update (PUT/PATCH)
     def put(self, request, pk):
         category = self.get_object(pk)
         if not category:
             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
             
-        # Use partial=True for PATCH functionality (optional fields)
         serializer = CategorySerializer(category, data=request.data, partial=True) 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Delete (DELETE)
     def delete(self, request, pk):
         category = self.get_object(pk)
         if not category:
-            # Idempotency: returning 204 even if not found is acceptable for DELETE
             return Response(status=status.HTTP_204_NO_CONTENT) 
         category.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -2,7 +2,7 @@ from django.db import models
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    image = models.ImageField(upload_to='category_images/', blank=True, null=True)
+    image = models.ImageField(upload_to='category_images/')
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -11,7 +11,7 @@ class Category(models.Model):
 class SubCategory(models.Model):
     category = models.ForeignKey(Category, related_name='subcategories', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='subcategory_images/', blank=True, null=True)
+    image = models.ImageField(upload_to='subcategory_images/')
     description = models.TextField(blank=True, null=True)
 
     class Meta:
