@@ -424,13 +424,13 @@ const BecomeMemberPage = () => {
 
   if (submitted) {
     return (
-      <section className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center gap-6 rounded-2xl border border-border bg-card p-8 text-center shadow-lg">
-        <div className="flex flex-col items-center gap-4">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <CheckCircle2 className="h-7 w-7" />
+      <section className="mx-auto flex min-h-screen w-full max-w-2xl flex-col items-center justify-center gap-5 rounded-xl border bg-card p-6 text-center">
+        <div className="flex flex-col items-center gap-3">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <CheckCircle2 className="h-6 w-6" />
           </span>
-          <div className="space-y-2">
-            <h2 className="text-2xl font-semibold text-foreground">
+          <div className="space-y-1.5">
+            <h2 className="text-xl font-semibold text-foreground">
               Payment details captured
             </h2>
             <p className="text-muted-foreground text-sm">
@@ -439,7 +439,7 @@ const BecomeMemberPage = () => {
             </p>
           </div>
         </div>
-        <Button className="mt-4" onClick={handleReset}>
+        <Button className="mt-2" onClick={handleReset} size="sm">
           Fill the form again
         </Button>
       </section>
@@ -447,10 +447,10 @@ const BecomeMemberPage = () => {
   }
 
   return (
-    <section className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4">
-      <div className="flex w-full flex-col gap-8 rounded-2xl border border-border bg-card p-6 shadow-lg sm:p-8">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-foreground">
+    <section className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 py-8">
+      <div className="flex w-full flex-col gap-6 rounded-xl border bg-card p-5 sm:p-6">
+        <div className="space-y-1.5">
+          <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
             Membership interest form
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -461,9 +461,13 @@ const BecomeMemberPage = () => {
 
         <nav
           aria-label="Steps"
-          className="rounded-md border border-border bg-background px-6 py-6"
+          className="rounded-lg border bg-background px-5 py-5"
         >
-          <ol className="flex items-center justify-between gap-4">
+          <ol className="flex items-center justify-between gap-3 relative">
+            <div className="absolute left-0 right-0 top-4 flex items-center px-8">
+              <div className="h-0.5 w-full bg-border" />
+            </div>
+            
             {steps.map((step, index) => {
               const isActive = index === activeStep;
               const isCompleted = index < activeStep;
@@ -471,12 +475,12 @@ const BecomeMemberPage = () => {
               return (
                 <li
                   key={step.title}
-                  className="flex flex-1 flex-col items-center gap-2"
+                  className="flex flex-1 flex-col items-center gap-1.5 relative z-10"
                 >
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all ${
+                    className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium ${
                       isActive
-                        ? "border-primary bg-primary text-primary-foreground shadow-md scale-110"
+                        ? "border-primary bg-primary text-primary-foreground"
                         : isCompleted
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-background text-muted-foreground"
@@ -492,19 +496,13 @@ const BecomeMemberPage = () => {
                   >
                     {step.title}
                   </p>
-                  {index < steps.length - 1 && (
-                    <span
-                      className="absolute left-1/2 top-5 -z-10 h-0.5 w-full -translate-x-1/2 bg-border"
-                      aria-hidden
-                    />
-                  )}
                 </li>
               );
             })}
           </ol>
         </nav>
 
-        <div className="rounded-lg border border-border bg-background p-6">
+        <div className="rounded-lg border bg-background p-5">
           {renderStepContent()}
         </div>
 
@@ -537,51 +535,51 @@ const BecomeMemberPage = () => {
       <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <IndianRupee className="h-6 w-6 text-primary" />
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <IndianRupee className="h-5 w-5 text-primary" />
             </div>
-            <DialogTitle className="text-center text-2xl">
+            <DialogTitle className="text-center text-xl">
               Membership Payment
             </DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogDescription className="text-center text-sm">
               Complete your RSS membership registration
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            <div className="rounded-lg border border-border bg-muted/50 p-4">
+          <div className="space-y-3 py-3">
+            <div className="rounded-lg border bg-muted/30 p-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">
                   Membership Fee
                 </span>
-                <span className="text-2xl font-bold text-foreground">
+                <span className="text-xl font-bold text-foreground">
                   ₹300
                 </span>
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="mt-1.5 text-xs text-muted-foreground">
                 One-time registration fee for RSS membership
               </p>
             </div>
 
-            <div className="space-y-2 rounded-lg border border-dashed border-border bg-background p-4">
+            <div className="space-y-2 rounded-lg border border-dashed bg-background p-3">
               <h4 className="text-sm font-medium text-foreground">
                 What you get:
               </h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3 text-primary" />
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
                   Official RSS membership certificate
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3 text-primary" />
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
                   Access to training programs & events
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3 text-primary" />
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
                   Connect with RSS community nationwide
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-3 w-3 text-primary" />
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
                   Monthly newsletters & updates
                 </li>
               </ul>

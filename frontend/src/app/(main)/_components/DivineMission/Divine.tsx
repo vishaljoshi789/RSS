@@ -14,6 +14,7 @@ import {
   Mountain, 
   Sparkles 
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const getIcon = (id: number) => {
   const iconProps = { className: "w-5 h-5 text-primary" };
@@ -51,10 +52,10 @@ const Divine = () => {
 
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {divineMissionData.map((mission) => (
+          {divineMissionData.slice(0,4).map((mission) => (
             <Card 
               key={mission.id} 
-              className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-card/50 backdrop-blur-sm hover:scale-105"
+              className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-card/50 backdrop-blur-sm hover:scale-105 p-2"
             >
               
               <div className="relative aspect-video overflow-hidden">
@@ -62,7 +63,7 @@ const Divine = () => {
                   src={mission.image}
                   alt={mission.alt}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="object-cover rounded-md transition-transform duration-500 group-hover:scale-110"
                 />
                 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
@@ -76,13 +77,13 @@ const Divine = () => {
               </div>
 
               
-              <CardHeader className="pb-2">
+              <CardHeader >
                 <CardTitle className="text-lg md:text-xl font-bold text-foreground leading-tight line-clamp-2">
                   {mission.title}
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="pt-0">
+              <CardContent>
                 <CardDescription className="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-3">
                   {mission.description}
                 </CardDescription>
@@ -118,6 +119,10 @@ const Divine = () => {
             </div>
           </div>
         </div>
+
+        <Button className='mx-auto flex justify-center items-center mt-3' draggable>
+          View All Missions
+        </Button>
       </div>
     </section>
   );

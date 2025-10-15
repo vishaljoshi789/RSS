@@ -11,15 +11,15 @@ interface PrimaryImageSectionProps {
 
 const PrimaryImageSection: React.FC<PrimaryImageSectionProps> = ({ image }) => {
   return (
-    <section className="py-8 sm:py-12 lg:py-16 mt-8 sm:-mt-12">
+    <section className="py-6 sm:py-10 lg:py-12 mt-6 sm:-mt-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border">
           <Image
             src={image.url}
             alt={image.alt}
             width={2048}
             height={1279}
-            className="w-full h-[300px] sm:h-[400px] lg:h-[600px] object-contain"
+            className="w-full h-[250px] sm:h-[350px] lg:h-[550px] object-contain"
             priority
           />
         </Card>

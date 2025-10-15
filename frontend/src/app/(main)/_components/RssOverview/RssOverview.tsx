@@ -118,9 +118,9 @@ const RssOverview = () => {
               </div>
               
               
-              <div className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm p-4 rounded-xl border">
-                <h3 className="font-semibold text-foreground mb-1">{videoInfo.title}</h3>
-                <p className="text-sm text-muted-foreground">{videoInfo.duration}</p>
+              <div className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm p-3 rounded-xl border">
+                <h3 className="font-semibold text-foreground text-sm mb-1">{videoInfo.title}</h3>
+                <p className="text-xs text-muted-foreground">{videoInfo.duration}</p>
               </div>
             </div>
           </div>

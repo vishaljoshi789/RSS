@@ -191,7 +191,7 @@ const VideoGallery: React.FC = () => {
 
   return (
     <div className="w-full">
-      
+{/*       
       <div className="flex flex-wrap gap-2 mb-6 justify-center">
         {videoCategories.map((category) => (
           <Button
@@ -205,7 +205,7 @@ const VideoGallery: React.FC = () => {
             <span>{category.label}</span>
           </Button>
         ))}
-      </div>
+      </div> */}
 
       
       <div className="text-center mb-6">
@@ -265,19 +265,6 @@ const VideoGallery: React.FC = () => {
         </div>
       )}
 
-      
-      <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <div className="flex items-start gap-3">
-          <VideoIcon className="w-5 h-5 text-blue-600 mt-0.5" />
-          <div>
-            <h4 className="font-semibold text-blue-900 mb-1">Video Integration Ready</h4>
-            <p className="text-blue-700 text-sm">
-              The video gallery structure is complete. When you provide the video details and URLs, 
-              they will automatically appear in this horizontal scrolling layout with proper categorization.
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

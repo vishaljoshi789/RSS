@@ -184,6 +184,10 @@ export const pageContent = {
   title: "Founders & Team Members",
   subtitle: "संस्थापक एवं टीम सदस्य",
   description: "Meet our dedicated leadership team and state coordinators who work tirelessly for the betterment of society through Rashtriya Seva Sangh.",
+  heroImage: {
+    url: "https://joinrss.org.in/wp-content/uploads/2025/07/Picsart_25-07-21_14-58-16-109-1024x1024.jpg",
+    alt: "हमारी टीम - राष्ट्रीय सेवा संघ"
+  },
   foundersSection: {
     title: "Core Leadership Team",
     subtitle: "मुख्य नेतृत्व टीम"

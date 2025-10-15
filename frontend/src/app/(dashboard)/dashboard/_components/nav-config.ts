@@ -90,7 +90,7 @@ export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
     url: "/dashboard/vyapari",
     icon: Store,
     description: "Business directory",
-    roles: ["member"],
+    roles: ["staff" , "admin"],
   },
   {
     title: "Shikayat Portal",
@@ -166,11 +166,3 @@ export const filterNavItemsForRoles = (
     return item.roles.some((role) => roleSet.has(role));
   });
 };
-
-/**
- * Helper for extending the navigation with new roles or menu items.
- * Example usage when adding a new role "reporting":
- *   1. Add the role to the DashboardRole union.
- *   2. Update deriveDashboardRoles to push the role based on a user flag.
- *   3. Add the role name to any NavItemConfig.roles arrays that should see the menu item.
- */

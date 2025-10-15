@@ -264,16 +264,16 @@ const NewDonationForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 hero-badge rounded-full mb-4">
-            <Heart className="h-8 w-8 text-primary-foreground" />
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-3">
+            <Heart className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
             Support RSS Community
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Your contribution makes a difference in building our nation
           </p>
         </div>
@@ -285,14 +285,14 @@ const NewDonationForm = () => {
           </Alert>
         )}
 
-        <Card className="border-0 shadow-xl bg-card/80 backdrop-blur-sm">
+        <Card className="border rounded-xl">
           <form onSubmit={handleSubmit}>
-            <CardContent className="p-8 space-y-8">
+            <CardContent className="p-6 space-y-6">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-foreground mb-6">
+                <h2 className="text-lg font-semibold text-foreground mb-5">
                   Choose Your Contribution
                 </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
                   {donationAmounts.map((amount) => (
                     <Button
                       key={amount.value}
@@ -300,16 +300,16 @@ const NewDonationForm = () => {
                       variant={
                         selectedAmount === amount.value ? "default" : "outline"
                       }
-                      className={`h-20 flex flex-col items-center justify-center gap-1 transition-all duration-300 transform hover:scale-105 focus-ring ${
+                      className={`h-auto py-3 flex flex-col items-center justify-center gap-0.5 ${
                         selectedAmount === amount.value
-                          ? "btn-primary shadow-lg"
-                          : "hover:border-primary/30 hover:bg-primary/5 hover:shadow-md"
+                          ? ""
+                          : ""
                       }`}
                       onClick={() => handleAmountSelect(amount.value)}
                     >
-                      <IndianRupee className="h-4 w-4" />
-                      <span className="font-bold text-lg">{amount.label}</span>
-                      <span className="text-xs opacity-80">
+                      <IndianRupee className="h-3.5 w-3.5" />
+                      <span className="font-bold text-base">{amount.label}</span>
+                      <span className="text-xs opacity-70">
                         {amount.description}
                       </span>
                     </Button>
@@ -317,16 +317,16 @@ const NewDonationForm = () => {
                   <Button
                     type="button"
                     variant={isCustomAmount ? "default" : "outline"}
-                    className={`h-20 flex flex-col items-center justify-center gap-1 transition-all duration-300 transform hover:scale-105 focus-ring ${
+                    className={`h-auto py-3 flex flex-col items-center justify-center gap-0.5 ${
                       isCustomAmount
-                        ? "btn-primary shadow-lg"
-                        : "hover:border-primary/30 hover:bg-primary/5 hover:shadow-md"
+                        ? ""
+                        : ""
                     }`}
                     onClick={() => handleAmountSelect(-1)}
                   >
-                    <Gift className="h-4 w-4" />
-                    <span className="font-bold text-lg">Custom</span>
-                    <span className="text-xs opacity-80">Enter amount</span>
+                    <Gift className="h-3.5 w-3.5" />
+                    <span className="font-bold text-base">Custom</span>
+                    <span className="text-xs opacity-70">Enter amount</span>
                   </Button>
                 </div>
 
@@ -363,10 +363,10 @@ const NewDonationForm = () => {
                 )}
               </div>
 
-              <Separator className="my-8" />
+              <Separator className="my-6" />
 
-              <div className="space-y-6">
-                <h3 className="text-lg font-semibold text-foreground text-center">
+              <div className="space-y-5">
+                <h3 className="text-base font-semibold text-foreground text-center">
                   Your Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -445,10 +445,10 @@ const NewDonationForm = () => {
                 </div>
               </div>
 
-              <Separator className="my-8" />
+              <Separator className="my-6" />
 
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground text-center">
+                <h3 className="text-base font-semibold text-foreground text-center">
                   Choose Purpose
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -457,10 +457,10 @@ const NewDonationForm = () => {
                     return (
                       <div
                         key={type.value}
-                        className={`border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                        className={`border rounded-lg p-3 cursor-pointer ${
                           formData.payment_for === type.value
-                            ? "border-primary bg-primary/5 shadow-lg"
-                            : "border-border hover:border-primary/30 hover:bg-primary/5 hover:shadow-md"
+                            ? "border-primary bg-primary/5"
+                            : "border-border"
                         }`}
                         onClick={() =>
                           handleInputChange("payment_for", type.value)
@@ -499,26 +499,26 @@ const NewDonationForm = () => {
                 </div>
               </div>
 
-              <Separator className="my-8" />
+              <Separator className="my-6" />
 
               <div className="space-y-4">
-                <div className="bg-primary/5 p-4 rounded-xl border border-primary/20">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Shield className="h-5 w-5 text-primary" />
-                    <span className="font-medium text-primary">
+                <div className="bg-muted/30 p-3 rounded-lg border">
+                  <div className="flex items-center justify-center gap-2 mb-1">
+                    <Shield className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium text-foreground">
                       100% Secure Payment
                     </span>
                     <Badge
                       variant="secondary"
                       className="bg-primary/10 text-primary text-xs"
                     >
-                      SSL Protected
+                      SSL
                     </Badge>
                   </div>
-                  <div className="text-center space-y-1">
-                    <p className="text-xs text-primary/80 flex items-center justify-center gap-1">
+                  <div className="text-center">
+                    <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
                       <Lock className="h-3 w-3" />
-                      256-bit encryption • Razorpay gateway • Instant receipt
+                      256-bit encryption • Razorpay • Instant receipt
                     </p>
                   </div>
                 </div>
@@ -526,7 +526,7 @@ const NewDonationForm = () => {
 
               <Button
                 type="submit"
-                className="w-full h-16 text-xl font-bold btn-primary rounded-xl"
+                className="w-full h-12 text-base font-semibold rounded-lg"
                 disabled={isProcessing}
               >
                 {isProcessing ? (

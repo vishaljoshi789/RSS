@@ -33,7 +33,7 @@ const FoundersTeamLayout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-background">
       
-      <main className="relative pt-14">
+      <main className="relative">
         {children}
       </main>
     </div>

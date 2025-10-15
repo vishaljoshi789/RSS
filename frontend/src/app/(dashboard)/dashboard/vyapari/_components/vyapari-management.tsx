@@ -11,6 +11,13 @@ import {
   Phone,
   Mail,
   Globe,
+  CheckCircle,
+  XCircle,
+  Clock,
+  ShieldCheck,
+  ShieldX,
+  Ban,
+  UnlockKeyhole,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -259,53 +266,70 @@ export default function VyapariManagement() {
                     <TableCell>
                       <div className="flex flex-col gap-1">
                         {vyapari.is_verified && (
-                          <Badge variant="default" className="w-fit">
+                          <Badge variant="default" className="w-fit flex items-center gap-1">
+                            <CheckCircle className="h-3 w-3" />
                             Verified
                           </Badge>
                         )}
                         {vyapari.is_blocked && (
-                          <Badge variant="destructive" className="w-fit">
+                          <Badge variant="destructive" className="w-fit flex items-center gap-1">
+                            <Ban className="h-3 w-3" />
                             Blocked
                           </Badge>
                         )}
                         {!vyapari.is_verified && !vyapari.is_blocked && (
-                          <Badge variant="secondary" className="w-fit">
+                          <Badge variant="secondary" className="w-fit flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
                             Pending
                           </Badge>
                         )}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1">
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
+                          className="h-8 w-8"
                           onClick={() => handleToggleVerification(vyapari)}
-                          title={vyapari.is_verified ? "Unverify" : "Verify"}
+                          title={vyapari.is_verified ? "Mark as Unverified" : "Mark as Verified"}
                         >
-                          {vyapari.is_verified ? "✓" : "?"}
+                          {vyapari.is_verified ? (
+                            <XCircle className="h-4 w-4 text-orange-500" />
+                          ) : (
+                            <ShieldCheck className="h-4 w-4 text-green-600" />
+                          )}
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
+                          className="h-8 w-8"
                           onClick={() => handleToggleBlock(vyapari)}
-                          title={vyapari.is_blocked ? "Unblock" : "Block"}
+                          title={vyapari.is_blocked ? "Unblock Business" : "Block Business"}
                         >
-                          {vyapari.is_blocked ? "🔓" : "🔒"}
+                          {vyapari.is_blocked ? (
+                            <UnlockKeyhole className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <Ban className="h-4 w-4 text-red-600" />
+                          )}
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
+                          className="h-8 w-8"
                           onClick={() => openEditModal(vyapari)}
+                          title="Edit Business"
                         >
-                          <Pencil className="h-4 w-4" />
+                          <Pencil className="h-4 w-4 text-blue-600" />
                         </Button>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
+                          className="h-8 w-8"
                           onClick={() => openDeleteDialog(vyapari)}
+                          title="Delete Business"
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className="h-4 w-4 text-red-600" />
                         </Button>
                       </div>
                     </TableCell>

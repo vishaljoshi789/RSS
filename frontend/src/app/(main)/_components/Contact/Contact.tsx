@@ -108,7 +108,8 @@ const Contact: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
+
+          <Card className="hidden md:block shadow-xl border-0 bg-white/90 backdrop-blur-sm">
             <CardHeader className="pb-6">
               <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 <MessageSquare className="w-6 h-6 text-orange-600" />

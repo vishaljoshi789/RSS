@@ -18,7 +18,7 @@ import {
 
 const AboutUsPage = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-3">
       <HeroSection 
         mainTitle={aboutPageData.mainTitle} 
         subtitle="सव, समरपण और रषटर क परत हमर अटट परतबदधत क परचय" 

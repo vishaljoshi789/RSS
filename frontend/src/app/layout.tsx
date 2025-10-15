@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Lato, Poppins, Nunito } from "next/font/google";
+import { Lato, Poppins, Hind } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import Provider from "./Provider";
@@ -18,10 +18,10 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const hind = Hind({
+  variable: "--font-hind",
   subsets: ["latin"],
-  weight: ["300", "400", "600", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -247,7 +247,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
       </head>
       <body
-        className={`${lato.variable} ${poppins.variable} ${nunito.variable} antialiased m-0 p-0 w-full overflow-x-hidden`}
+        className={`${lato.variable} ${poppins.variable} ${hind.variable} antialiased m-0 p-0 w-full overflow-x-hidden`}
       >
         <Link
           href="#main-content"

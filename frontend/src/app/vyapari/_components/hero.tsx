@@ -44,16 +44,17 @@ const VyapariHero = () => {
 
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:items-start">
               <Link
-                href="/vyapari/businesses"
+                href="/vyapari/category"
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 <Store className="h-5 w-5" />
                 Explore Business Listings
               </Link>
               <Link
-                href="/auth/register"
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-8 py-4 text-base font-semibold text-foreground transition-colors hover:bg-accent"
+                href="/vyapari/register"
+                className="inline-flex items-center gap-2 rounded-lg border-2 border-primary bg-background px-8 py-4 text-base font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
               >
+                <Users className="h-5 w-5" />
                 Register Your Business
               </Link>
             </div>
