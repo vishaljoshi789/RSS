@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .permissions import IsAdmin
 from django.db.models import Count
 
 from account.models import User
@@ -13,6 +12,7 @@ from payment.serializers import PaymentSerializer
 from dashboard.serializers import UserInfoSerializer
 from dashboard.serializers import ReferralSerializer
 from dashboard.filters import PaymentFilter
+from dashboard.permissions import IsAdmin
 
 class UserListView(ListAPIView):
     permission_classes = [IsAdmin]

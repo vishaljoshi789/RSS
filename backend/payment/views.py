@@ -8,6 +8,7 @@ from django.utils.timezone import now
 from account.models import User
 from .models import Payment
 from .serializers import PaymentSerializer
+from dashboard.permissions import IsStaff, IsAdmin
 
 import razorpay
 
@@ -174,6 +175,7 @@ class PaymentStatView(APIView):
         return Response(stats)
     
 class PaymentCreateView(APIView):
+    permission_classes = [IsStaff, IsAdmin]
     def post(self, request):
         data = request.data
         serializer = PaymentSerializer(data=data)
