@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (
     VyapariListCreateView, VyapariDetailView, 
     CategoryListCreateView, CategoryDetailView, 
-    SubCategoryListCreateView, SubCategoryDetailView
+    SubCategoryListCreateView, SubCategoryDetailView, 
+    AdvertisementListCreateView, AdvertisementDetailView
 )
 
 urlpatterns = [
@@ -14,4 +15,7 @@ urlpatterns = [
 
     path('subcategory/', SubCategoryListCreateView.as_view(), name='subcategory-list'),
     path('subcategory/<int:pk>/', SubCategoryDetailView.as_view(), name='subcategory-detail'),
+
+    path('advertisement/', AdvertisementListCreateView.as_view(), name='advertisement-list'),
+    path('advertisement/<int:pk>/', AdvertisementDetailView.as_view(), name='advertisement-detail'),
 ]

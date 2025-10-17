@@ -27,7 +27,6 @@ class Vyapari(models.Model):
     long_description = models.TextField(blank=True, null=True)
     logo = models.URLField(max_length=500, blank=True, null=True)
     cover_image = models.URLField(max_length=500, blank=True, null=True)
-    business_type = models.CharField(max_length=100)
     category = models.ForeignKey(Category, related_name='vyaparis', on_delete=models.SET_NULL, blank=True, null=True)
     subcategory = models.ForeignKey(SubCategory, related_name='vyaparis', on_delete=models.SET_NULL, blank=True, null=True)
     email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
@@ -42,6 +41,7 @@ class Vyapari(models.Model):
     is_verified = models.BooleanField(default=False)
     is_blocked = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    tags = models.TextField(blank=True, null=True)
     referred_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='vyapari_referrals')
 
     def __str__(self):
