@@ -51,7 +51,7 @@ export function useReferrals(userId?: string | number) {
     } finally {
       setLoading(false);
     }
-  }, [axios]);
+  }, []);
 
   useEffect(() => {
     fetchReferrals();

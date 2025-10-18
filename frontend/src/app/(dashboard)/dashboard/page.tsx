@@ -4,8 +4,9 @@ import React, { useEffect } from "react";
 import useAuth from "@/hooks/use-auth";
 import Referral from "@/module/dashboard/users/components/referral-model";
 import { useReferrals } from "@/module/dashboard/referrals/hooks";
-import IDCardManagement from "./id-card-management/page";
+// import IDCardManagement from "./id-card-management/page";
 import StatCard from "./_components/stat-card";
+import UserTransactionHistory from "@/module/dashboard/Payments/components/transaction-history";
 import useAxios from "@/hooks/use-axios";
 
 export default function Page() {
@@ -48,10 +49,14 @@ export default function Page() {
         error={referralError}
       />
 
-      <Referral
-        userData={user}
-        referralCount={referralLoading ? 0 : referralCount}
-      />
+      <div className="grid grid-cols-1  gap-6">
+        <UserTransactionHistory />
+        
+        {/* <Referral
+          userData={user}
+          referralCount={referralLoading ? 0 : referralCount}
+        /> */}
+      </div>
     </div>
   );
 }

@@ -36,7 +36,7 @@ export default function ReferralsPage() {
 
     try {
       const userResponse = await axios.get(
-        `/admin/users?user_id=${userId.trim()}`
+        `/account/list/?user_id=${userId.trim()}`
       );
 
       if (
@@ -54,7 +54,7 @@ export default function ReferralsPage() {
       setUserData(user);
 
       const referralResponse = await axios.get(
-        `/admin/referrals/${userId.trim()}/`
+        `/dashboard/referrals/${userId.trim()}/`
       );
       const data = referralResponse.data;
 

@@ -118,7 +118,7 @@ export function UserTable({
             break;
         }
 
-        const response = await axios.get("/admin/users/", {
+        const response = await axios.get("/account/list/", {
           params: filterParams,
         });
 
@@ -150,7 +150,7 @@ export function UserTable({
       try {
         if (searchValue.trim()) {
           hasSearchedRef.current = true;
-          const response = await axios.get("/admin/users/", {
+          const response = await axios.get("/account/list/", {
             params: {
               search: searchValue.trim(),
               page,
