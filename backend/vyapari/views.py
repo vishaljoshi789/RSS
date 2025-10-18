@@ -2,18 +2,23 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import AllowAny
 from django.db.models import Q 
 from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers
 
 from .models import Vyapari, Category, SubCategory, Advertisement
 from .serializers import VyapariSerializer, CategorySerializer, SubCategorySerializer, AdvertisementSerializer
 from dashboard.permissions import IsAdminOrIsStaff
 from account.models import User
+from .filters import VyapariFilter
 
 class VyapariListCreateView(ListCreateAPIView):
     queryset = Vyapari.objects.all()
     serializer_class = VyapariSerializer
     
-    filter_backends = [SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter] 
+    
+    # 2. Specify the custom FilterSet for DjangoFilterBackend
+    filterset_class = VyapariFilter
     search_fields = [
         'name', 
         'address', 
