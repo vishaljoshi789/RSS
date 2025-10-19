@@ -18,6 +18,7 @@ class Payment(models.Model):
     payment_for = models.CharField(max_length=255, db_index=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING', db_index=True)
     notes = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='payments/', blank=True, null=True)
 
     # IDs
     order_id = models.CharField(max_length=100, unique=True, db_index=True)
