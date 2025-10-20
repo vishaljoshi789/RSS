@@ -1,6 +1,9 @@
 from django.db import models
 from account.models import User
 
+def vyapari_directory_path(instance, filename):
+    return f'vyapari_uploads/{instance.name}/{filename}'
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
     image = models.ImageField(upload_to='category_images/')
@@ -25,14 +28,17 @@ class Vyapari(models.Model):
     name = models.CharField(max_length=255, unique=True)
     short_description = models.TextField(blank=True, null=True) 
     long_description = models.TextField(blank=True, null=True)
-    logo = models.URLField(max_length=500, blank=True, null=True)
-    cover_image = models.URLField(max_length=500, blank=True, null=True)
+    logo = models.ImageField(upload_to=vyapari_directory_path, blank=True, null=True)
+    cover_image = models.ImageField(upload_to=vyapari_directory_path, blank=True, null=True)
+    image1 = models.ImageField(upload_to=vyapari_directory_path, blank=True, null=True)
+    image2 = models.ImageField(upload_to=vyapari_directory_path, blank=True, null=True)
+    image3 = models.ImageField(upload_to=vyapari_directory_path, blank=True, null=True)
+    visiting_card = models.ImageField(upload_to=vyapari_directory_path, blank=True, null=True)
     category = models.ForeignKey(Category, related_name='vyaparis', on_delete=models.SET_NULL, blank=True, null=True)
     subcategory = models.ForeignKey(SubCategory, related_name='vyaparis', on_delete=models.SET_NULL, blank=True, null=True)
     email = models.EmailField(max_length=255, unique=True, blank=True, null=True)
     phone = models.CharField(max_length=20)
     owner = models.CharField(max_length=255, blank=True, null=True)
-    employee_count = models.PositiveIntegerField(blank=True, null=True) 
     insta_url = models.URLField(max_length=500, blank=True, null=True)
     facebook_url = models.URLField(max_length=500, blank=True, null=True)
     website_url = models.URLField(max_length=500, blank=True, null=True)
@@ -53,8 +59,8 @@ class Advertisement(models.Model):
         ('district', 'District'),
         ('market', 'Market'),
         ('state', 'State'),
-        ('category', 'Category'),
-        ('subcategory', 'SubCategory'),
+        # ('category', 'Category'),
+        # ('subcategory', 'SubCategory'),
     ]
     vyapari = models.ForeignKey(Vyapari, related_name='advertisements', on_delete=models.CASCADE)
     ad_type = models.CharField(max_length=20, choices=ADVERTISEMENT_TYPE)
