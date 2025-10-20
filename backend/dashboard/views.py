@@ -8,15 +8,24 @@ from django.db.models import Count
 from account.models import User
 from dashboard.permissions import IsAdminOrIsStaff
 from .serializers import UserInfoSerializer, ReferralSerializer
+from vyapari.serializers import VyapariSerializer
+from vyapari.models import Vyapari
 
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        serializer = UserInfoSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+        if user.is_business_user:
+            vyapari = Vyapari.objects.get(email=user.email)
+            vyapari_serializer = VyapariSerializer(vyapari)
+        user_serializer = UserInfoSerializer(user)
+        data = {
+            "user_info": user_serializer.data,
+            "vyapari_info": vyapari_serializer.data if user.is_business_user else None,
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
 class UserCountView(APIView):
     permission_classes = [IsAuthenticated]
 
