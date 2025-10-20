@@ -53,8 +53,8 @@ class Advertisement(models.Model):
         ('district', 'District'),
         ('market', 'Market'),
         ('state', 'State'),
-        ('category', 'Category'),
-        ('subcategory', 'SubCategory'),
+        # ('category', 'Category'),
+        # ('subcategory', 'SubCategory'),
     ]
     vyapari = models.ForeignKey(Vyapari, related_name='advertisements', on_delete=models.CASCADE)
     ad_type = models.CharField(max_length=20, choices=ADVERTISEMENT_TYPE)

@@ -114,6 +114,7 @@ class AdvertisementListCreateView(ListCreateAPIView):
         queryset = self.queryset
         query_params = self.request.query_params
         
+        market = query_params.get('market')
         state = query_params.get('state')
         district = query_params.get('district')
         category_name = query_params.get('category')
@@ -129,14 +130,17 @@ class AdvertisementListCreateView(ListCreateAPIView):
         
         q_objects = Q()
 
-        if state:
-            q_objects &= Q(ad_type='state', vyapari__address__state__iexact=state)
-        if district:
-            q_objects &= Q(ad_type='district', vyapari__address__district__iexact=district)
-        if subcategory_name:
-            q_objects &= Q(ad_type='subcategory', vyapari__subcategory__name__iexact=subcategory_name)
-        elif category_name:
-            q_objects &= Q(ad_type='category', vyapari__category__name__iexact=category_name)
+        if market:
+            q_objects = Q(ad_type='market', vyapari__address__market__iexact=market)
+        elif district:
+            q_objects = Q(ad_type='district', vyapari__address__district__iexact=district)
+        elif state:
+            q_objects = Q(ad_type='state', vyapari__address__state__iexact=state)
+        
+        # if subcategory_name:
+        #     q_objects &= Q(ad_type='subcategory', vyapari__subcategory__name__iexact=subcategory_name)
+        # elif category_name:
+        #     q_objects &= Q(ad_type='category', vyapari__category__name__iexact=category_name)
         
         if q_objects:
             queryset = queryset.filter(q_objects).distinct()
