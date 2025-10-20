@@ -116,6 +116,7 @@ const vyapariFormSchema = z.object({
     .optional(),
   is_verified: z.boolean().optional(),
   is_blocked: z.boolean().optional(),
+  is_business_account: z.boolean().optional(),
 });
 
 type VyapariFormValues = z.infer<typeof vyapariFormSchema>;
@@ -172,6 +173,7 @@ export default function VyapariFormModal({
       },
       is_verified: undefined,
       is_blocked: undefined,
+      is_business_account: undefined,
     },
   });
 
@@ -234,6 +236,7 @@ export default function VyapariFormModal({
         },
         is_verified: vyapari.is_verified || undefined,
         is_blocked: vyapari.is_blocked || undefined,
+        is_business_account: vyapari.is_business_account || undefined,
       });
     } else {
       form.reset();
@@ -283,6 +286,7 @@ export default function VyapariFormModal({
         website_url: values.website_url || null,
         is_verified: values.is_verified ?? false,
         is_blocked: values.is_blocked ?? false,
+        is_business_account: values.is_business_account ?? false,
       };
 
       if (
@@ -955,6 +959,37 @@ export default function VyapariFormModal({
                 />
               </div>
             </div>
+
+            {/* Business Account Checkbox (only in edit mode) */}
+            {mode === "edit" && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Account Status</h3>
+                <FormField
+                  control={form.control}
+                  name="is_business_account"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={field.value || false}
+                          onChange={field.onChange}
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-sm font-medium">
+                          Business Account
+                        </FormLabel>
+                        <p className="text-sm text-muted-foreground">
+                          Enable business account features for this vyapari. Usually enabled automatically when business is verified.
+                        </p>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
 
             <DialogFooter>
               <Button

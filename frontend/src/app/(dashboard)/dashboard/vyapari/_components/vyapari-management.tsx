@@ -63,6 +63,10 @@ export default function VyapariManagement() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isVerifyDialogOpen, setIsVerifyDialogOpen] = useState(false);
+  const [isUnverifyDialogOpen, setIsUnverifyDialogOpen] = useState(false);
+  const [isBlockDialogOpen, setIsBlockDialogOpen] = useState(false);
+  const [isUnblockDialogOpen, setIsUnblockDialogOpen] = useState(false);
   const [currentVyapari, setCurrentVyapari] = useState<Vyapari | null>(null);
 
   const fetchData = async () => {
@@ -125,33 +129,86 @@ export default function VyapariManagement() {
     }
   };
 
-  const handleToggleVerification = async (vyapari: Vyapari) => {
-    try {
-      await axios.patch(`/vyapari/vyapari/${vyapari.id}/`, {
-        is_verified: !vyapari.is_verified,
-      });
-      toast.success(
-        `Business ${
-          vyapari.is_verified ? "unverified" : "verified"
-        } successfully`
-      );
-      fetchData();
-    } catch (error: any) {
-      toast.error("Failed to update verification status");
+  const openVerifyDialog = (vyapari: Vyapari) => {
+    setCurrentVyapari(vyapari);
+    if (vyapari.is_verified) {
+      setIsUnverifyDialogOpen(true);
+    } else {
+      setIsVerifyDialogOpen(true);
     }
   };
 
-  const handleToggleBlock = async (vyapari: Vyapari) => {
+  const openBlockDialog = (vyapari: Vyapari) => {
+    setCurrentVyapari(vyapari);
+    if (vyapari.is_blocked) {
+      setIsUnblockDialogOpen(true);
+    } else {
+      setIsBlockDialogOpen(true);
+    }
+  };
+
+  const handleVerify = async () => {
+    if (!currentVyapari) return;
+
     try {
-      await axios.patch(`/vyapari/vyapari/${vyapari.id}/`, {
-        is_blocked: !vyapari.is_blocked,
+      await axios.patch(`/vyapari/vyapari/${currentVyapari.id}/`, {
+        is_verified: true,
+        is_business_account: true,
       });
-      toast.success(
-        `Business ${vyapari.is_blocked ? "unblocked" : "blocked"} successfully`
-      );
+      toast.success("Business verified successfully");
+      setIsVerifyDialogOpen(false);
+      setCurrentVyapari(null);
       fetchData();
     } catch (error: any) {
-      toast.error("Failed to update block status");
+      toast.error("Failed to verify business");
+    }
+  };
+
+  const handleUnverify = async () => {
+    if (!currentVyapari) return;
+
+    try {
+      await axios.patch(`/vyapari/vyapari/${currentVyapari.id}/`, {
+        is_verified: false,
+      });
+      toast.success("Business unverified successfully");
+      setIsUnverifyDialogOpen(false);
+      setCurrentVyapari(null);
+      fetchData();
+    } catch (error: any) {
+      toast.error("Failed to unverify business");
+    }
+  };
+
+  const handleBlock = async () => {
+    if (!currentVyapari) return;
+
+    try {
+      await axios.patch(`/vyapari/vyapari/${currentVyapari.id}/`, {
+        is_blocked: true,
+      });
+      toast.success("Business blocked successfully");
+      setIsBlockDialogOpen(false);
+      setCurrentVyapari(null);
+      fetchData();
+    } catch (error: any) {
+      toast.error("Failed to block business");
+    }
+  };
+
+  const handleUnblock = async () => {
+    if (!currentVyapari) return;
+
+    try {
+      await axios.patch(`/vyapari/vyapari/${currentVyapari.id}/`, {
+        is_blocked: false,
+      });
+      toast.success("Business unblocked successfully");
+      setIsUnblockDialogOpen(false);
+      setCurrentVyapari(null);
+      fetchData();
+    } catch (error: any) {
+      toast.error("Failed to unblock business");
     }
   };
 
@@ -177,7 +234,6 @@ export default function VyapariManagement() {
         </div>
       </CardHeader>
       <CardContent>
-        
         <div className="mb-4 flex items-center gap-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
@@ -188,7 +244,6 @@ export default function VyapariManagement() {
           />
         </div>
 
-        
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -266,19 +321,28 @@ export default function VyapariManagement() {
                     <TableCell>
                       <div className="flex flex-col gap-1">
                         {vyapari.is_verified && (
-                          <Badge variant="default" className="w-fit flex items-center gap-1">
+                          <Badge
+                            variant="default"
+                            className="w-fit flex items-center gap-1"
+                          >
                             <CheckCircle className="h-3 w-3" />
                             Verified
                           </Badge>
                         )}
                         {vyapari.is_blocked && (
-                          <Badge variant="destructive" className="w-fit flex items-center gap-1">
+                          <Badge
+                            variant="destructive"
+                            className="w-fit flex items-center gap-1"
+                          >
                             <Ban className="h-3 w-3" />
                             Blocked
                           </Badge>
                         )}
                         {!vyapari.is_verified && !vyapari.is_blocked && (
-                          <Badge variant="secondary" className="w-fit flex items-center gap-1">
+                          <Badge
+                            variant="secondary"
+                            className="w-fit flex items-center gap-1"
+                          >
                             <Clock className="h-3 w-3" />
                             Pending
                           </Badge>
@@ -291,8 +355,12 @@ export default function VyapariManagement() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => handleToggleVerification(vyapari)}
-                          title={vyapari.is_verified ? "Mark as Unverified" : "Mark as Verified"}
+                          onClick={() => openVerifyDialog(vyapari)}
+                          title={
+                            vyapari.is_verified
+                              ? "Mark as Unverified"
+                              : "Mark as Verified"
+                          }
                         >
                           {vyapari.is_verified ? (
                             <XCircle className="h-4 w-4 text-orange-500" />
@@ -304,8 +372,12 @@ export default function VyapariManagement() {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => handleToggleBlock(vyapari)}
-                          title={vyapari.is_blocked ? "Unblock Business" : "Block Business"}
+                          onClick={() => openBlockDialog(vyapari)}
+                          title={
+                            vyapari.is_blocked
+                              ? "Unblock Business"
+                              : "Block Business"
+                          }
                         >
                           {vyapari.is_blocked ? (
                             <UnlockKeyhole className="h-4 w-4 text-green-600" />
@@ -341,7 +413,6 @@ export default function VyapariManagement() {
         </div>
       </CardContent>
 
-      
       <VyapariFormModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -349,7 +420,6 @@ export default function VyapariManagement() {
         mode="create"
       />
 
-      
       <VyapariFormModal
         isOpen={isEditModalOpen}
         onClose={() => {
@@ -361,7 +431,6 @@ export default function VyapariManagement() {
         mode="edit"
       />
 
-      
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -383,6 +452,192 @@ export default function VyapariManagement() {
             </Button>
             <Button variant="destructive" onClick={handleDelete}>
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isVerifyDialogOpen} onOpenChange={setIsVerifyDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-green-600" />
+              Verify Business
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Are you sure you want to verify "{currentVyapari?.name}"?
+                </p>
+                <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <div className="text-sm text-green-800 font-medium">
+                    This will:
+                  </div>
+                  <ul className="mt-1 text-sm text-green-700 list-disc list-inside">
+                    <li>Mark the business as verified</li>
+                    <li>Enable business account features</li>
+                    <li>Display verified badge on profile</li>
+                  </ul>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsVerifyDialogOpen(false);
+                setCurrentVyapari(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleVerify}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <ShieldCheck className="mr-2 h-4 w-4" />
+              Verify Business
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isUnverifyDialogOpen}
+        onOpenChange={setIsUnverifyDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <XCircle className="h-5 w-5 text-orange-500" />
+              Unverify Business
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Are you sure you want to unverify "{currentVyapari?.name}"?
+                </p>
+                <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
+                  <div className="text-sm text-orange-800 font-medium">
+                    This will:
+                  </div>
+                  <ul className="mt-1 text-sm text-orange-700 list-disc list-inside">
+                    <li>Remove verified status</li>
+                    <li>Hide verified badge from profile</li>
+                    <li>Business account features may be affected</li>
+                  </ul>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsUnverifyDialogOpen(false);
+                setCurrentVyapari(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUnverify}
+              variant="destructive"
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              <XCircle className="mr-2 h-4 w-4" />
+              Unverify
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isBlockDialogOpen} onOpenChange={setIsBlockDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Ban className="h-5 w-5 text-red-600" />
+              Block Business
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Are you sure you want to block "{currentVyapari?.name}"?
+                </p>
+                <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                  <div className="text-sm text-red-800 font-medium">
+                    This will:
+                  </div>
+                  <ul className="mt-1 text-sm text-red-700 list-disc list-inside">
+                    <li>Hide business from public listings</li>
+                    <li>Disable all business account features</li>
+                    <li>Prevent new customer interactions</li>
+                    <li>Profile will not be accessible</li>
+                  </ul>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsBlockDialogOpen(false);
+                setCurrentVyapari(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleBlock} variant="destructive">
+              <Ban className="mr-2 h-4 w-4" />
+              Block Business
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isUnblockDialogOpen} onOpenChange={setIsUnblockDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UnlockKeyhole className="h-5 w-5 text-green-600" />
+              Unblock Business
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Are you sure you want to unblock "{currentVyapari?.name}"?
+                </p>
+                <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <div className="text-sm text-green-800 font-medium">
+                    This will:
+                  </div>
+                  <ul className="mt-1 text-sm text-green-700 list-disc list-inside">
+                    <li>Restore business visibility</li>
+                    <li>Enable business account features</li>
+                    <li>Allow customer interactions</li>
+                  </ul>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsUnblockDialogOpen(false);
+                setCurrentVyapari(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUnblock}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <UnlockKeyhole className="mr-2 h-4 w-4" />
+              Unblock Business
             </Button>
           </DialogFooter>
         </DialogContent>
