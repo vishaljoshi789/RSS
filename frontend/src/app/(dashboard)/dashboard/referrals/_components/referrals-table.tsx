@@ -78,7 +78,7 @@ export const ReferralsTable: React.FC<ReferralsTableProps> = ({
                 <TableRow>
                   <TableHead>नाम</TableHead>
                   <TableHead>ईमेल</TableHead>
-                  <TableHead>फोन</TableHead>
+                  <TableHead>पेशा</TableHead>
                   <TableHead>रेफरल</TableHead>
                   <TableHead className="w-[120px]">जॉइनिंग</TableHead>
                 </TableRow>
@@ -108,7 +108,7 @@ export const ReferralsTable: React.FC<ReferralsTableProps> = ({
                         {referral.email || "-"}
                       </TableCell>
                       <TableCell className="text-sm">
-                        {referral.phone || "-"}
+                        {referral.profession || "-"}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">

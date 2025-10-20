@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Store, Layers, FolderTree } from "lucide-react";
+import { Store, Layers, FolderTree, Megaphone } from "lucide-react";
 import CategoryManagement from "./_components/category-management";
 import SubCategoryManagement from "./_components/subcategory-management";
 import VyapariManagement from "./_components/vyapari-management";
+import AdsManagement from "./_components/ads-management";
 
 export default function VyapariDashboardPage() {
   const [activeTab, setActiveTab] = useState("businesses");
@@ -22,7 +23,7 @@ export default function VyapariDashboardPage() {
 
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-2xl grid-cols-4">
           <TabsTrigger value="businesses" className="flex items-center gap-2">
             <Store className="h-4 w-4" />
             <span>Businesses</span>
@@ -34,6 +35,10 @@ export default function VyapariDashboardPage() {
           <TabsTrigger value="subcategories" className="flex items-center gap-2">
             <FolderTree className="h-4 w-4" />
             <span>SubCategories</span>
+          </TabsTrigger>
+          <TabsTrigger value="ads" className="flex items-center gap-2">
+            <Megaphone className="h-4 w-4" />
+            <span>Ads</span>
           </TabsTrigger>
         </TabsList>
 
@@ -47,6 +52,10 @@ export default function VyapariDashboardPage() {
 
         <TabsContent value="subcategories" className="space-y-4">
           <SubCategoryManagement />
+        </TabsContent>
+
+        <TabsContent value="ads" className="space-y-4">
+          <AdsManagement />
         </TabsContent>
       </Tabs>
     </div>

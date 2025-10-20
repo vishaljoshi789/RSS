@@ -8,6 +8,11 @@ export interface DonationFormData {
   notes?: string;
 }
 
+export interface ManualPaymentFormData extends DonationFormData {
+  method: 'CASH' | 'CHEQUE' | 'BANK_TRANSFER' | 'UPI';
+  payment_details?: Record<string, any>;
+}
+
 
 export type PaymentStep = 'idle' | 'creating-order' | 'waiting-payment' | 'verifying' | 'completed';
 

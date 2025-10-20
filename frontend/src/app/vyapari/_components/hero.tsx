@@ -1,9 +1,13 @@
+'use client'
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Store, TrendingUp, Users, Award } from "lucide-react";
+import { Store, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const VyapariHero = () => {
+  const router = useRouter();
   return (
     <section className="relative w-full bg-background">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 ">
@@ -31,12 +35,17 @@ const VyapariHero = () => {
                 <div className="relative flex-1">
                   <Store className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                   <input
+                    onClick={() => router.push('/vyapari/s')}
                     type="text"
                     placeholder="Search for businesses..."
-                    className="h-12 w-full rounded-lg border border-border bg-background pl-10 pr-4 text-base placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="h-12 w-full rounded-lg border border-border bg-background pl-10 pr-4 text-base placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                    readOnly
                   />
                 </div>
-                <button className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+                <button
+                  onClick={() => router.push('/vyapari/s')}
+                  className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                >
                   Search
                 </button>
               </div>

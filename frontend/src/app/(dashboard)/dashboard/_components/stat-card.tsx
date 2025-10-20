@@ -192,20 +192,12 @@ const StatCard: React.FC<StatCardProps> = ({
                         <TableCell>{referral.email || "-"}</TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {referral.is_verified && (
+                            
                               <Badge variant="outline" className="text-green-600">
-                                Verified
+                                Success
                               </Badge>
-                            )}
-                            {referral.is_member_account && (
-                              <Badge variant="outline" className="text-blue-600">
-                                Member
-                              </Badge>
-                            )}
-                            {!referral.is_verified &&
-                              !referral.is_member_account && (
-                                <Badge variant="secondary">Pending</Badge>
-                              )}
+                            
+                            
                           </div>
                         </TableCell>
                         <TableCell>

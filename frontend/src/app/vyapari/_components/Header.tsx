@@ -2,9 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useAuth } from "@/hooks/use-auth";
-import { Menu, X, User, Store, Home, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, Store, Home, LogOut, LayoutDashboard } from "lucide-react";
 import ButtonRSS from "@/components/common/button-rss";
 import {
   DropdownMenu,
