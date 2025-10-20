@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, use } from 'react';
 import useAxios from '@/hooks/use-axios';
-import type { DonationFormData } from '../types';
+import { useAuth } from '@/hooks/use-auth';
+import type { DonationFormData, ManualPaymentFormData } from '../types';
 
 
 declare global {
@@ -76,6 +77,7 @@ export function useDonationPayment() {
   const [orderData, setOrderData] = useState<OrderCreateResponse | null>(null);
 
   const axios = useAxios();
+  const { user } = useAuth();
 
   
   const createOrder = useCallback(async (formData: DonationFormData): Promise<OrderCreateResponse> => {
@@ -235,6 +237,55 @@ export function useDonationPayment() {
     }
   }, [createOrder, verifyPayment]);
 
+  const mannualPayment = useCallback(async (formData: ManualPaymentFormData) => {
+    try {
+      setIsProcessing(true);
+      setError(null);
+      setSuccess(false);
+      setCurrentStep('creating-order');
+
+      const timestamp = Date.now();
+      const orderIdManual = `manual_order_${timestamp}`;
+      const paymentIdManual = `manual_payment_${timestamp}`;
+
+      const response = await axios.post('/payment/create/', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        amount: formData.amount,
+        payment_for: formData.payment_for,
+        notes: formData.notes || '',
+        method: formData.method,
+        payment_details: formData.payment_details || {},
+        status: 'COMPLETED',
+        order_id: orderIdManual,
+        payment_id: paymentIdManual
+      });
+
+      if (response.data && response.data.id) {
+        setSuccess(true);
+        setDonationId(response.data.payment_id || response.data.order_id || null);
+        setCurrentStep('completed');
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error: any) {
+      console.error('Manual payment error:', error);
+      
+      let errorMessage = 'Manual payment entry failed';
+      
+      if (error.response?.status === 403) {
+        errorMessage = 'You need admin or staff privileges to create manual payments. Please contact an administrator to get the required permissions.';
+      } else {
+        errorMessage = error.response?.data?.error || error.response?.data?.message || error.message || 'Manual payment entry failed';
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [user]);
+
   const reset = useCallback(() => {
     setIsProcessing(false);
     setError(null);
@@ -247,6 +298,7 @@ export function useDonationPayment() {
 
   return {
     processPayment,
+    mannualPayment,
     isProcessing,
     error,
     success,

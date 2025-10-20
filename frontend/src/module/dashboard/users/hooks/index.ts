@@ -44,7 +44,7 @@ export function useUsers(page: number = 1, page_size: number = 30) {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get("/admin/users/", {
+      const response = await axios.get("/account/list/", {
         params: { page, page_size }
       });
       
@@ -91,12 +91,12 @@ export function useUsers(page: number = 1, page_size: number = 30) {
     } finally {
       setLoading(false);
     }
-  }, [axios, page, page_size]);
+  }, [page, page_size]);
 
 
   const updateUser = async (userId: number, data: Partial<User>) => {
     try {
-      const response = await axios.put(`/admin/user/${userId}/`, data);
+      const response = await axios.put(`/account/detail/${userId}/`, data);
       
       setUsers(prevUsers => 
         prevUsers.map((user) => user.id === userId ? { ...user, ...response.data } : user)
@@ -114,7 +114,7 @@ export function useUsers(page: number = 1, page_size: number = 30) {
       setLoading(true);
       setError(null);
       
-      const response = await axios.get("/admin/users/", {
+      const response = await axios.get("/account/list/", {
         params: { 
           search: searchTerm,
           page,
@@ -198,7 +198,7 @@ export function useUserById(userId: number) {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`/admin/user/${userId}/`);
+      const response = await axios.get(`/account/detail/${userId}/`);
       setUser(response.data);
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || err.message || "Failed to fetch user";
@@ -208,7 +208,7 @@ export function useUserById(userId: number) {
     } finally {
       setLoading(false);
     }
-  }, [axios, userId]);
+  }, [userId]);
 
   useEffect(() => {
     fetchUser();
@@ -240,11 +240,11 @@ export function useUserStats() {
     } finally {
       setLoading(false);
     }
-  }, []); // Removed axios dependency to prevent unnecessary re-fetches
+  }, []);
 
   useEffect(() => {
     fetchStats();
-  }, []); // Only fetch on mount
+  }, []);
 
   return {
     stats,

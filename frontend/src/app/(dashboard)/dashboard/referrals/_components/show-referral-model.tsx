@@ -42,7 +42,7 @@ const ShowReferralModal: React.FC<ShowReferralModalProps> = ({
     setReferrals([]);
 
     try {
-      const response = await axios.get(`/admin/referrals/${userId}/`);
+      const response = await axios.get(`/dashboard/referrals/${userId}/`);
       const data = response.data;
 
       const referralsList = Array.isArray(data.results)

@@ -188,7 +188,8 @@ export function usePayments(page: number = 1, page_size: number = 20) {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get("/admin/payments/", {
+
+        const response = await axios.get("/payment/list/", {
           params,
         });
 
@@ -200,8 +201,19 @@ export function usePayments(page: number = 1, page_size: number = 20) {
         setPayments(items);
         setPagination(meta);
       } catch (err: any) {
-        const errorMessage =
-          err.response?.data?.message || err.message || "Failed to fetch payments";
+        let errorMessage = "Failed to fetch payments";
+        
+        if (err.response?.status === 403) {
+          errorMessage = err.response?.data?.detail || 
+                        err.response?.data?.message || 
+                        "You need admin or staff privileges to view all payments. Please contact an administrator to get the required permissions.";
+        } else {
+          errorMessage = err.response?.data?.detail || 
+                        err.response?.data?.message || 
+                        err.message || 
+                        "Failed to fetch payments";
+        }
+        
         setError(errorMessage);
         console.error("Error fetching payments:", err);
         setPayments([]);
@@ -209,7 +221,7 @@ export function usePayments(page: number = 1, page_size: number = 20) {
         setLoading(false);
       }
     },
-    [axios, filters, page, page_size]
+    [filters, page, page_size]
   );
 
   useEffect(() => {
@@ -248,7 +260,7 @@ export function usePayments(page: number = 1, page_size: number = 20) {
 
   const getPaymentById = async (paymentId: number): Promise<Payment | null> => {
     try {
-      const response = await axios.get(`/admin/payment/${paymentId}`);
+      const response = await axios.get(`/payment/detail/${paymentId}/`);
       return normalizePayment(response.data);
     } catch (err: any) {
       console.error("Error fetching payment by ID:", err);
@@ -316,16 +328,105 @@ export function usePaymentStats() {
       setError(null);
     } catch (err: any) {
       console.error("Error fetching payment stats:", err);
-      setError(err.response?.data?.message || "Failed to fetch payment stats");
+      
+      let errorMessage = "Failed to fetch payment stats";
+      if (err.response?.status === 403) {
+        errorMessage = err.response?.data?.detail || 
+                      err.response?.data?.message || 
+                      "You need admin or staff privileges to view payment statistics.";
+      } else {
+        errorMessage = err.response?.data?.detail || 
+                      err.response?.data?.message || 
+                      err.message || 
+                      "Failed to fetch payment stats";
+      }
+      
+      setError(errorMessage);
       setStats(defaultStats);
     } finally {
       setLoading(false);
     }
-  }, [axios]);
+  }, []);
+
+  const fetchPaymentInfo = useCallback(async () => {
+    try{
+      setLoading(true);
+      const response = await axios.get(`/payment/stats/`);
+      return normalizePayment(response.data);
+    } catch (err: any) {
+      console.error("Error fetching payment info:", err);
+      
+      let errorMessage = "Failed to fetch payment info";
+      if (err.response?.status === 403) {
+        errorMessage = err.response?.data?.detail || 
+                      err.response?.data?.message || 
+                      "You need admin or staff privileges to view payment information.";
+      } else {
+        errorMessage = err.response?.data?.detail || 
+                      err.response?.data?.message || 
+                      err.message || 
+                      "Failed to fetch payment info";
+      }
+      
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchStats();
+    fetchPaymentInfo();
   }, [fetchStats]);
 
   return { stats, loading, error, refetch: fetchStats };
+}
+
+export function useUserPayments(limit: number = 5) {
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const axios = useAxios();
+
+  const fetchUserPayments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get("/payment/user-payments/", {
+        params: { page_size: limit }
+      });
+
+      const { items } = extractPayments(response.data, 1);
+      setPayments(items);
+    } catch (err: any) {
+      let errorMessage = "Failed to fetch your payments";
+      
+      if (err.response?.status === 403) {
+        errorMessage = "Please login to view your payments";
+      } else {
+        errorMessage = err.response?.data?.detail || 
+                      err.response?.data?.message || 
+                      err.message || 
+                      "Failed to fetch your payments";
+      }
+      
+      setError(errorMessage);
+      console.error("Error fetching user payments:", err);
+      setPayments([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [limit]);
+
+  useEffect(() => {
+    fetchUserPayments();
+  }, [fetchUserPayments]);
+
+  return {
+    payments,
+    loading,
+    error,
+    refetch: fetchUserPayments
+  };
 }

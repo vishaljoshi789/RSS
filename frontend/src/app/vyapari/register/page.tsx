@@ -55,7 +55,7 @@ interface FormData {
   address_line2: string;
   street: string;
   landmark: string;
-  city: string;
+  market: string;
   district: string;
   state: string;
   postal_code: string;
@@ -98,7 +98,7 @@ export default function RegisterBusinessPage() {
     address_line2: "",
     street: "",
     landmark: "",
-    city: "",
+    market: "",
     district: "",
     state: "",
     postal_code: "",
@@ -171,8 +171,8 @@ export default function RegisterBusinessPage() {
         }
         break;
       case 2:
-        if (!formData.address_line1.trim() || !formData.city.trim() || !formData.state.trim()) {
-          toast.error("Address, city, and state are required");
+        if (!formData.address_line1.trim() || !formData.market.trim() || !formData.state.trim()) {
+          toast.error("Address, market, and state are required");
           return false;
         }
         break;
@@ -225,7 +225,7 @@ export default function RegisterBusinessPage() {
         address_line2: formData.address_line2,
         street: formData.street,
         landmark: formData.landmark,
-        city: formData.city,
+        market: formData.market,
         district: formData.district,
         state: formData.state,
         postal_code: formData.postal_code,
@@ -251,13 +251,11 @@ export default function RegisterBusinessPage() {
 
       toast.success("Business registered successfully! Pending admin approval.");
       
-      // Redirect after success
       setTimeout(() => {
         router.push("/vyapari");
       }, 2000);
     } catch (error: any) {
       console.error("Registration error:", error);
-      toast.error(error.response?.data?.message || "Failed to register business");
     } finally {
       setLoading(false);
     }
@@ -605,15 +603,15 @@ export default function RegisterBusinessPage() {
 
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="city">
-                        City <span className="text-destructive">*</span>
+                      <Label htmlFor="market">
+                        Market <span className="text-destructive">*</span>
                       </Label>
                       <Input
-                        id="city"
-                        name="city"
-                        value={formData.city}
+                        id="market"
+                        name="market"
+                        value={formData.market}
                         onChange={handleInputChange}
-                        placeholder="City"
+                        placeholder="Enter your market or city"
                       />
                     </div>
 

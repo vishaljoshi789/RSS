@@ -8,7 +8,7 @@ export interface Category {
 
 export interface SubCategory {
   id: number;
-  category: number; // Foreign key ID
+  category: number;
   name: string;
   image: string | null;
   description: string | null;
@@ -40,8 +40,8 @@ export interface Vyapari {
   logo: string | null;
   cover_image: string | null;
   business_type: string;
-  category: number | null; // Foreign key ID
-  subcategory: number | null; // Foreign key ID
+  category: number | null;
+  subcategory: number | null;
   email: string | null;
   phone: string;
   owner: string | null;
@@ -53,6 +53,7 @@ export interface Vyapari {
   location: Location;
   is_verified: boolean;
   is_blocked: boolean;
+  is_business_account: boolean;
   date_joined: string;
 }
 
@@ -90,9 +91,9 @@ export interface VyapariFormData {
   location?: Location;
   is_verified?: boolean;
   is_blocked?: boolean;
+  is_business_account?: boolean;
 }
 
-// Extended types with related data
 export interface CategoryWithCount extends Category {
   subcategories_count?: number;
   vyaparis_count?: number;
