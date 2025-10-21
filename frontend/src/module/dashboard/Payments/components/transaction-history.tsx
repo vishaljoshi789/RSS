@@ -293,7 +293,7 @@ const UserTransactionHistory = () => {
                       {payment.order_id}
                     </TableCell>
                     <TableCell className="font-semibold">
-                      {formatCurrency(payment.amount)}
+                      {formatCurrency(payment.amount/100)}
                     </TableCell>
                     <TableCell>{getTypeBadge(payment.payment_for)}</TableCell>
                     <TableCell>{getPaymentMethodIcon(payment)}</TableCell>
