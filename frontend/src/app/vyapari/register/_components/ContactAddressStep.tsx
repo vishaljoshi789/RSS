@@ -1,4 +1,4 @@
-import { MapPin, Mail, Globe, Instagram, Facebook } from "lucide-react";
+import { MapPin, Mail, Globe, Instagram, Facebook, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ interface ContactAddressStepProps {
     website_url: string;
     insta_url: string;
     facebook_url: string;
+    referred_by: string;
     address_line1: string;
     address_line2: string;
     street: string;
@@ -28,6 +29,8 @@ interface ContactAddressStepProps {
   ) => void;
   emailVerified: boolean;
   setEmailVerified: (verified: boolean) => void;
+  referralVerified: boolean;
+  setReferralVerified: (verified: boolean) => void;
 }
 
 export function ContactAddressStep({
@@ -35,10 +38,14 @@ export function ContactAddressStep({
   handleInputChange,
   emailVerified,
   setEmailVerified,
+  referralVerified,
+  setReferralVerified,
 }: ContactAddressStepProps) {
   const axios = useAxios();
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
+  const [checkingReferral, setCheckingReferral] = useState(false);
+  const [hasCheckedReferral, setHasCheckedReferral] = useState(false);
 
   const handleCheckEmail = async () => {
     if (!formData.email || !formData.email.trim()) {
@@ -46,7 +53,6 @@ export function ContactAddressStep({
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast.error("Please enter a valid email address");
@@ -73,6 +79,38 @@ export function ContactAddressStep({
       setEmailVerified(false);
     } finally {
       setCheckingEmail(false);
+    }
+  };
+
+  const handleCheckReferral = async () => {
+    if (!formData.referred_by || !formData.referred_by.trim()) {
+      toast.error("Please enter a referral user ID");
+      return;
+    }
+
+    setCheckingReferral(true);
+    setHasCheckedReferral(true);
+    setReferralVerified(false);
+
+    try {
+      const userResponse = await axios.get(
+        `/account/list/?user_id=${formData.referred_by.trim()}`
+      );
+      
+      if (userResponse.data && userResponse.data.results && userResponse.data.results.length > 0) {
+        const user = userResponse.data.results[0];
+        setReferralVerified(true);
+        toast.success(`Referral verified! Referred by: ${user.name || user.email || 'User'}`);
+      } else {
+        setReferralVerified(false);
+        toast.error("Referral ID not found. Please check the user ID.");
+      }
+    } catch (error: any) {
+      console.error("Error checking referral:", error);
+      toast.error("Failed to verify referral. Please try again.");
+      setReferralVerified(false);
+    } finally {
+      setCheckingReferral(false);
     }
   };
 
@@ -130,6 +168,50 @@ export function ContactAddressStep({
           )}
           {hasChecked && !emailVerified && (
             <p className="text-sm text-red-600">✗ Email not found in system</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="referred_by">
+            Referred By (User ID) <span className="text-destructive">*</span>
+          </Label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Users className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                id="referred_by"
+                name="referred_by"
+                value={formData.referred_by}
+                onChange={(e) => {
+                  handleInputChange(e);
+                  setReferralVerified(false);
+                  setHasCheckedReferral(false);
+                }}
+                placeholder="Enter referral user ID"
+                className={`pl-10 ${
+                  referralVerified
+                    ? "border-green-500 focus-visible:ring-green-500"
+                    : hasCheckedReferral && !referralVerified
+                    ? "border-red-500 focus-visible:ring-red-500"
+                    : ""
+                }`}
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCheckReferral}
+              disabled={checkingReferral || !formData.referred_by}
+              className="px-4 whitespace-nowrap"
+            >
+              {checkingReferral ? "Checking..." : "Check Referral"}
+            </Button>
+          </div>
+          {referralVerified && (
+            <p className="text-sm text-green-600">✓ Referral verified successfully</p>
+          )}
+          {hasCheckedReferral && !referralVerified && (
+            <p className="text-sm text-red-600">✗ Referral ID not found</p>
           )}
         </div>
 

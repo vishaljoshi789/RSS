@@ -20,7 +20,7 @@ export interface Address {
   street?: string;
   landmark?: string;
   sub_district?: string;
-  city?: string;
+  market?: string;
   district?: string;
   state?: string;
   postal_code?: string;
@@ -46,6 +46,7 @@ export interface Vyapari {
   phone: string;
   owner: string | null;
   employee_count: number | null;
+  referred_by: string | null;
   insta_url: string | null;
   facebook_url: string | null;
   website_url: string | null;

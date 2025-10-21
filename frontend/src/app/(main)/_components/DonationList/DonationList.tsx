@@ -110,7 +110,7 @@ const DonationList = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl p-6 text-center">
             <Users className="w-8 h-8 text-primary mx-auto mb-3" />
             <h3 className="text-2xl font-bold text-foreground">
@@ -134,7 +134,7 @@ const DonationList = () => {
             </h3>
             <p className="text-sm text-muted-foreground">आज के दान</p>
           </div>
-        </div>
+        </div> */}
 
         <div className="mb-8 max-w-md mx-auto">
           <div className="relative">
@@ -149,13 +149,40 @@ const DonationList = () => {
           </div>
         </div>
 
-        <div className="bg-card rounded-2xl shadow-lg border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-lg border border-border overflow-hidden relative">
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              @keyframes scrollVerticalUp {
+                0% {
+                  transform: translateY(0);
+                }
+                100% {
+                  transform: translateY(-50%);
+                }
+              }
+              
+              .donation-scroll-container {
+                max-height: 600px;
+                overflow: hidden;
+                position: relative;
+              }
+              
+              .donation-scroll-body {
+                animation: scrollVerticalUp 30s linear infinite;
+              }
+              
+              .donation-scroll-body:hover {
+                animation-play-state: paused;
+              }
+            `
+          }} />
+          
           <Table>
             <TableCaption className="py-4 text-muted-foreground">
               राष्ट्रीय सेवा संघ के दानदाताओं की सूची - कुल{" "}
               {tickerDonations.length} प्रविष्टियां
             </TableCaption>
-            <TableHeader>
+            <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow className="bg-muted/50">
                 <TableHead className="font-semibold text-foreground px-6 py-4">
                   दानदाता
@@ -177,8 +204,12 @@ const DonationList = () => {
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {filteredDonations.map((donation) => (
+          </Table>
+          
+          <div className="donation-scroll-container">
+            <Table>
+              <TableBody className="donation-scroll-body">
+                {filteredDonations.map((donation) => (
                 <TableRow
                   key={donation.id}
                   className="hover:bg-muted/30 transition-colors"
@@ -245,8 +276,77 @@ const DonationList = () => {
                   </TableCell>
                 </TableRow>
               ))}
+              {/* Duplicate rows for seamless loop */}
+              {filteredDonations.map((donation) => (
+                <TableRow
+                  key={`duplicate-${donation.id}`}
+                  className="hover:bg-muted/30 transition-colors"
+                >
+                  <TableCell className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-semibold text-primary">
+                          {donation.donorName.charAt(0)}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">
+                          {donation.isAnonymous
+                            ? "गुप्त दानदाता"
+                            : donation.donorName}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <span className="font-bold text-lg text-primary">
+                      {formatTickerAmount(donation.amount, donation.currency)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-foreground">
+                        {donation.location}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <Badge
+                      className={`${getPaymentBadgeVariant(
+                        donation.paymentMode
+                      )} border`}
+                    >
+                      <div className="flex items-center gap-1">
+                        {getPaymentIcon(donation.paymentMode)}
+                        <span className="text-xs">{donation.paymentMode}</span>
+                      </div>
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">
+                        {donation.timeAgo}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {donation.message ? (
+                      <span className="text-sm text-muted-foreground italic">
+                        &ldquo;{donation.message}&rdquo;
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">
+                        कोई संदेश नहीं
+                      </span>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
-          </Table>
+            </Table>
+          </div>
         </div>
 
         {displayCount < tickerDonations.length && (

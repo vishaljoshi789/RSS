@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Building2, MapPin } from "lucide-react";
+import { Building2, MapPin, Mail, Users, FileText, Image, Globe, MapPinned, Settings } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/context/AuthContext";
 import {
   Select,
   SelectContent,
@@ -18,6 +19,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -43,19 +45,6 @@ interface VyapariFormModalProps {
   mode: "create" | "edit";
 }
 
-const BUSINESS_TYPES = [
-  "Retail",
-  "Wholesale",
-  "Manufacturing",
-  "Service",
-  "Restaurant",
-  "Healthcare",
-  "Education",
-  "Technology",
-  "Construction",
-  "Other",
-];
-
 const vyapariFormSchema = z.object({
   name: z
     .string()
@@ -63,17 +52,8 @@ const vyapariFormSchema = z.object({
     .min(2, "Business name must be at least 2 characters"),
   short_description: z.string().optional(),
   long_description: z.string().optional(),
-  logo: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || val === "" || z.string().url().safeParse(val).success,
-      {
-        message: "Please enter a valid URL",
-      }
-    ),
-  cover_image: z.string().optional(),
-  business_type: z.string().min(1, "Business type is required"),
+  logo: z.any().optional(),
+  cover_image: z.any().optional(),
   category: z.number().nullable().optional(),
   subcategory: z.number().nullable().optional(),
   email: z
@@ -90,7 +70,7 @@ const vyapariFormSchema = z.object({
     .min(1, "Phone number is required")
     .min(10, "Phone number must be at least 10 digits"),
   owner: z.string().optional(),
-  employee_count: z.number().nullable().optional(),
+  referred_by: z.string().optional(),
   insta_url: z.string().optional(),
   facebook_url: z.string().optional(),
   website_url: z.string().optional(),
@@ -101,7 +81,7 @@ const vyapariFormSchema = z.object({
       street: z.string().optional(),
       landmark: z.string().optional(),
       sub_district: z.string().optional(),
-      city: z.string().optional(),
+      market: z.string().optional(),
       district: z.string().optional(),
       state: z.string().optional(),
       postal_code: z.string().optional(),
@@ -129,6 +109,7 @@ export default function VyapariFormModal({
   mode,
 }: VyapariFormModalProps) {
   const axios = useAxios();
+  const { user } = useAuth();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
@@ -136,12 +117,16 @@ export default function VyapariFormModal({
     SubCategory[]
   >([]);
   const [submitting, setSubmitting] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string>("");
+  const [coverImagePreview, setCoverImagePreview] = useState<string>("");
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  const [hasCheckedEmail, setHasCheckedEmail] = useState(false);
 
   const form = useForm<VyapariFormValues>({
     resolver: zodResolver(vyapariFormSchema),
     defaultValues: {
       name: "",
-      business_type: "Retail",
       phone: "",
       logo: undefined,
       short_description: undefined,
@@ -151,7 +136,7 @@ export default function VyapariFormModal({
       subcategory: null,
       email: undefined,
       owner: undefined,
-      employee_count: null,
+      referred_by: undefined,
       insta_url: undefined,
       facebook_url: undefined,
       website_url: undefined,
@@ -161,7 +146,7 @@ export default function VyapariFormModal({
         street: undefined,
         landmark: undefined,
         sub_district: undefined,
-        city: undefined,
+        market: undefined,
         district: undefined,
         state: undefined,
         postal_code: undefined,
@@ -178,6 +163,12 @@ export default function VyapariFormModal({
   });
 
   const selectedCategory = form.watch("category");
+
+  useEffect(() => {
+    if (isOpen && mode === "create" && user?.user_id) {
+      form.setValue("referred_by", user.user_id);
+    }
+  }, [isOpen, mode, user, form]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -208,13 +199,12 @@ export default function VyapariFormModal({
         long_description: vyapari.long_description || undefined,
         logo: vyapari.logo || undefined,
         cover_image: vyapari.cover_image || undefined,
-        business_type: vyapari.business_type || "Retail",
         category: vyapari.category || null,
         subcategory: vyapari.subcategory || null,
         email: vyapari.email || undefined,
         phone: vyapari.phone || "",
         owner: vyapari.owner || undefined,
-        employee_count: vyapari.employee_count || null,
+        referred_by: vyapari.referred_by || undefined,
         insta_url: vyapari.insta_url || undefined,
         facebook_url: vyapari.facebook_url || undefined,
         website_url: vyapari.website_url || undefined,
@@ -224,7 +214,7 @@ export default function VyapariFormModal({
           street: vyapari.address?.street || undefined,
           landmark: vyapari.address?.landmark || undefined,
           sub_district: vyapari.address?.sub_district || undefined,
-          city: vyapari.address?.city || undefined,
+          market: vyapari.address?.market || undefined,
           district: vyapari.address?.district || undefined,
           state: vyapari.address?.state || undefined,
           postal_code: vyapari.address?.postal_code || undefined,
@@ -238,8 +228,17 @@ export default function VyapariFormModal({
         is_blocked: vyapari.is_blocked || undefined,
         is_business_account: vyapari.is_business_account || undefined,
       });
+      
+      if (vyapari.logo) {
+        setLogoPreview(vyapari.logo);
+      }
+      if (vyapari.cover_image) {
+        setCoverImagePreview(vyapari.cover_image);
+      }
     } else {
       form.reset();
+      setLogoPreview("");
+      setCoverImagePreview("");
     }
   }, [mode, vyapari, isOpen, form]);
 
@@ -264,63 +263,171 @@ export default function VyapariFormModal({
     }
   }, [selectedCategory, subcategories, form]);
 
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("logo", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      form.setValue("cover_image", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCheckEmail = async () => {
+    const email = form.getValues("email");
+    
+    if (!email || !email.trim()) {
+      toast.error("Please enter an email address");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setCheckingEmail(true);
+    setHasCheckedEmail(true);
+    setEmailVerified(false);
+
+    try {
+      const response = await axios.get(`/account/list/?email=${email}`);
+      
+      if (response.data && response.data.results && response.data.results.length > 0) {
+        setEmailVerified(true);
+        toast.success("Email verified! This email is registered in the system.");
+      } else {
+        setEmailVerified(false);
+        toast.error("Email not found. Please ensure you have registered as a user first.");
+      }
+    } catch (error: any) {
+      console.error("Error checking email:", error);
+      toast.error("Failed to verify email. Please try again.");
+      setEmailVerified(false);
+    } finally {
+      setCheckingEmail(false);
+    }
+  };
+
   const onSubmit = async (values: VyapariFormValues) => {
     try {
       setSubmitting(true);
 
-      const cleanData: any = {
-        name: values.name,
-        business_type: values.business_type,
-        phone: values.phone,
-        short_description: values.short_description || null,
-        long_description: values.long_description || null,
-        logo: values.logo || null,
-        cover_image: values.cover_image || null,
-        category: values.category || null,
-        subcategory: values.subcategory || null,
-        email: values.email && values.email.trim() !== "" ? values.email : null,
-        owner: values.owner || null,
-        employee_count: values.employee_count || null,
-        insta_url: values.insta_url || null,
-        facebook_url: values.facebook_url || null,
-        website_url: values.website_url || null,
-        is_verified: values.is_verified ?? false,
-        is_blocked: values.is_blocked ?? false,
-        is_business_account: values.is_business_account ?? false,
-      };
+      const hasFiles = values.logo instanceof File || values.cover_image instanceof File;
 
-      if (
-        values.address &&
-        Object.values(values.address).some((val) => val && val.trim() !== "")
-      ) {
-        cleanData.address = {};
-        Object.keys(values.address).forEach((key) => {
-          const value = values.address![key as keyof typeof values.address];
-          cleanData.address[key] = value && value.trim() !== "" ? value : null;
-        });
+      let response;
+      
+      if (hasFiles) {
+        const formData = new FormData();
+        
+        formData.append("name", values.name);
+        formData.append("phone", values.phone);
+        
+        if (values.short_description) formData.append("short_description", values.short_description);
+        if (values.long_description) formData.append("long_description", values.long_description);
+        if (values.logo instanceof File) formData.append("logo", values.logo);
+        if (values.cover_image instanceof File) formData.append("cover_image", values.cover_image);
+        if (values.category) formData.append("category", values.category.toString());
+        if (values.subcategory) formData.append("subcategory", values.subcategory.toString());
+        if (values.email) formData.append("email", values.email);
+        if (values.owner) formData.append("owner", values.owner);
+        if (values.referred_by) formData.append("referred_by", values.referred_by);
+        if (values.insta_url) formData.append("insta_url", values.insta_url);
+        if (values.facebook_url) formData.append("facebook_url", values.facebook_url);
+        if (values.website_url) formData.append("website_url", values.website_url);
+        
+        formData.append("is_verified", (values.is_verified ?? false).toString());
+        formData.append("is_blocked", (values.is_blocked ?? false).toString());
+        formData.append("is_business_account", (values.is_business_account ?? false).toString());
+
+        if (values.address) {
+          Object.keys(values.address).forEach((key) => {
+            const value = values.address![key as keyof typeof values.address];
+            if (value && value.trim() !== "") {
+              formData.append(`address.${key}`, value);
+            }
+          });
+        }
+
+        if (values.location?.latitude) formData.append("location.latitude", values.location.latitude.toString());
+        if (values.location?.longitude) formData.append("location.longitude", values.location.longitude.toString());
+
+        if (mode === "create") {
+          response = await axios.post("/vyapari/vyapari/", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+        } else {
+          response = await axios.put(`/vyapari/vyapari/${vyapari?.id}/`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+        }
       } else {
-        cleanData.address = {};
-      }
-
-      if (
-        values.location &&
-        (values.location.latitude || values.location.longitude)
-      ) {
-        cleanData.location = {
-          latitude: values.location.latitude || null,
-          longitude: values.location.longitude || null,
+        const cleanData: any = {
+          name: values.name,
+          phone: values.phone,
+          short_description: values.short_description || null,
+          long_description: values.long_description || null,
+          category: values.category || null,
+          subcategory: values.subcategory || null,
+          email: values.email && values.email.trim() !== "" ? values.email : null,
+          owner: values.owner || null,
+          referred_by: values.referred_by || null,
+          insta_url: values.insta_url || null,
+          facebook_url: values.facebook_url || null,
+          website_url: values.website_url || null,
+          is_verified: values.is_verified ?? false,
+          is_blocked: values.is_blocked ?? false,
+          is_business_account: values.is_business_account ?? false,
         };
-      } else {
-        cleanData.location = {};
+
+        if (
+          values.address &&
+          Object.values(values.address).some((val) => val && val.trim() !== "")
+        ) {
+          cleanData.address = {};
+          Object.keys(values.address).forEach((key) => {
+            const value = values.address![key as keyof typeof values.address];
+            cleanData.address[key] = value && value.trim() !== "" ? value : null;
+          });
+        } else {
+          cleanData.address = {};
+        }
+
+        if (
+          values.location &&
+          (values.location.latitude || values.location.longitude)
+        ) {
+          cleanData.location = {
+            latitude: values.location.latitude || null,
+            longitude: values.location.longitude || null,
+          };
+        } else {
+          cleanData.location = {};
+        }
+
+        if (mode === "create") {
+          response = await axios.post("/vyapari/vyapari/", cleanData);
+        } else {
+          response = await axios.put(`/vyapari/vyapari/${vyapari?.id}/`, cleanData);
+        }
       }
 
-      if (mode === "create") {
-        await axios.post("/vyapari/vyapari/", cleanData);
-        toast.success("Business created successfully");
-      } else {
-        await axios.put(`/vyapari/vyapari/${vyapari?.id}/`, cleanData);
-        toast.success("Business updated successfully");
-      }
+      toast.success(mode === "create" ? "Business created successfully" : "Business updated successfully");
 
       onSuccess();
       onClose();
@@ -367,7 +474,7 @@ export default function VyapariFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Add New Business" : "Edit Business"}
@@ -380,12 +487,16 @@ export default function VyapariFormModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Section 1: Basic Business Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                Basic Information
-              </h3>
+              <div className="border-b pb-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Basic Business Information
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">Essential business contact details</p>
+              </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="md:col-span-2">
@@ -403,143 +514,6 @@ export default function VyapariFormModal({
                     )}
                   />
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="business_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Business Type *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {BUSINESS_TYPES.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="+91 1234567890" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="business@example.com"
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="logo"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Logo URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://example.com/logo.png"
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="md:col-span-2">
-                  <FormField
-                    control={form.control}
-                    name="short_description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Short Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Brief description (1-2 lines)"
-                            rows={2}
-                            {...field}
-                            value={field.value || ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="long_description"
-                  render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel>Long Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Detailed description of your business"
-                          rows={4}
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="cover_image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cover Image URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://example.com/cover.jpg"
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
                 <FormField
                   control={form.control}
@@ -561,10 +535,124 @@ export default function VyapariFormModal({
 
                 <FormField
                   control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+91 1234567890" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="md:col-span-2">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <div className="space-y-2">
+                            <div className="flex gap-2">
+                              <div className="relative flex-1">
+                                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                <Input
+                                  type="email"
+                                  placeholder="business@example.com"
+                                  className={`pl-10 ${
+                                    hasCheckedEmail
+                                      ? emailVerified
+                                        ? "border-green-500 focus-visible:ring-green-500"
+                                        : "border-red-500 focus-visible:ring-red-500"
+                                      : ""
+                                  }`}
+                                  {...field}
+                                  value={field.value || ""}
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    setEmailVerified(false);
+                                    setHasCheckedEmail(false);
+                                  }}
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleCheckEmail}
+                                disabled={checkingEmail || !field.value}
+                              >
+                                {checkingEmail ? "Checking..." : "Check"}
+                              </Button>
+                            </div>
+                            {hasCheckedEmail && (
+                              <p
+                                className={`text-sm ${
+                                  emailVerified ? "text-green-600" : "text-red-600"
+                                }`}
+                              >
+                                {emailVerified
+                                  ? "✓ Email verified successfully"
+                                  : "✗ Email not found in the system"}
+                              </p>
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <FormField
+                    control={form.control}
+                    name="referred_by"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Referred By (Staff ID)</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Users className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                            <Input
+                              placeholder="Auto-filled with your user ID"
+                              className="pl-10 bg-gray-50"
+                              {...field}
+                              value={field.value || ""}
+                              disabled={true}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormDescription>
+                          Auto-filled with your user ID
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Business Details */}
+            <div className="space-y-4">
+              <div className="border-b pb-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Business Category & Description
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">Classify and describe your business</p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
                   name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel>Category *</FormLabel>
                       <Select
                         onValueChange={(value) =>
                           field.onChange(value ? Number(value) : null)
@@ -629,30 +717,130 @@ export default function VyapariFormModal({
                   )}
                 />
 
+                <div className="md:col-span-2">
+                  <FormField
+                    control={form.control}
+                    name="short_description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Short Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Brief description (1-2 lines)"
+                            rows={2}
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
-                  name="employee_count"
+                  name="long_description"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Employee Count</FormLabel>
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>Long Description</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Number of employees"
+                        <Textarea
+                          placeholder="Detailed description of your business"
+                          rows={4}
                           {...field}
                           value={field.value || ""}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value ? Number(e.target.value) : null
-                            )
-                          }
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+              </div>
+            </div>
 
+            {/* Section 3: Media & Branding */}
+            <div className="space-y-4">
+              <div className="border-b pb-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Image className="h-5 w-5" />
+                  Media & Branding
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">Upload logo and cover image</p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="logo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Logo</FormLabel>
+                      <FormControl>
+                        <div className="space-y-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoChange}
+                          />
+                          {logoPreview && (
+                            <div className="mt-2">
+                              <img
+                                src={logoPreview}
+                                alt="Logo preview"
+                                className="h-24 w-24 object-cover rounded border"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="cover_image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cover Image</FormLabel>
+                      <FormControl>
+                        <div className="space-y-2">
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleCoverImageChange}
+                          />
+                          {coverImagePreview && (
+                            <div className="mt-2">
+                              <img
+                                src={coverImagePreview}
+                                alt="Cover image preview"
+                                className="h-32 w-full object-cover rounded border"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Section 4: Online Presence */}
+            <div className="space-y-4">
+              <div className="border-b pb-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Online Presence
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">Social media and website links</p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="website_url"
@@ -709,11 +897,15 @@ export default function VyapariFormModal({
               </div>
             </div>
 
+            {/* Section 5: Address Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Address Information
-              </h3>
+              <div className="border-b pb-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Address Information
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">Complete business location details</p>
+              </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <FormField
@@ -721,7 +913,7 @@ export default function VyapariFormModal({
                   name="address.address_line1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Address Line 1</FormLabel>
+                      <FormLabel>Address Line 1 *</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="House/Building number, Street"
@@ -790,13 +982,13 @@ export default function VyapariFormModal({
 
                 <FormField
                   control={form.control}
-                  name="address.city"
+                  name="address.market"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>City</FormLabel>
+                      <FormLabel>Market *</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="City name"
+                          placeholder="Market name"
                           {...field}
                           value={field.value || ""}
                         />
@@ -829,7 +1021,7 @@ export default function VyapariFormModal({
                   name="address.state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>State</FormLabel>
+                      <FormLabel>State *</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="State name"
@@ -898,10 +1090,15 @@ export default function VyapariFormModal({
               </div>
             </div>
 
+            {/* Section 6: Location Coordinates */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">
-                Location Coordinates (Optional)
-              </h3>
+              <div className="border-b pb-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <MapPinned className="h-5 w-5" />
+                  Location Coordinates
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">GPS coordinates (optional)</p>
+              </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <FormField
@@ -960,10 +1157,16 @@ export default function VyapariFormModal({
               </div>
             </div>
 
-            {/* Business Account Checkbox (only in edit mode) */}
+            {/* Section 7: Account Settings (only in edit mode) */}
             {mode === "edit" && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Account Status</h3>
+                <div className="border-b pb-2">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Account Settings
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">Manage account features and status</p>
+                </div>
                 <FormField
                   control={form.control}
                   name="is_business_account"

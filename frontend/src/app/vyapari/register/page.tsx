@@ -32,6 +32,7 @@ interface FormData {
   website_url: string;
   insta_url: string;
   facebook_url: string;
+  referred_by: string;
 
   // Address
   address_line1: string;
@@ -69,8 +70,9 @@ export default function RegisterBusinessPage() {
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [coverImagePreview, setCoverImagePreview] = useState<string>("");
   
-  // Email verification state
   const [emailVerified, setEmailVerified] = useState(false);
+  
+  const [referralVerified, setReferralVerified] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -84,6 +86,7 @@ export default function RegisterBusinessPage() {
     website_url: "",
     insta_url: "",
     facebook_url: "",
+    referred_by: "",
     address_line1: "",
     address_line2: "",
     street: "",
@@ -97,7 +100,6 @@ export default function RegisterBusinessPage() {
     longitude: "",
   });
 
-  // Check authentication on mount
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       setShowLoginModal(true);
@@ -222,6 +224,14 @@ export default function RegisterBusinessPage() {
           toast.info("Please verify your email by clicking the 'Check' button");
           return false;
         }
+        if (!formData.referred_by.trim()) {
+          toast.error("Referral ID is required");
+          return false;
+        }
+        if (!referralVerified) {
+          toast.info("Please verify the referral ID by clicking the 'Check Referral' button");
+          return false;
+        }
         break;
     }
     return true;
@@ -273,6 +283,8 @@ export default function RegisterBusinessPage() {
         submitFormData.append("insta_url", formData.insta_url);
       if (formData.facebook_url)
         submitFormData.append("facebook_url", formData.facebook_url);
+      if (formData.referred_by)
+        submitFormData.append("referred_by", formData.referred_by);
 
       const address = {
         address_line1: formData.address_line1,
@@ -353,6 +365,8 @@ export default function RegisterBusinessPage() {
                   handleInputChange={handleInputChange}
                   emailVerified={emailVerified}
                   setEmailVerified={setEmailVerified}
+                  referralVerified={referralVerified}
+                  setReferralVerified={setReferralVerified}
                 />
               )}
 

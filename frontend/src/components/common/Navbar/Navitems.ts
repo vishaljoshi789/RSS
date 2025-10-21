@@ -78,7 +78,7 @@ export const navigationItems: NavItem[] = [
       {
         id: "volunteer-registration",
         title: "Volunteer Registration",
-        href: "https://app.joinrss.org.in/registration",
+        href: "/vyapari",
         icon: Users,
         description: "स्वयंसेवक बनें",
       },
