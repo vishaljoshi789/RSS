@@ -61,7 +61,7 @@ const Navbar = () => {
           </div>
         </div>
 
-  <MobileNav isOpen={isMobileMenuOpen} onMenuClose={closeMobileMenu} />
+        <MobileNav isOpen={isMobileMenuOpen} onMenuClose={closeMobileMenu} />
       </div>
     </header>
   );

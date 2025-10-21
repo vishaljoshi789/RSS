@@ -8,24 +8,24 @@ const Logo = () => {
       <Link 
         href="/" 
         className="flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
-        aria-label="राष्ट्रीय सेवा संघ - Home"
+        aria-label="राष्ट्रीय स्वयंसेवक संघ - Home"
       >
-        <div className="relative h-14 w-14">
+        <div className="relative h-14 w-14 flex-shrink-0">
           <Image
             src="/logo/logo.png"
-            alt="राष्ट्रीय सेवा संघ Logo"
+            alt="राष्ट्रीय स्वयंसेवक संघ Logo"
             fill
             className="object-contain"
             priority
           />
         </div>
-        <div className="hidden sm:block">
-          <h1 className="font-lato font-bold text-lg lg:text-sm 2xl:text-lg leading-tight">
-            <span className="bg-gradient-to-r from-orange-500 via-gray-400 to-green-600 bg-clip-text text-transparent animate-pulse">
-              RASHTRIYA SEVA SANGH
+        <div className="block">
+          <h1 className="font-lato font-bold text-sm sm:text-base lg:text-lg xl:text-lg leading-tight">
+            <span className="bg-gradient-to-r from-orange-500 via-gray-400 to-green-600 bg-clip-text text-transparent">
+              Rashtriya Swayamsevak Sangh
             </span>
           </h1>
-          <p className="font-nunito text-xs text-gray-600 mt-1">
+          <p className="font-nunito text-[8px] sm:text-xs text-gray-600 mt-0.5 hidden sm:block">
             United for Dharma, Dedicated for Nation.
           </p>
         </div>
