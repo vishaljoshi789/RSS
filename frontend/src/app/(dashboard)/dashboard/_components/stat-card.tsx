@@ -198,7 +198,7 @@ const StatCard: React.FC<StatCardProps> = ({
                       return (
                         <TableRow key={rowKey}>
                         <TableCell className="font-medium">
-                          {referral.name || "N/A"}
+                          {referral.name ? referral.name.charAt(0).toUpperCase() + referral.name.slice(1).toLowerCase() : "N/A"}
                         </TableCell>
                         <TableCell>{referral.email || "-"}</TableCell>
                         <TableCell>
@@ -242,7 +242,7 @@ const StatCard: React.FC<StatCardProps> = ({
               </Avatar>
               <div>
                 <CardTitle className="text-xl">
-                  {user?.name || "User"}
+                  {user?.name ? user.name.charAt(0).toUpperCase() + user.name.slice(1).toLowerCase() : "User"}
                 </CardTitle>
                 <CardDescription>
                   {user?.email || "ईमेल उपलब्ध नहीं"}

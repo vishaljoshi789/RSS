@@ -192,7 +192,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-medium">
               <Building2 className="h-4 w-4 text-muted-foreground" />
-              City
+              Market
             </label>
             <Select
               value={selectedCity}
@@ -205,10 +205,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select City" />
+                <SelectValue placeholder="Select Market" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Cities</SelectItem>
+                <SelectItem value="all">All Market</SelectItem>
                 {availableCities.map((city: string) => (
                   <SelectItem key={city} value={city}>
                     {city}

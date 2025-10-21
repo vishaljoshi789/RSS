@@ -78,6 +78,7 @@ const formSchema = z.object({
   // Roles
   is_volunteer: z.boolean().default(false),
   is_staff_account: z.boolean().default(false),
+  is_field_worker: z.boolean().default(false),
   is_admin_account: z.boolean().default(false),
   is_member_account: z.boolean().default(false),
 });
@@ -122,6 +123,7 @@ export function EditUserDetailModal({
       is_blocked: false,
       is_volunteer: false,
       is_staff_account: false,
+  is_field_worker: false,
       is_admin_account: false,
       is_member_account: false,
     },
@@ -150,6 +152,7 @@ export function EditUserDetailModal({
         is_blocked: user.is_blocked,
         is_volunteer: user.is_volunteer,
         is_staff_account: user.is_staff_account,
+        is_field_worker: user.is_field_worker,
         is_admin_account: user.is_admin_account,
         is_member_account: user.is_member_account,
       });
@@ -250,6 +253,7 @@ export function EditUserDetailModal({
                             placeholder="Enter phone number"
                             {...field}
                             className="h-10"
+                            minLength={10}
                           />
                         </FormControl>
                         <FormMessage />
@@ -579,6 +583,30 @@ export function EditUserDetailModal({
 
                   <FormField
                     control={form.control}
+                    name="is_field_worker"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border border-teal-200 bg-teal-50/50 dark:bg-teal-950/20 dark:border-teal-900 p-4 hover:shadow-sm transition-shadow">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="mt-0.5"
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="text-sm font-medium">
+                            Field Worker
+                          </FormLabel>
+                          <FormDescription className="text-xs">
+                            On-ground operations support
+                          </FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="is_admin_account"
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border border-orange-200 bg-orange-50/50 dark:bg-orange-950/20 dark:border-orange-900 p-4 hover:shadow-sm transition-shadow">
@@ -611,7 +639,7 @@ export function EditUserDetailModal({
                   <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
                   <h3 className="text-lg font-semibold">Account Status</h3>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pl-7">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-7">
                   <FormField
                     control={form.control}
                     name="is_active"

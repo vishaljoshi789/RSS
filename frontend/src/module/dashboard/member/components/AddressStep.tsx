@@ -18,18 +18,9 @@ type AddressStepProps = {
   };
   errors: Record<string, string>;
   onChange: (field: string, value: string) => void;
+  stateOptions: string[];
 };
-
-const stateOptions = [
-  { value: "rajasthan", label: "Rajasthan" },
-  { value: "maharashtra", label: "Maharashtra" },
-  { value: "uttar pradesh", label: "Uttar Pradesh" },
-  { value: "madhya pradesh", label: "Madhya Pradesh" },
-  { value: "delhi", label: "Delhi" },
-  { value: "other", label: "Other" },
-];
-
-export const AddressStep = ({ formData, errors, onChange }: AddressStepProps) => {
+export const AddressStep = ({ formData, errors, onChange, stateOptions }: AddressStepProps) => {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -74,14 +65,17 @@ export const AddressStep = ({ formData, errors, onChange }: AddressStepProps) =>
         </div>
         <div className="space-y-2">
           <Label>State</Label>
-          <Select value={formData.state} onValueChange={(value) => onChange("state", value)}>
+          <Select
+            value={formData.state || undefined}
+            onValueChange={(value) => onChange("state", value)}
+          >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select state" />
+              <SelectValue placeholder="Select a state" />
             </SelectTrigger>
             <SelectContent>
               {stateOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                <SelectItem key={option} value={option}>
+                  {option}
                 </SelectItem>
               ))}
             </SelectContent>

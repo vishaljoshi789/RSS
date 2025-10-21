@@ -370,14 +370,14 @@ const RegisterForm = () => {
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  पंजीकरण के बाद आपका पासवर्ड आपकी जन्म तिथि होगी (DDMMYYYY
+                  पंजीकरण के बाद आपका पासवर्ड आपकी जन्म तिथि होगी (YYYYMMDD
                   format में)।
                 </p>
                 <div className="rounded bg-card px-2 py-1">
                   <p className="text-xs text-muted-foreground">
                     <strong>उदाहरण:</strong> जन्म तिथि 15/01/1990 = पासवर्ड:
                     <code className="ml-1 rounded bg-muted px-1 py-0.5 text-xs font-mono text-foreground/80">
-                      15011990
+                      19900115
                     </code>
                   </p>
                 </div>
@@ -404,13 +404,23 @@ const RegisterForm = () => {
                       <FormItem className="space-y-1">
                         <FormControl>
                           <Input
-                            placeholder="रेफरल कोड दर्ज करें"
-                            className="h-9 text-sm placeholder:text-foreground/60"
+                            placeholder={referralParam ? "रेफरल कोड (URL से आया है)" : "रेफरल कोड दर्ज करें"}
+                            className={cn(
+                              "h-9 text-sm placeholder:text-foreground/60",
+                              referralParam && "bg-muted cursor-not-allowed"
+                            )}
+                            disabled={Boolean(referralParam)}
+                            readOnly={Boolean(referralParam)}
                             onKeyPress={handleEnglishOnlyInput}
                             onPaste={handleEnglishOnlyPaste}
                             {...field}
                           />
                         </FormControl>
+                        {referralParam && (
+                          <p className="text-xs text-muted-foreground">
+                            यह रेफरल कोड URL से आया है और इसे बदला नहीं जा सकता
+                          </p>
+                        )}
                         <FormMessage className="text-xs text-destructive" />
                       </FormItem>
                     )}

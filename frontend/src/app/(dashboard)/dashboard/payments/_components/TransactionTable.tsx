@@ -493,7 +493,7 @@ export function TransactionTable({
           )}
         </div>
 
-  <Select value={filterStatus} onValueChange={handleStatusFilterChange}>
+        <Select value={filterStatus} onValueChange={handleStatusFilterChange}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
@@ -506,7 +506,7 @@ export function TransactionTable({
           </SelectContent>
         </Select>
 
-  <Select value={filterType} onValueChange={handleTypeFilterChange}>
+        <Select value={filterType} onValueChange={handleTypeFilterChange}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
@@ -514,7 +514,7 @@ export function TransactionTable({
             <SelectItem value="all">All Types</SelectItem>
             <SelectItem value="donation">Donation</SelectItem>
             <SelectItem value="subscription">Subscription</SelectItem>
-            <SelectItem value="membership">Membership</SelectItem>
+            <SelectItem value="membership">Member</SelectItem>
             <SelectItem value="general">General</SelectItem>
           </SelectContent>
         </Select>

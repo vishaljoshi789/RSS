@@ -138,11 +138,11 @@ export const Ads: React.FC<AdsProps> = ({
                 <span className="text-xs font-medium text-gray-800">Ad</span>
               </div>
 
-              {/* <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded">
+              <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded">
                 <span className="text-xs font-medium text-gray-800">
                   {ad.ad_type}
                 </span>
-              </div> */}
+              </div>
             </div>
           </SwiperSlide>
         ))}

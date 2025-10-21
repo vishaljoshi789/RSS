@@ -1,8 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState, type ChangeEvent } from "react";
-import { CheckCircle2, Loader2, LogIn, CreditCard, IndianRupee } from "lucide-react";
+import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import {
+  CheckCircle2,
+  Loader2,
+  CreditCard,
+  IndianRupee,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -14,7 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import useAuth from "@/hooks/use-auth";
 import {
   PersonalDetailsStep,
   AddressStep,
@@ -23,6 +26,7 @@ import {
 } from "@/module/dashboard/member/components";
 import { useMemberSubmit } from "@/module/dashboard/member/hooks";
 import { useDonationPayment } from "@/module/donation";
+import rawStateDistrictData from "@/lib/state-district.json";
 
 type FormState = {
   name: string;
@@ -76,6 +80,29 @@ const defaultFormState: FormState = {
   referred_by: "",
 };
 
+type StateDistrictData = typeof rawStateDistrictData;
+type StateKey = keyof StateDistrictData["India"];
+
+const isStateKey = (
+  value: string,
+  data: StateDistrictData
+): value is StateKey =>
+  Boolean(value) && Object.prototype.hasOwnProperty.call(data.India, value);
+
+const getIndianStates = (data: StateDistrictData): string[] => {
+  if (!data?.India) return [];
+  return Object.keys(data.India).sort((a, b) => a.localeCompare(b));
+};
+
+const getDistrictsForState = (
+  data: StateDistrictData,
+  stateName: string
+): string[] => {
+  if (!stateName || !isStateKey(stateName, data)) return [];
+  const districts = data.India[stateName]?.districts || {};
+  return Object.keys(districts).sort((a, b) => a.localeCompare(b));
+};
+
 type StepConfig = {
   title: string;
   description: string;
@@ -108,6 +135,11 @@ const BecomeMemberPage = () => {
   const [formState, setFormState] = useState<FormState>(defaultFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const stateOptions = useMemo(
+    () => getIndianStates(rawStateDistrictData),
+    []
+  );
+
   useEffect(() => {
     if (typeof window === "undefined" || storageHydrated) {
       return;
@@ -118,10 +150,15 @@ const BecomeMemberPage = () => {
 
       const storedUserData = window.localStorage.getItem("user_data");
 
-      let userData = null;
+      let userData: Record<string, any> | null = null;
       if (storedUserData) {
         try {
-          userData = JSON.parse(storedUserData);
+          const parsed = JSON.parse(storedUserData);
+          if (parsed && typeof parsed === "object") {
+            userData =
+              (parsed as { user_info?: Record<string, any> }).user_info ||
+              parsed;
+          }
         } catch (e) {
           console.warn("Unable to parse user_data from localStorage", e);
         }
@@ -141,42 +178,77 @@ const BecomeMemberPage = () => {
             }
           });
         }
-
         if (userData) {
-          if (!updated.name && userData.name) {
-            updated.name = userData.name;
+          const safeGet = (key: string) => {
+            const value = userData?.[key];
+            if (value === undefined || value === null || value === "")
+              return undefined;
+            return String(value);
+          };
+
+          const maybeName = safeGet("name");
+          if (!updated.name && maybeName) {
+            updated.name = maybeName;
           }
-          if (!updated.email && userData.email) {
-            updated.email = userData.email;
+
+          const maybeEmail = safeGet("email");
+          if (!updated.email && maybeEmail) {
+            updated.email = maybeEmail;
           }
-          if (!updated.dob && userData.dob) {
-            updated.dob = userData.dob;
+
+          const maybeDob = safeGet("dob");
+          if (!updated.dob && maybeDob) {
+            updated.dob = maybeDob;
           }
-          if (!updated.gender && userData.gender) {
-            updated.gender = userData.gender.toLowerCase();
+
+          const maybeGender = safeGet("gender");
+          if (!updated.gender && maybeGender) {
+            updated.gender = maybeGender.toLowerCase();
           }
-          if (!updated.phone && userData.phone) {
-            updated.phone = userData.phone;
+
+          const maybePhone = safeGet("phone");
+          if (!updated.phone && maybePhone) {
+            updated.phone = maybePhone;
           }
-          if (!updated.profession && userData.profession) {
-            updated.profession = userData.profession
+
+          const maybeProfession = safeGet("profession");
+          if (!updated.profession && maybeProfession) {
+            updated.profession = maybeProfession
               .toLowerCase()
               .replace(/\s+/g, "-");
           }
-          if (!updated.city && userData.city) {
-            updated.city = userData.city;
+
+          const maybeCity = safeGet("city");
+          if (!updated.city && maybeCity) {
+            updated.city = maybeCity;
           }
-          if (!updated.sub_district && userData.sub_district) {
-            updated.sub_district = userData.sub_district;
+
+          const maybeSubDistrict = safeGet("sub_district");
+          if (!updated.sub_district && maybeSubDistrict) {
+            updated.sub_district = maybeSubDistrict;
           }
-          if (!updated.district && userData.district) {
-            updated.district = userData.district;
+
+          const maybeDistrict = safeGet("district");
+          if (!updated.district && maybeDistrict) {
+            updated.district = maybeDistrict;
           }
-          if (!updated.state && userData.state) {
-            updated.state = userData.state.toLowerCase().replace(/\s+/g, " ");
+
+          const maybeState = safeGet("state");
+          if (!updated.state && maybeState) {
+            const matchedState = stateOptions.find(
+              (option) => option.toLowerCase() === maybeState.toLowerCase()
+            );
+            updated.state = matchedState || maybeState;
           }
-          if (!updated.postal_code && userData.postal_code) {
-            updated.postal_code = userData.postal_code;
+
+          const maybePostal = safeGet("postal_code");
+          if (!updated.postal_code && maybePostal) {
+            updated.postal_code = maybePostal;
+          }
+
+          const maybeReferral = safeGet("referred_by");
+          if (!updated.referred_by && maybeReferral) {
+            updated.referred_by = maybeReferral;
           }
         }
 
@@ -187,7 +259,7 @@ const BecomeMemberPage = () => {
     } finally {
       setStorageHydrated(true);
     }
-  }, [storageHydrated]);
+  }, [storageHydrated, stateOptions]);
 
   useEffect(() => {
     if (!storageHydrated || typeof window === "undefined") {
@@ -333,8 +405,9 @@ const BecomeMemberPage = () => {
   };
 
   const { submitMemberForm, loading: isMemberSubmitting } = useMemberSubmit();
-  const { processPayment, isProcessing: isPaymentProcessing } = useDonationPayment();
-  
+  const { processPayment, isProcessing: isPaymentProcessing } =
+    useDonationPayment();
+
   const isSubmitting = isMemberSubmitting || isPaymentProcessing;
 
   const handleSubmit = async () => {
@@ -351,7 +424,7 @@ const BecomeMemberPage = () => {
       toast.loading("Registering membership...", { id: "member-registration" });
       await submitMemberForm(formState);
       toast.success("Registration successful!", { id: "member-registration" });
-      
+
       // Step 2: Process payment
       toast.loading("Opening payment gateway...", { id: "payment-processing" });
       await processPayment({
@@ -362,28 +435,30 @@ const BecomeMemberPage = () => {
         payment_for: "member",
         notes: `Membership registration for ${formState.name}`,
       });
-      toast.success("Payment completed successfully!", { id: "payment-processing" });
-      
+      toast.success("Payment completed successfully!", {
+        id: "payment-processing",
+      });
+
       clearStoredForm();
       setShowPaymentModal(false);
       setSubmitted(true);
     } catch (error: any) {
       console.error("Registration or payment failed:", error);
-      
+
       toast.dismiss("member-registration");
       toast.dismiss("payment-processing");
-      
-      const errorMessage = 
-        error?.response?.data?.error || 
-        error?.response?.data?.message || 
-        error?.message || 
+
+      const errorMessage =
+        error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        error?.message ||
         "An error occurred. Please try again later.";
-      
+
       toast.error(errorMessage, {
         duration: 5000,
         description: "If the problem persists, please contact support.",
       });
-      
+
       setShowPaymentModal(false);
     }
   };
@@ -405,6 +480,7 @@ const BecomeMemberPage = () => {
           formData={formState}
           errors={errors}
           onChange={handleChange}
+          stateOptions={stateOptions}
         />
       );
     }
@@ -467,7 +543,7 @@ const BecomeMemberPage = () => {
             <div className="absolute left-0 right-0 top-4 flex items-center px-8">
               <div className="h-0.5 w-full bg-border" />
             </div>
-            
+
             {steps.map((step, index) => {
               const isActive = index === activeStep;
               const isCompleted = index < activeStep;
@@ -552,9 +628,7 @@ const BecomeMemberPage = () => {
                 <span className="text-sm text-muted-foreground">
                   Membership Fee
                 </span>
-                <span className="text-xl font-bold text-foreground">
-                  ₹300
-                </span>
+                <span className="text-xl font-bold text-foreground">₹300</span>
               </div>
               <p className="mt-1.5 text-xs text-muted-foreground">
                 One-time registration fee for RSS membership

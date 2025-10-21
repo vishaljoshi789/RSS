@@ -1,7 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Building2, MapPin, Mail, Users, FileText, Image, Globe, MapPinned, Settings } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Mail,
+  Users,
+  FileText,
+  Image,
+  Globe,
+  MapPinned,
+  Settings,
+  MapPinIcon,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -35,6 +46,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
+import { cn } from "@/lib/utils";
 import type { Vyapari, Category, SubCategory } from "../types";
 
 interface VyapariFormModalProps {
@@ -52,13 +64,33 @@ const vyapariFormSchema = z.object({
     .min(2, "Business name must be at least 2 characters"),
   short_description: z.string().optional(),
   long_description: z.string().optional(),
-  logo: z.any().optional(),
-  cover_image: z.any().optional(),
+  logo: z
+    .any()
+    .refine(
+      (val) =>
+        val !== undefined &&
+        val !== null &&
+        !(typeof val === "string" && val.trim() === ""),
+      {
+        message: "Logo is required",
+      }
+    ),
+  cover_image: z
+    .any()
+    .refine(
+      (val) =>
+        val !== undefined &&
+        val !== null &&
+        !(typeof val === "string" && val.trim() === ""),
+      {
+        message: "Cover Image is required",
+      }
+    ),
   category: z.number().nullable().optional(),
   subcategory: z.number().nullable().optional(),
   email: z
     .string()
-    .optional()
+    .min(1, "Email is mandatory")
     .refine(
       (val) => !val || val === "" || z.string().email().safeParse(val).success,
       {
@@ -82,7 +114,7 @@ const vyapariFormSchema = z.object({
       landmark: z.string().optional(),
       sub_district: z.string().optional(),
       market: z.string().optional(),
-      district: z.string().optional(),
+      district: z.string().min(1, "District is required"),
       state: z.string().optional(),
       postal_code: z.string().optional(),
       country: z.string().optional(),
@@ -122,6 +154,7 @@ export default function VyapariFormModal({
   const [emailVerified, setEmailVerified] = useState(false);
   const [checkingEmail, setCheckingEmail] = useState(false);
   const [hasCheckedEmail, setHasCheckedEmail] = useState(false);
+  const [fetchingLocation, setFetchingLocation] = useState(false);
 
   const form = useForm<VyapariFormValues>({
     resolver: zodResolver(vyapariFormSchema),
@@ -228,7 +261,7 @@ export default function VyapariFormModal({
         is_blocked: vyapari.is_blocked || undefined,
         is_business_account: vyapari.is_business_account || undefined,
       });
-      
+
       if (vyapari.logo) {
         setLogoPreview(vyapari.logo);
       }
@@ -289,7 +322,7 @@ export default function VyapariFormModal({
 
   const handleCheckEmail = async () => {
     const email = form.getValues("email");
-    
+
     if (!email || !email.trim()) {
       toast.error("Please enter an email address");
       return;
@@ -307,13 +340,21 @@ export default function VyapariFormModal({
 
     try {
       const response = await axios.get(`/account/list/?email=${email}`);
-      
-      if (response.data && response.data.results && response.data.results.length > 0) {
+
+      if (
+        response.data &&
+        response.data.results &&
+        response.data.results.length > 0
+      ) {
         setEmailVerified(true);
-        toast.success("Email verified! This email is registered in the system.");
+        toast.success(
+          "Email verified! This email is registered in the system."
+        );
       } else {
         setEmailVerified(false);
-        toast.error("Email not found. Please ensure you have registered as a user first.");
+        toast.error(
+          "Email not found. Please ensure you have registered as a user first."
+        );
       }
     } catch (error: any) {
       console.error("Error checking email:", error);
@@ -324,36 +365,102 @@ export default function VyapariFormModal({
     }
   };
 
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by this browser.");
+      return;
+    }
+
+    setFetchingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        form.setValue("location.latitude", latitude);
+        form.setValue("location.longitude", longitude);
+
+        toast.success(
+          `Location fetched successfully! Lat: ${latitude.toFixed(
+            6
+          )}, Lng: ${longitude.toFixed(6)}`
+        );
+        setFetchingLocation(false);
+      },
+      (error) => {
+        let errorMessage = "Failed to get location. ";
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += "Location access denied by user.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += "Location information unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage += "Location request timed out.";
+            break;
+          default:
+            errorMessage += "Unknown error occurred.";
+            break;
+        }
+
+        toast.error(errorMessage);
+        setFetchingLocation(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  };
+
   const onSubmit = async (values: VyapariFormValues) => {
     try {
       setSubmitting(true);
 
-      const hasFiles = values.logo instanceof File || values.cover_image instanceof File;
+      const hasFiles =
+        values.logo instanceof File || values.cover_image instanceof File;
 
       let response;
-      
+
       if (hasFiles) {
         const formData = new FormData();
-        
+
         formData.append("name", values.name);
         formData.append("phone", values.phone);
-        
-        if (values.short_description) formData.append("short_description", values.short_description);
-        if (values.long_description) formData.append("long_description", values.long_description);
+
+        if (values.short_description)
+          formData.append("short_description", values.short_description);
+        if (values.long_description)
+          formData.append("long_description", values.long_description);
         if (values.logo instanceof File) formData.append("logo", values.logo);
-        if (values.cover_image instanceof File) formData.append("cover_image", values.cover_image);
-        if (values.category) formData.append("category", values.category.toString());
-        if (values.subcategory) formData.append("subcategory", values.subcategory.toString());
+        if (values.cover_image instanceof File)
+          formData.append("cover_image", values.cover_image);
+        if (values.category)
+          formData.append("category", values.category.toString());
+        if (values.subcategory)
+          formData.append("subcategory", values.subcategory.toString());
         if (values.email) formData.append("email", values.email);
         if (values.owner) formData.append("owner", values.owner);
-        if (values.referred_by) formData.append("referred_by", values.referred_by);
+        if (values.referred_by)
+          formData.append("referred_by", values.referred_by);
         if (values.insta_url) formData.append("insta_url", values.insta_url);
-        if (values.facebook_url) formData.append("facebook_url", values.facebook_url);
-        if (values.website_url) formData.append("website_url", values.website_url);
-        
-        formData.append("is_verified", (values.is_verified ?? false).toString());
+        if (values.facebook_url)
+          formData.append("facebook_url", values.facebook_url);
+        if (values.website_url)
+          formData.append("website_url", values.website_url);
+
+        formData.append(
+          "is_verified",
+          (values.is_verified ?? false).toString()
+        );
         formData.append("is_blocked", (values.is_blocked ?? false).toString());
-        formData.append("is_business_account", (values.is_business_account ?? false).toString());
+        formData.append(
+          "is_business_account",
+          (values.is_business_account ?? false).toString()
+        );
 
         if (values.address) {
           Object.keys(values.address).forEach((key) => {
@@ -364,17 +471,29 @@ export default function VyapariFormModal({
           });
         }
 
-        if (values.location?.latitude) formData.append("location.latitude", values.location.latitude.toString());
-        if (values.location?.longitude) formData.append("location.longitude", values.location.longitude.toString());
+        if (values.location?.latitude)
+          formData.append(
+            "location.latitude",
+            values.location.latitude.toString()
+          );
+        if (values.location?.longitude)
+          formData.append(
+            "location.longitude",
+            values.location.longitude.toString()
+          );
 
         if (mode === "create") {
           response = await axios.post("/vyapari/vyapari/", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
         } else {
-          response = await axios.put(`/vyapari/vyapari/${vyapari?.id}/`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
+          response = await axios.put(
+            `/vyapari/vyapari/${vyapari?.id}/`,
+            formData,
+            {
+              headers: { "Content-Type": "multipart/form-data" },
+            }
+          );
         }
       } else {
         const cleanData: any = {
@@ -384,7 +503,8 @@ export default function VyapariFormModal({
           long_description: values.long_description || null,
           category: values.category || null,
           subcategory: values.subcategory || null,
-          email: values.email && values.email.trim() !== "" ? values.email : null,
+          email:
+            values.email && values.email.trim() !== "" ? values.email : null,
           owner: values.owner || null,
           referred_by: values.referred_by || null,
           insta_url: values.insta_url || null,
@@ -402,7 +522,8 @@ export default function VyapariFormModal({
           cleanData.address = {};
           Object.keys(values.address).forEach((key) => {
             const value = values.address![key as keyof typeof values.address];
-            cleanData.address[key] = value && value.trim() !== "" ? value : null;
+            cleanData.address[key] =
+              value && value.trim() !== "" ? value : null;
           });
         } else {
           cleanData.address = {};
@@ -423,11 +544,18 @@ export default function VyapariFormModal({
         if (mode === "create") {
           response = await axios.post("/vyapari/vyapari/", cleanData);
         } else {
-          response = await axios.put(`/vyapari/vyapari/${vyapari?.id}/`, cleanData);
+          response = await axios.put(
+            `/vyapari/vyapari/${vyapari?.id}/`,
+            cleanData
+          );
         }
       }
 
-      toast.success(mode === "create" ? "Business created successfully" : "Business updated successfully");
+      toast.success(
+        mode === "create"
+          ? "Business created successfully"
+          : "Business updated successfully"
+      );
 
       onSuccess();
       onClose();
@@ -495,7 +623,9 @@ export default function VyapariFormModal({
                   <Building2 className="h-5 w-5" />
                   Basic Business Information
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">Essential business contact details</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Essential business contact details
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
@@ -505,7 +635,9 @@ export default function VyapariFormModal({
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Business Name *</FormLabel>
+                        <FormLabel>
+                          Business Name <span className="text-red-500">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Enter business name" {...field} />
                         </FormControl>
@@ -538,7 +670,9 @@ export default function VyapariFormModal({
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number *</FormLabel>
+                      <FormLabel>
+                        Phone Number <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="+91 1234567890" {...field} />
                       </FormControl>
@@ -553,7 +687,9 @@ export default function VyapariFormModal({
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>
+                          Email <span className="text-red-500">* </span>
+                        </FormLabel>
                         <FormControl>
                           <div className="space-y-2">
                             <div className="flex gap-2">
@@ -590,7 +726,9 @@ export default function VyapariFormModal({
                             {hasCheckedEmail && (
                               <p
                                 className={`text-sm ${
-                                  emailVerified ? "text-green-600" : "text-red-600"
+                                  emailVerified
+                                    ? "text-green-600"
+                                    : "text-red-600"
                                 }`}
                               >
                                 {emailVerified
@@ -643,7 +781,9 @@ export default function VyapariFormModal({
                   <FileText className="h-5 w-5" />
                   Business Category & Description
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">Classify and describe your business</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Classify and describe your business
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
@@ -652,7 +792,9 @@ export default function VyapariFormModal({
                   name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category *</FormLabel>
+                      <FormLabel>
+                        Category <span className="text-red-500">*</span>
+                      </FormLabel>
                       <Select
                         onValueChange={(value) =>
                           field.onChange(value ? Number(value) : null)
@@ -766,7 +908,9 @@ export default function VyapariFormModal({
                   <Image className="h-5 w-5" />
                   Media & Branding
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">Upload logo and cover image</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Upload logo and cover image
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
@@ -775,7 +919,7 @@ export default function VyapariFormModal({
                   name="logo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Logo</FormLabel>
+                      <FormLabel>Logo <span className="text-red-500">*</span></FormLabel>
                       <FormControl>
                         <div className="space-y-2">
                           <Input
@@ -804,7 +948,7 @@ export default function VyapariFormModal({
                   name="cover_image"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cover Image</FormLabel>
+                      <FormLabel>Cover Image <span className="text-red-500">*</span></FormLabel>
                       <FormControl>
                         <div className="space-y-2">
                           <Input
@@ -837,7 +981,9 @@ export default function VyapariFormModal({
                   <Globe className="h-5 w-5" />
                   Online Presence
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">Social media and website links</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Social media and website links
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
@@ -904,7 +1050,9 @@ export default function VyapariFormModal({
                   <MapPin className="h-5 w-5" />
                   Address Information
                 </h3>
-                <p className="text-sm text-gray-500 mt-1">Complete business location details</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Complete business location details
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
@@ -913,7 +1061,9 @@ export default function VyapariFormModal({
                   name="address.address_line1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Address Line 1 *</FormLabel>
+                      <FormLabel>
+                        Address Line 1 <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="House/Building number, Street"
@@ -985,7 +1135,9 @@ export default function VyapariFormModal({
                   name="address.market"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Market *</FormLabel>
+                      <FormLabel>
+                        Market <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Market name"
@@ -1003,7 +1155,9 @@ export default function VyapariFormModal({
                   name="address.district"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>District</FormLabel>
+                      <FormLabel>
+                        District <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="District name"
@@ -1021,7 +1175,9 @@ export default function VyapariFormModal({
                   name="address.state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>State *</FormLabel>
+                      <FormLabel>
+                        State <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="State name"
@@ -1093,11 +1249,30 @@ export default function VyapariFormModal({
             {/* Section 6: Location Coordinates */}
             <div className="space-y-4">
               <div className="border-b pb-2">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <MapPinned className="h-5 w-5" />
-                  Location Coordinates
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">GPS coordinates (optional)</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <MapPinned className="h-5 w-5" />
+                      Location Coordinates
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      GPS coordinates (optional)
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleGetCurrentLocation}
+                    disabled={fetchingLocation}
+                    className="flex items-center gap-2"
+                  >
+                    <MapPinIcon className="h-4 w-4" />
+                    {fetchingLocation
+                      ? "Getting Location..."
+                      : "Get Current Location"}
+                  </Button>
+                </div>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
@@ -1108,20 +1283,35 @@ export default function VyapariFormModal({
                     <FormItem>
                       <FormLabel>Latitude</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="any"
-                          placeholder="e.g., 28.6139"
-                          {...field}
-                          value={field.value || ""}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value
-                                ? parseFloat(e.target.value)
-                                : undefined
-                            )
-                          }
-                        />
+                        <div className="relative">
+                          <Input
+                            type="number"
+                            step="any"
+                            placeholder={
+                              fetchingLocation
+                                ? "Fetching latitude..."
+                                : "e.g., 28.6139"
+                            }
+                            {...field}
+                            value={field.value || ""}
+                            disabled={fetchingLocation}
+                            className={cn(
+                              fetchingLocation && "animate-pulse bg-muted"
+                            )}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value
+                                  ? parseFloat(e.target.value)
+                                  : undefined
+                              )
+                            }
+                          />
+                          {fetchingLocation && (
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                            </div>
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1135,20 +1325,35 @@ export default function VyapariFormModal({
                     <FormItem>
                       <FormLabel>Longitude</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="any"
-                          placeholder="e.g., 77.2090"
-                          {...field}
-                          value={field.value || ""}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value
-                                ? parseFloat(e.target.value)
-                                : undefined
-                            )
-                          }
-                        />
+                        <div className="relative">
+                          <Input
+                            type="number"
+                            step="any"
+                            placeholder={
+                              fetchingLocation
+                                ? "Fetching longitude..."
+                                : "e.g., 77.2090"
+                            }
+                            {...field}
+                            value={field.value || ""}
+                            disabled={fetchingLocation}
+                            className={cn(
+                              fetchingLocation && "animate-pulse bg-muted"
+                            )}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value
+                                  ? parseFloat(e.target.value)
+                                  : undefined
+                              )
+                            }
+                          />
+                          {fetchingLocation && (
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                            </div>
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1165,7 +1370,9 @@ export default function VyapariFormModal({
                     <Settings className="h-5 w-5" />
                     Account Settings
                   </h3>
-                  <p className="text-sm text-gray-500 mt-1">Manage account features and status</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Manage account features and status
+                  </p>
                 </div>
                 <FormField
                   control={form.control}
@@ -1185,7 +1392,9 @@ export default function VyapariFormModal({
                           Business Account
                         </FormLabel>
                         <p className="text-sm text-muted-foreground">
-                          Enable business account features for this vyapari. Usually enabled automatically when business is verified.
+                          Enable business account features for this vyapari.
+                          Usually enabled automatically when business is
+                          verified.
                         </p>
                       </div>
                     </FormItem>

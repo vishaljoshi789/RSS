@@ -34,7 +34,7 @@ const MobileNav = ({ isOpen, onMenuClose }: MobileNavProps) => {
           
           <div className="pt-6 mt-6 border-t border-primary/10">
             <ButtonRSS
-              href="https://app.joinrss.org.in/registration"
+              href="/auth/login"
               variant="primary"
               size="md"
               rounded="left-br"

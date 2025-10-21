@@ -35,19 +35,27 @@ export default function Page() {
   }, [user]);
 
 
-  const referralCount = referralData.total_referrals ?? 0;
-
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Welcome{user?.name ? `, ${user.name}` : " to Dashboard"}
-        </h1>
-        <p className="text-muted-foreground">
-          Welcome to the Rashtriya Swayamsevak Sangh dashboard. Here you can
-          view your activities and information.
-        </p>
-       
+      <div className="flex items-start justify-between">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Welcome{user?.name ? `, ${user.name.charAt(0).toUpperCase() + user.name.slice(1).toLowerCase()}` : " to Dashboard"}
+          </h1>
+          <p className="text-muted-foreground">
+            Welcome to the Rashtriya Swayamsevak Sangh dashboard. Here you can
+            view your activities and information.
+          </p>
+        </div>
+        
+        <div className="flex gap-2">
+          <a 
+            href="/become-member"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+          >
+            Become Member
+          </a>
+        </div>
       </div>
 
       <StatCard

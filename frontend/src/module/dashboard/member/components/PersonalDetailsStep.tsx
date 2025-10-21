@@ -1,5 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -7,6 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type PersonalDetailsStepProps = {
   formData: {
@@ -20,6 +31,16 @@ type PersonalDetailsStepProps = {
   };
   errors: Record<string, string>;
   onChange: (field: string, value: string) => void;
+};
+
+const calculateAge = (birthDate: Date): number => {
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
 };
 
 const professionOptions = [
@@ -52,13 +73,46 @@ export const PersonalDetailsStep = ({
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="dob">Date of birth</Label>
-          <Input
-            id="dob"
-            type="date"
-            value={formData.dob}
-            onChange={(e) => onChange("dob", e.target.value)}
-          />
+          <Label>Date of birth</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !formData.dob && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {formData.dob ? format(new Date(formData.dob), "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                captionLayout="dropdown"
+                selected={formData.dob ? new Date(formData.dob) : undefined}
+                onSelect={(date) => {
+                  if (date) {
+                    const age = calculateAge(date);
+                    if (age < 18) {
+                      toast.error("You must be at least 18 years old to register.");
+                      return;
+                    }
+                    if (age > 100) {
+                      toast.error("Please enter a valid date of birth.");
+                      return;
+                    }
+                    onChange('dob', date.toISOString().split('T')[0]);
+                  }
+                }}
+                disabled={(date) =>
+                  date > new Date() || date < new Date("1900-01-01")
+                }
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
           {errors.dob && (
             <p className="text-sm text-destructive">{errors.dob}</p>
           )}
