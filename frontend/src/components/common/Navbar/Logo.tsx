@@ -22,10 +22,10 @@ const Logo = () => {
         <div className="block">
           <h1 className="font-lato font-bold text-sm sm:text-base lg:text-lg xl:text-lg leading-tight">
             <span className="bg-gradient-to-r from-orange-500 via-gray-400 to-green-600 bg-clip-text text-transparent">
-              Rashtriya Swayamsevak Sangh
+              RASHTRIYA SEVA SANGH
             </span>
           </h1>
-          <p className="font-nunito text-[8px] sm:text-xs text-gray-600 mt-0.5 hidden sm:block">
+          <p className="font-nunito text-[5px] sm:text-xs text-gray-600 mt-0.5 hidden sm:block tracking-tighter">
             United for Dharma, Dedicated for Nation.
           </p>
         </div>

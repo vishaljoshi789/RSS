@@ -5,6 +5,38 @@ export interface SupporterInfo {
   alt: string;
 }
 
+export interface PageContent {
+  mainTitle: string;
+  mainSubtitle: string;
+  introSection: {
+    title: string;
+    description: string;
+    joinButtonText: string;
+    learnMoreButtonText: string;
+  };
+  organizationName: string;
+}
+
+
+export interface VideoInfo {
+  title: string;
+  duration: string;
+  description: string;
+  videoSrc: string;
+  posterSrc: string;
+  fullScreenButtonText: string;
+}
+
+
+export const videoInfo: VideoInfo = {
+  title: "संगठन परिचय वीडियो",
+  duration: "अवधि: 2 मिनट 50 सेकंड",
+  description: "हमारी यात्रा और दृष्टिकोण",
+  videoSrc: "https://joinrss.org.in/wp-content/uploads/2025/09/InShot_20250915_180027869.mp4",
+  posterSrc: "/hero/hero-01.png",
+  fullScreenButtonText: "पूर्ण स्क्रीन में देखें"
+};
+
 
 export const supporterImages: SupporterInfo[] = [
   {
@@ -50,6 +82,19 @@ export const supporterImages: SupporterInfo[] = [
     alt: "RSS Supporter"
   }
 ];
+
+export const pageContent: PageContent = {
+  mainTitle: "राष्ट्रीय सेवा संघ का परिचय",
+  mainSubtitle: "सेवा, समर्पण और राष्ट्र के प्रति हमारी अटूट प्रतिबद्धता को समझें",
+  introSection: {
+    title: "राष्ट्रीय सेवा संघ का संपूर्ण परिचय",
+    description: "हमारे संगठन के उद्देश्य, कार्यप्रणाली और भविष्य की योजनाओं के बारे में विस्तार से जानें। देखें कि कैसे हम सभी मिलकर एक मजबूत और समृद्ध भारत का निर्माण कर सकते हैं।",
+    joinButtonText: "Join Our Mission",
+    learnMoreButtonText: "Learn More"
+  },
+  organizationName: "राष्ट्रीय सेवा संघ"
+};
+
 
 
 export const supporterRows = {

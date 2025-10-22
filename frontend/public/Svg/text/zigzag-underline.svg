@@ -1,0 +1,12 @@
+<svg viewBox="0 0 200 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path 
+    d="M5 10L15 5L25 15L35 5L45 15L55 5L65 15L75 5L85 15L95 5L105 15L115 5L125 15L135 5L145 15L155 5L165 15L175 5L185 15L195 10" 
+    stroke="#f97316" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  />
+  <circle cx="30" cy="10" r="1" fill="#f97316" />
+  <circle cx="100" cy="10" r="1" fill="#f97316" />
+  <circle cx="170" cy="10" r="1" fill="#f97316" />
+</svg>

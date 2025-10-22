@@ -1,0 +1,13 @@
+<svg viewBox="0 0 200 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path 
+    d="M10 10C30 6 50 14 70 10C90 6 110 14 130 10C150 6 170 14 190 10" 
+    stroke="#f97316" 
+    strokeWidth="2.5" 
+    strokeLinecap="round"
+    fill="none"
+  />
+  <circle cx="30" cy="7" r="1" fill="#fb923c" />
+  <circle cx="70" cy="10" r="1" fill="#f97316" />
+  <circle cx="110" cy="7" r="1" fill="#fb923c" />
+  <circle cx="150" cy="7" r="1" fill="#fb923c" />
+</svg>

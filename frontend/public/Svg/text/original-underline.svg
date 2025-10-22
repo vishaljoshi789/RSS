@@ -1,0 +1,27 @@
+<svg viewBox="0 0 200 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M10 15C50 8 90 8 130 15C150 18 170 18 190 15"
+    stroke="url(#about-gradient)"
+    strokeWidth="3"
+    strokeLinecap="round"
+  />
+  
+  <circle cx="15" cy="12" r="1.5" fill="#FF6B35" opacity="0.8" />
+  <circle cx="100" cy="6" r="1" fill="#FF8C42" opacity="0.6" />
+  <circle cx="185" cy="12" r="1.5" fill="#FF6B35" opacity="0.8" />
+  
+  <defs>
+    <linearGradient
+      id="about-gradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop offset="0%" stopColor="#FF6B35" />
+      <stop offset="30%" stopColor="#FF8C42" />
+      <stop offset="70%" stopColor="#FFA726" />
+      <stop offset="100%" stopColor="#FF6B35" />
+    </linearGradient>
+  </defs>
+</svg>
