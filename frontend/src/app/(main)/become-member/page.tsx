@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, useRef, type ChangeEvent } from "react";
 import Image from "next/image";
 import {
   CheckCircle2,
@@ -139,6 +139,12 @@ const BecomeMemberPage = () => {
   const [storageHydrated, setStorageHydrated] = useState(false);
   const [formState, setFormState] = useState<FormState>(defaultFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const formDataRef = useRef<{ name: string; phone: string; email: string }>({
+    name: "",
+    phone: "",
+    email: ""
+  });
 
   const stateOptions = useMemo(
     () => getIndianStates(rawStateDistrictData),
@@ -421,11 +427,40 @@ const BecomeMemberPage = () => {
 
   useEffect(() => {
     if (paymentSuccess && !submitted) {
+      // Use the ref instead of formState to get preserved data
+      const savedFormData = formDataRef.current;
+      
       toast.success("Payment completed successfully!", {
         duration: 5000,
       });
-      clearStoredForm();
+      
       setSubmitted(true);
+
+      setTimeout(() => {
+        const receiptParams = new URLSearchParams({
+          name: savedFormData.name || '',
+          phone: savedFormData.phone || '',
+          date: new Date().toLocaleDateString('en-IN'),
+          mode: 'Online payment',
+          amount: '300',
+          amountWords: 'Three Hundred Rupees Only',
+          receiptNumber: 'MEMBER_' + Date.now(),
+          location: formState.state || 'state'
+        });
+
+        const receiptUrl = `/receipt?${receiptParams.toString()}`;
+        
+        // Create a temporary link and click it (bypasses popup blocker)
+        const link = document.createElement('a');
+        link.href = receiptUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        clearStoredForm();
+      }, 500);
     }
   }, [paymentSuccess, submitted]);
 
@@ -461,6 +496,13 @@ const BecomeMemberPage = () => {
 
   const handlePaymentConfirm = async () => {
     try {
+      // Store form data in ref before any async operations
+      formDataRef.current = {
+        name: formState.name,
+        phone: formState.phone,
+        email: formState.email
+      };
+      
       // Step 1: Register member
       toast.loading("Registering membership...", { id: "member-registration" });
       await submitMemberForm(formState);
@@ -571,7 +613,7 @@ const BecomeMemberPage = () => {
           </div>
         </div>
         <Button className="mt-2" onClick={handleReset} size="sm">
-          Fill the form again
+          Download pdf
         </Button>
       </section>
     );
