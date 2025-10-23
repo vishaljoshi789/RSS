@@ -1,0 +1,20 @@
+<svg viewBox="0 0 200 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path 
+    d="M10 10 Q30 5 50 10 T90 10 T130 10 T170 10 L190 10" 
+    stroke="url(#smooth-gradient)" 
+    strokeWidth="3" 
+    strokeLinecap="round"
+    fill="none"
+  />
+  <circle cx="50" cy="10" r="1.5" fill="#f97316" opacity="0.7" />
+  <circle cx="100" cy="10" r="1.5" fill="#fb923c" opacity="0.7" />
+  <circle cx="150" cy="10" r="1.5" fill="#f97316" opacity="0.7" />
+  
+  <defs>
+    <linearGradient id="smooth-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#f97316" />
+      <stop offset="50%" stopColor="#fb923c" />
+      <stop offset="100%" stopColor="#f97316" />
+    </linearGradient>
+  </defs>
+</svg>

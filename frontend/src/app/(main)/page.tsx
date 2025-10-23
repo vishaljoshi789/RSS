@@ -30,7 +30,7 @@ export default function Home() {
 
     <Press />
 
-    <Contact />
+    {/* <Contact /> */}
   </main>
   );
 }

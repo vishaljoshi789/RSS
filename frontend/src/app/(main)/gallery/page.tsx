@@ -76,6 +76,12 @@ const GalleryPage = () => {
                 >
                   🎬 वीडियो गैलरी
                 </TabsTrigger>
+                <TabsTrigger
+                  value="books"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-6 py-2 text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground"
+                >
+                  📖 पवित्र पुस्तकें
+                </TabsTrigger>
               </TabsList>
             </div>
 
@@ -242,6 +248,223 @@ const GalleryPage = () => {
                   <p className="text-muted-foreground max-w-md mx-auto">कृपया दूसरी श्रेणी का चयन करें या बाद में फिर से देखें</p>
                 </div>
               )}
+            </TabsContent>
+
+            
+            <TabsContent value="books" className="space-y-8">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+                  🕉️ पवित्र ग्रंथ संग्रह
+                </h2>
+                <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
+                  श्रीमद्भगवद्गीता और अन्य धार्मिक पुस्तकों का डिजिटल संग्रह
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group border">
+                  <div className="relative aspect-[3/4] bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-950/20 dark:to-orange-900/10">
+                    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+                      <div className="text-7xl mb-4">🕉️</div>
+                      <h3 className="text-2xl font-bold text-orange-800 dark:text-orange-600">
+                        श्रीमद्भगवद्गीता
+                      </h3>
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-bold text-foreground mb-2">
+                      श्रीमद्भगवद्गीता
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      18 अध्याय • 700 श्लोक
+                    </p>
+                    <Button 
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                      onClick={() => window.open('https://www.gitasupersite.iitk.ac.in/srimad?language=hi&field_chapter_value=1&field_nsutra_value=1', '_blank')}
+                    >
+                      ऑनलाइन पढ़ें 📖
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                
+                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group border">
+                  <div className="relative aspect-[3/4] bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-950/20 dark:to-orange-900/10">
+                    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+                      <div className="text-7xl mb-4">📿</div>
+                      <h3 className="text-2xl font-bold text-orange-800 dark:text-orange-600">
+                        रामायण
+                      </h3>
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-bold text-foreground mb-2">
+                      श्री रामायण
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      महर्षि वाल्मीकि कृत
+                    </p>
+                    <Button 
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                      onClick={() => window.open('https://valmikiramayan.net/', '_blank')}
+                    >
+                      ऑनलाइन पढ़ें 📖
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                
+                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group border">
+                  <div className="relative aspect-[3/4] bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-950/20 dark:to-orange-900/10">
+                    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+                      <div className="text-7xl mb-4">📜</div>
+                      <h3 className="text-2xl font-bold text-orange-800 dark:text-orange-600">
+                        वेद
+                      </h3>
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-bold text-foreground mb-2">
+                      चारों वेद
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      ऋग्वेद • यजुर्वेद • सामवेद • अथर्ववेद
+                    </p>
+                    <Button 
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                      onClick={() => window.open('https://www.vedicbooks.net/', '_blank')}
+                    >
+                      ऑनलाइन पढ़ें 📖
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+
+              
+              {/* Info Note about Online Readers */}
+              <div className="mt-12">
+                <Card className="overflow-hidden border-2 border-orange-200 dark:border-orange-800">
+                  <CardContent className="p-0">
+                    <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 text-white">
+                      <h3 className="text-2xl font-bold mb-2">
+                        📖 पवित्र ग्रंथ कैसे पढ़ें
+                      </h3>
+                      <p className="text-white/90">
+                        ऑनलाइन और ऑफलाइन पढ़ने के विकल्प
+                      </p>
+                    </div>
+                    <div className="p-8 bg-gradient-to-br from-orange-50 to-white dark:from-orange-950/10 dark:to-background">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="text-2xl">🌐</div>
+                            <div>
+                              <h4 className="font-semibold text-lg mb-2">ऑनलाइन पढ़ें</h4>
+                              <p className="text-sm text-muted-foreground mb-3">
+                                ऊपर दिए गए बटनों पर क्लिक करके विश्वसनीय स्रोतों से सीधे पढ़ें:
+                              </p>
+                              <ul className="text-sm space-y-2 text-muted-foreground">
+                                <li className="flex items-center gap-2">
+                                  <span className="text-orange-500">•</span>
+                                  IIT Kanpur का Gita Supersite (हिंदी)
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-orange-500">•</span>
+                                  Internet Archive (PDF डाउनलोड)
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-orange-500">•</span>
+                                  Vedabase और अन्य धार्मिक साइटें
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="text-2xl">📱</div>
+                            <div>
+                              <h4 className="font-semibold text-lg mb-2">जल्द आ रहा है</h4>
+                              <p className="text-sm text-muted-foreground mb-3">
+                                हम एक समर्पित पाठक ऐप विकसित कर रहे हैं जिसमें शामिल होगा:
+                              </p>
+                              <ul className="text-sm space-y-2 text-muted-foreground">
+                                <li className="flex items-center gap-2">
+                                  <span className="text-orange-500">•</span>
+                                  ऑफलाइन पढ़ने की सुविधा
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-orange-500">•</span>
+                                  बुकमार्क और नोट्स
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-orange-500">•</span>
+                                  ऑडियो उच्चारण और व्याख्या
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 p-4 bg-orange-100 dark:bg-orange-950/30 rounded-lg border border-orange-200 dark:border-orange-800">
+                        <div className="flex items-start gap-3">
+                          <div className="text-orange-600 dark:text-orange-400 text-xl">ℹ️</div>
+                          <div className="text-sm">
+                            <p className="font-medium text-orange-900 dark:text-orange-100 mb-1">
+                              नोट: वेब सुरक्षा के कारण
+                            </p>
+                            <p className="text-orange-800 dark:text-orange-200">
+                              अधिकांश वेबसाइटें अपनी सामग्री को अन्य साइटों में एम्बेड करने की अनुमति नहीं देती हैं। 
+                              इसलिए हमने सीधे लिंक प्रदान किए हैं जो नए टैब में खुलेंगे।
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              
+              <div className="mt-8">
+                <Card className="border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-orange-50 to-white dark:from-orange-950/10 dark:to-background">
+                  <CardContent className="p-8 text-center">
+                    <div className="text-5xl mb-4">🙏</div>
+                    <h3 className="text-2xl font-bold text-foreground mb-3">
+                      अधिक धार्मिक पुस्तकें
+                    </h3>
+                    <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                      हमारे डिजिटल पुस्तकालय में हजारों धार्मिक ग्रंथ, पुराण, उपनिषद और अन्य पवित्र साहित्य उपलब्ध हैं।
+                    </p>
+                    <div className="flex flex-wrap gap-3 justify-center">
+                      <Button
+                        variant="outline"
+                        className="border-orange-600 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                        onClick={() => window.open('https://archive.org/details/bhagavadgita', '_blank')}
+                      >
+                        Internet Archive
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="border-orange-600 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                        onClick={() => window.open('https://www.wisdomlib.org/', '_blank')}
+                      >
+                        Wisdom Library
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="border-orange-600 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                        onClick={() => window.open('https://vedabase.io/', '_blank')}
+                      >
+                        Vedabase
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

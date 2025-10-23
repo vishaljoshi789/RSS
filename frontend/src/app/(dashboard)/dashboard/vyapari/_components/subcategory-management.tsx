@@ -29,7 +29,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
@@ -43,14 +49,15 @@ export default function SubCategoryManagement() {
   const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Dialog states
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  
+
   // Form states
-  const [currentSubCategory, setCurrentSubCategory] = useState<SubCategory | null>(null);
+  const [currentSubCategory, setCurrentSubCategory] =
+    useState<SubCategory | null>(null);
   const [formData, setFormData] = useState<SubCategoryFormData>({
     category: 0,
     name: "",
@@ -69,7 +76,9 @@ export default function SubCategoryManagement() {
         axios.get("/vyapari/subcategory/"),
       ]);
       setCategories(categoriesRes.data.results || categoriesRes.data || []);
-      setSubcategories(subcategoriesRes.data.results || subcategoriesRes.data || []);
+      setSubcategories(
+        subcategoriesRes.data.results || subcategoriesRes.data || []
+      );
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to fetch data");
     } finally {
@@ -125,7 +134,8 @@ export default function SubCategoryManagement() {
       const data = new FormData();
       data.append("category", formData.category.toString());
       data.append("name", formData.name);
-      if (formData.description) data.append("description", formData.description);
+      if (formData.description)
+        data.append("description", formData.description);
       data.append("image", imageFile);
 
       await axios.post("/vyapari/subcategory/", data, {
@@ -138,7 +148,9 @@ export default function SubCategoryManagement() {
       resetForm();
       fetchData();
     } catch (error: any) {
-      toast.error(error.response?.data?.name?.[0] || "Failed to create subcategory");
+      toast.error(
+        error.response?.data?.name?.[0] || "Failed to create subcategory"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -167,7 +179,8 @@ export default function SubCategoryManagement() {
       const data = new FormData();
       data.append("category", formData.category.toString());
       data.append("name", formData.name);
-      if (formData.description) data.append("description", formData.description);
+      if (formData.description)
+        data.append("description", formData.description);
       if (imageFile) data.append("image", imageFile);
 
       await axios.put(`/vyapari/subcategory/${currentSubCategory.id}/`, data, {
@@ -180,7 +193,9 @@ export default function SubCategoryManagement() {
       resetForm();
       fetchData();
     } catch (error: any) {
-      toast.error(error.response?.data?.name?.[0] || "Failed to update subcategory");
+      toast.error(
+        error.response?.data?.name?.[0] || "Failed to update subcategory"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -205,16 +220,21 @@ export default function SubCategoryManagement() {
       setCurrentSubCategory(null);
       fetchData();
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to delete subcategory");
+      toast.error(
+        error.response?.data?.message || "Failed to delete subcategory"
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
   // Filter subcategories
-  const filteredSubcategories = subcategories.filter((sub) =>
-    sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getCategoryName(sub.category).toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSubcategories = subcategories.filter(
+    (sub) =>
+      sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getCategoryName(sub.category)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -225,7 +245,10 @@ export default function SubCategoryManagement() {
             <CardTitle>SubCategories</CardTitle>
             <CardDescription>Manage business subcategories</CardDescription>
           </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Button
+            title="Add SubCategory"
+            onClick={() => setIsCreateDialogOpen(true)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add SubCategory
           </Button>
@@ -288,9 +311,13 @@ export default function SubCategoryManagement() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{getCategoryName(subcategory.category)}</Badge>
+                      <Badge variant="outline">
+                        {getCategoryName(subcategory.category)}
+                      </Badge>
                     </TableCell>
-                    <TableCell className="font-medium">{subcategory.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {subcategory.name}
+                    </TableCell>
                     <TableCell>
                       <p className="line-clamp-2 text-sm text-muted-foreground">
                         {subcategory.description || "No description"}
@@ -299,6 +326,7 @@ export default function SubCategoryManagement() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
+                          title="Edit"
                           variant="ghost"
                           size="sm"
                           onClick={() => openEditDialog(subcategory)}
@@ -306,6 +334,7 @@ export default function SubCategoryManagement() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
+                          title="Delete"
                           variant="ghost"
                           size="sm"
                           onClick={() => openDeleteDialog(subcategory)}
@@ -327,14 +356,20 @@ export default function SubCategoryManagement() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create SubCategory</DialogTitle>
-            <DialogDescription>Add a new business subcategory</DialogDescription>
+            <DialogDescription>
+              Add a new business subcategory
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="category">Category *</Label>
+              <Label htmlFor="category">
+                Category <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.category.toString()}
-                onValueChange={(value) => setFormData({ ...formData, category: parseInt(value) })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, category: parseInt(value) })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
@@ -349,11 +384,15 @@ export default function SubCategoryManagement() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="name">Name *</Label>
+              <Label htmlFor="name">
+                Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Enter subcategory name"
               />
             </div>
@@ -362,13 +401,17 @@ export default function SubCategoryManagement() {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Enter subcategory description"
                 rows={3}
               />
             </div>
             <div>
-              <Label htmlFor="image">Image *</Label>
+              <Label htmlFor="image">
+                Image <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="image"
                 type="file"
@@ -378,16 +421,28 @@ export default function SubCategoryManagement() {
               />
               {imagePreview && (
                 <div className="mt-2 relative h-32 w-32 overflow-hidden rounded">
-                  <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               )}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setIsCreateDialogOpen(false); resetForm(); }}>
+            <Button
+              title="Cancel"
+              variant="outline"
+              onClick={() => {
+                setIsCreateDialogOpen(false);
+                resetForm();
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleCreate} disabled={submitting}>
+            <Button title="Create" onClick={handleCreate} disabled={submitting}>
               {submitting ? "Creating..." : "Create"}
             </Button>
           </DialogFooter>
@@ -403,10 +458,14 @@ export default function SubCategoryManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit-category">Category *</Label>
+              <Label htmlFor="edit-category">
+                Category <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.category.toString()}
-                onValueChange={(value) => setFormData({ ...formData, category: parseInt(value) })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, category: parseInt(value) })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
@@ -421,11 +480,15 @@ export default function SubCategoryManagement() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="edit-name">Name *</Label>
+              <Label htmlFor="edit-name">
+                Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="edit-name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Enter subcategory name"
               />
             </div>
@@ -434,7 +497,9 @@ export default function SubCategoryManagement() {
               <Textarea
                 id="edit-description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Enter subcategory description"
                 rows={3}
               />
@@ -449,16 +514,28 @@ export default function SubCategoryManagement() {
               />
               {imagePreview && (
                 <div className="mt-2 relative h-32 w-32 overflow-hidden rounded">
-                  <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               )}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setIsEditDialogOpen(false); resetForm(); }}>
+            <Button
+              title="Cancel"
+              variant="outline"
+              onClick={() => {
+                setIsEditDialogOpen(false);
+                resetForm();
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleEdit} disabled={submitting}>
+            <Button title="Update" onClick={handleEdit} disabled={submitting}>
               {submitting ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>
@@ -471,11 +548,13 @@ export default function SubCategoryManagement() {
           <DialogHeader>
             <DialogTitle>Delete SubCategory</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentSubCategory?.name}"? This action cannot be undone.
+              Are you sure you want to delete "{currentSubCategory?.name}"? This
+              action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
+              title="Cancel"
               variant="outline"
               onClick={() => {
                 setIsDeleteDialogOpen(false);
@@ -485,6 +564,7 @@ export default function SubCategoryManagement() {
               Cancel
             </Button>
             <Button
+              title="Delete"
               variant="destructive"
               onClick={handleDelete}
               disabled={submitting}

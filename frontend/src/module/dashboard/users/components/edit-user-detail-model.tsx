@@ -203,7 +203,7 @@ export function EditUserDetailModal({
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <UserIcon className="h-4 w-4" />
-                          Full Name *
+                          Full Name <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -224,7 +224,7 @@ export function EditUserDetailModal({
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
                           <Mail className="h-4 w-4" />
-                          Email *
+                          Email <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input

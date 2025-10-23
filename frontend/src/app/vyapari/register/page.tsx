@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
@@ -342,54 +343,72 @@ export default function RegisterBusinessPage() {
       />
 
       <div className="min-h-screen bg-gradient-to-b from-background via-muted/20 to-background">
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <PageHeader onBackClick={() => router.push("/vyapari")} />
 
-          <ProgressSteps currentStep={step} />
+          <div className="flex gap-6 mt-8">
+            {/* Left side - Form */}
+            <div className="flex-1 max-w-4xl">
+              <ProgressSteps currentStep={step} />
 
-          <Card className="border-2 mt-8">
-            <CardContent className="p-6">
-              {step === 1 && (
-                <BasicInfoStep
-                  formData={formData}
-                  categories={categories}
-                  filteredSubcategories={filteredSubcategories}
-                  handleInputChange={handleInputChange}
-                  handleSelectChange={handleSelectChange}
+              <Card className="border-2 mt-8">
+                <CardContent className="p-6">
+                  {step === 1 && (
+                    <BasicInfoStep
+                      formData={formData}
+                      categories={categories}
+                      filteredSubcategories={filteredSubcategories}
+                      handleInputChange={handleInputChange}
+                      handleSelectChange={handleSelectChange}
+                    />
+                  )}
+
+                  {step === 2 && (
+                    <ContactAddressStep
+                      formData={formData}
+                      handleInputChange={handleInputChange}
+                      emailVerified={emailVerified}
+                      setEmailVerified={setEmailVerified}
+                      referralVerified={referralVerified}
+                      setReferralVerified={setReferralVerified}
+                    />
+                  )}
+
+                  {step === 3 && (
+                    <ImageUploadStep
+                      logoFile={logoFile}
+                      coverImageFile={coverImageFile}
+                      logoPreview={logoPreview}
+                      coverImagePreview={coverImagePreview}
+                      handleFileChange={handleFileChange}
+                      removeImage={removeImage}
+                    />
+                  )}
+
+                  <FormNavigation
+                    step={step}
+                    loading={loading}
+                    onBack={handleBack}
+                    onNext={handleNext}
+                    onSubmit={handleSubmit}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right side - Image */}
+            <div className="hidden lg:flex w-full max-w-sm items-start justify-center">
+              <div className="sticky top-24 w-full h-[600px] rounded-xl overflow-hidden border-2 border-muted">
+                <Image
+                  src="/hero/business.jpg"
+                  alt="Business Registration"
+                  fill
+                  className="object-cover"
+                  priority
                 />
-              )}
-
-              {step === 2 && (
-                <ContactAddressStep
-                  formData={formData}
-                  handleInputChange={handleInputChange}
-                  emailVerified={emailVerified}
-                  setEmailVerified={setEmailVerified}
-                  referralVerified={referralVerified}
-                  setReferralVerified={setReferralVerified}
-                />
-              )}
-
-              {step === 3 && (
-                <ImageUploadStep
-                  logoFile={logoFile}
-                  coverImageFile={coverImageFile}
-                  logoPreview={logoPreview}
-                  coverImagePreview={coverImagePreview}
-                  handleFileChange={handleFileChange}
-                  removeImage={removeImage}
-                />
-              )}
-
-              <FormNavigation
-                step={step}
-                loading={loading}
-                onBack={handleBack}
-                onNext={handleNext}
-                onSubmit={handleSubmit}
-              />
-            </CardContent>
-          </Card>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

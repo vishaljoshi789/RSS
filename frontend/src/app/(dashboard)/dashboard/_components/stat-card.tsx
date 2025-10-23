@@ -22,7 +22,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Copy, Users2, UserCheck2, UserPlus2 } from "lucide-react";
+import { Copy, Users2, UserCheck2, UserPlus2, Check, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -55,7 +55,7 @@ const StatCard: React.FC<StatCardProps> = ({
   loading,
   error,
 }) => {
-  const [copying, setCopying] = useState(false);
+  const [copyState, setCopyState] = useState<'idle' | 'success' | 'error'>('idle');
 
   const referrals: ReferralItem[] = useMemo(
     () => referralData?.referrals || [],
@@ -97,13 +97,14 @@ const StatCard: React.FC<StatCardProps> = ({
   const handleCopy = async () => {
     if (!referralLink) return;
     try {
-      setCopying(true);
       await navigator.clipboard.writeText(referralLink);
+      setCopyState('success');
       toast.success("Referral link copied to clipboard");
+      setTimeout(() => setCopyState('idle'), 2000);
     } catch (copyError) {
+      setCopyState('error');
       toast.error("Unable to copy referral link");
-    } finally {
-      setCopying(false);
+      setTimeout(() => setCopyState('idle'), 2000);
     }
   };
 
@@ -279,17 +280,30 @@ const StatCard: React.FC<StatCardProps> = ({
                 अपनी रेफरल लिंक साझा करें और अधिक सदस्यों को जोड़ें।
               </p>
               <div className="flex items-center gap-2">
-                <div className="flex-1 truncate rounded-md border bg-muted px-3 py-2 text-xs">
+                <div className="flex-1 truncate rounded-md border bg-muted px-3 py-2 text-xs shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]">
                   {referralLink || "रेफरल लिंक उपलब्ध नहीं"}
                 </div>
                 <Button
                   size="icon"
                   variant="outline"
-                  className="shrink-0"
-                  disabled={!referralLink || copying}
+                  className="shrink-0 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]"
+                  disabled={!referralLink || copyState !== 'idle'}
                   onClick={handleCopy}
+                  title={
+                    copyState === 'success' 
+                      ? 'Copied!' 
+                      : copyState === 'error' 
+                      ? 'Failed to copy' 
+                      : 'Copy referral link'
+                  }
                 >
-                  <Copy className="h-4 w-4" />
+                  {copyState === 'success' ? (
+                    <Check className="h-4 w-4 text-green-600" />
+                  ) : copyState === 'error' ? (
+                    <X className="h-4 w-4 text-red-600" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>

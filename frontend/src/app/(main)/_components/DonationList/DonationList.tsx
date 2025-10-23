@@ -182,7 +182,7 @@ const DonationList = () => {
               राष्ट्रीय सेवा संघ के दानदाताओं की सूची - कुल{" "}
               {tickerDonations.length} प्रविष्टियां
             </TableCaption>
-            <TableHeader className="sticky top-0 bg-background z-10">
+            {/* <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow className="bg-muted/50">
                 <TableHead className="font-semibold text-foreground px-6 py-4">
                   दानदाता
@@ -203,7 +203,7 @@ const DonationList = () => {
                   संदेश
                 </TableHead>
               </TableRow>
-            </TableHeader>
+            </TableHeader> */}
           </Table>
           
           <div className="donation-scroll-container">
@@ -230,11 +230,11 @@ const DonationList = () => {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="px-6 py-4">
+                  {/* <TableCell className="px-6 py-4">
                     <span className="font-bold text-lg text-primary">
                       {formatTickerAmount(donation.amount, donation.currency)}
                     </span>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />
@@ -276,7 +276,6 @@ const DonationList = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {/* Duplicate rows for seamless loop */}
               {filteredDonations.map((donation) => (
                 <TableRow
                   key={`duplicate-${donation.id}`}
@@ -298,11 +297,11 @@ const DonationList = () => {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="px-6 py-4">
+                  {/* <TableCell className="px-6 py-4">
                     <span className="font-bold text-lg text-primary">
                       {formatTickerAmount(donation.amount, donation.currency)}
                     </span>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-muted-foreground" />

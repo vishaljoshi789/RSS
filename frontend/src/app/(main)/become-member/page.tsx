@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import Image from "next/image";
 import {
   CheckCircle2,
   Loader2,
   CreditCard,
   IndianRupee,
+  CheckCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -523,87 +525,97 @@ const BecomeMemberPage = () => {
   }
 
   return (
-    <section className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 py-8">
-      <div className="flex w-full flex-col gap-6 rounded-xl border bg-card p-5 sm:p-6">
-        <div className="space-y-1.5">
-          <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
-            Membership interest form
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Complete the short form below to let us know how you&apos;d like to
-            contribute.
-          </p>
-        </div>
+    <section className="mx-auto flex min-h-screen w-full items-center justify-center px-4 py-8">
+      <div className="flex w-full max-w-7xl gap-6 rounded-xl border bg-card p-6">
+        {/* Left side - Form */}
+        <div className="flex w-full max-w-4xl flex-col gap-6">
+          <div className="space-y-1.5">
+            <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
+              Membership interest form
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Complete the short form below to let us know how you&apos;d like to
+              contribute.
+            </p>
+          </div>
 
-        <nav
-          aria-label="Steps"
-          className="rounded-lg border bg-background px-5 py-5"
-        >
-          <ol className="flex items-center justify-between gap-3 relative">
-            <div className="absolute left-0 right-0 top-4 flex items-center px-8">
-              <div className="h-0.5 w-full bg-border" />
-            </div>
-
+          <div className="flex items-center justify-center gap-4 mt-6">
             {steps.map((step, index) => {
               const isActive = index === activeStep;
               const isCompleted = index < activeStep;
 
               return (
-                <li
-                  key={step.title}
-                  className="flex flex-1 flex-col items-center gap-1.5 relative z-10"
-                >
+                <div key={step.title} className="flex items-center gap-2">
                   <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium ${
-                      isActive
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors ${
+                      isActive || isCompleted
                         ? "border-primary bg-primary text-primary-foreground"
-                        : isCompleted
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-background text-muted-foreground"
+                        : "border-muted-foreground/30 text-muted-foreground"
                     }`}
-                    aria-current={isActive ? "step" : undefined}
                   >
-                    {index + 1}
+                    {isCompleted ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      <span className="text-sm font-medium">{index + 1}</span>
+                    )}
                   </div>
-                  <p
-                    className={`text-xs font-medium text-center ${
-                      isActive ? "text-foreground" : "text-muted-foreground"
+                  <span
+                    className={`text-sm font-medium ${
+                      isActive || isCompleted
+                        ? "text-foreground"
+                        : "text-muted-foreground"
                     }`}
                   >
                     {step.title}
-                  </p>
-                </li>
+                  </span>
+                  {index < steps.length - 1 && (
+                    <div className="h-0.5 w-12 bg-muted-foreground/30" />
+                  )}
+                </div>
               );
             })}
-          </ol>
-        </nav>
+          </div>
 
-        <div className="rounded-lg border bg-background p-5">
-          {renderStepContent()}
-        </div>
+          <div className="rounded-lg border bg-background p-5">
+            {renderStepContent()}
+          </div>
 
-        <div className="flex justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleBack}
-            disabled={activeStep === 0 || isSubmitting}
-          >
-            Back
-          </Button>
-          {activeStep < steps.length - 1 ? (
-            <Button type="button" onClick={handleNext} disabled={isSubmitting}>
-              Next
-            </Button>
-          ) : (
+          <div className="flex justify-between">
             <Button
               type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
+              variant="outline"
+              onClick={handleBack}
+              disabled={activeStep === 0 || isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Review & Pay"}
+              Back
             </Button>
-          )}
+            {activeStep < steps.length - 1 ? (
+              <Button type="button" onClick={handleNext} disabled={isSubmitting}>
+                Next
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Review & Pay"}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Right side - Image */}
+        <div className="hidden lg:flex w-full max-w-sm items-center justify-center">
+          <div className="relative w-full h-full min-h-[600px] rounded-xl overflow-hidden border-2 border-muted">
+            <Image
+              src="/hero/business-register.avif"
+              alt="RSS Membership"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
         </div>
       </div>
 

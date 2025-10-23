@@ -13,16 +13,20 @@ export default function VyapariDashboardPage() {
 
   return (
     <div className="space-y-6">
-      
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Vyapari Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Vyapari Management
+        </h1>
         <p className="text-muted-foreground">
           Manage business directory categories, subcategories, and listings
         </p>
       </div>
 
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full max-w-2xl grid-cols-4">
           <TabsTrigger value="businesses" className="flex items-center gap-2">
             <Store className="h-4 w-4" />
@@ -32,7 +36,10 @@ export default function VyapariDashboardPage() {
             <Layers className="h-4 w-4" />
             <span>Categories</span>
           </TabsTrigger>
-          <TabsTrigger value="subcategories" className="flex items-center gap-2">
+          <TabsTrigger
+            value="subcategories"
+            className="flex items-center gap-2"
+          >
             <FolderTree className="h-4 w-4" />
             <span>SubCategories</span>
           </TabsTrigger>

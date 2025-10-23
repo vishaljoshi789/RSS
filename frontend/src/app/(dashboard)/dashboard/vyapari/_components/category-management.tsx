@@ -22,7 +22,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
@@ -35,12 +41,12 @@ export default function CategoryManagement() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   // Dialog states
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  
+
   // Form states
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>({
@@ -58,7 +64,9 @@ export default function CategoryManagement() {
       const response = await axios.get("/vyapari/category/");
       setCategories(response.data.results || response.data || []);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to fetch categories");
+      toast.error(
+        error.response?.data?.message || "Failed to fetch categories"
+      );
     } finally {
       setLoading(false);
     }
@@ -105,7 +113,8 @@ export default function CategoryManagement() {
       setSubmitting(true);
       const data = new FormData();
       data.append("name", formData.name);
-      if (formData.description) data.append("description", formData.description);
+      if (formData.description)
+        data.append("description", formData.description);
       data.append("image", imageFile);
 
       await axios.post("/vyapari/category/", data, {
@@ -118,7 +127,9 @@ export default function CategoryManagement() {
       resetForm();
       fetchCategories();
     } catch (error: any) {
-      toast.error(error.response?.data?.name?.[0] || "Failed to create category");
+      toast.error(
+        error.response?.data?.name?.[0] || "Failed to create category"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -145,7 +156,8 @@ export default function CategoryManagement() {
       setSubmitting(true);
       const data = new FormData();
       data.append("name", formData.name);
-      if (formData.description) data.append("description", formData.description);
+      if (formData.description)
+        data.append("description", formData.description);
       if (imageFile) data.append("image", imageFile);
 
       await axios.put(`/vyapari/category/${currentCategory.id}/`, data, {
@@ -158,7 +170,9 @@ export default function CategoryManagement() {
       resetForm();
       fetchCategories();
     } catch (error: any) {
-      toast.error(error.response?.data?.name?.[0] || "Failed to update category");
+      toast.error(
+        error.response?.data?.name?.[0] || "Failed to update category"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -202,14 +216,17 @@ export default function CategoryManagement() {
             <CardTitle>Categories</CardTitle>
             <CardDescription>Manage business categories</CardDescription>
           </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Button
+            title="Create Category"
+            onClick={() => setIsCreateDialogOpen(true)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add Category
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {/* Search */}
+        
         <div className="mb-4 flex items-center gap-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
@@ -220,7 +237,7 @@ export default function CategoryManagement() {
           />
         </div>
 
-        {/* Table */}
+        
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -263,7 +280,9 @@ export default function CategoryManagement() {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell className="font-medium">{category.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {category.name}
+                    </TableCell>
                     <TableCell>
                       <p className="line-clamp-2 text-sm text-muted-foreground">
                         {category.description || "No description"}
@@ -272,6 +291,7 @@ export default function CategoryManagement() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
+                          title="Edit Category"
                           variant="ghost"
                           size="sm"
                           onClick={() => openEditDialog(category)}
@@ -279,6 +299,7 @@ export default function CategoryManagement() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
+                          title="Delete Category"
                           variant="ghost"
                           size="sm"
                           onClick={() => openDeleteDialog(category)}
@@ -295,7 +316,7 @@ export default function CategoryManagement() {
         </div>
       </CardContent>
 
-      {/* Create Dialog */}
+      
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -304,11 +325,15 @@ export default function CategoryManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Name *</Label>
+              <Label htmlFor="name">
+                Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Enter category name"
               />
             </div>
@@ -317,13 +342,17 @@ export default function CategoryManagement() {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Enter category description"
                 rows={3}
               />
             </div>
             <div>
-              <Label htmlFor="image">Image *</Label>
+              <Label htmlFor="image">
+                Image <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="image"
                 type="file"
@@ -333,23 +362,40 @@ export default function CategoryManagement() {
               />
               {imagePreview && (
                 <div className="mt-2 relative h-32 w-32 overflow-hidden rounded">
-                  <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               )}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setIsCreateDialogOpen(false); resetForm(); }}>
+            <Button
+              title="Cancel"
+              variant="outline"
+              onClick={() => {
+                setIsCreateDialogOpen(false);
+                resetForm();
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleCreate} disabled={submitting}>
+            <Button
+              title="Create Category"
+              onClick={handleCreate}
+              disabled={submitting}
+            >
+              <Plus className="h-4 w-4" />
               {submitting ? "Creating..." : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Dialog */}
+      
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -358,11 +404,15 @@ export default function CategoryManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit-name">Name *</Label>
+              <Label htmlFor="edit-name">
+                Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="edit-name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Enter category name"
               />
             </div>
@@ -371,7 +421,9 @@ export default function CategoryManagement() {
               <Textarea
                 id="edit-description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Enter category description"
                 rows={3}
               />
@@ -386,33 +438,47 @@ export default function CategoryManagement() {
               />
               {imagePreview && (
                 <div className="mt-2 relative h-32 w-32 overflow-hidden rounded">
-                  <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               )}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setIsEditDialogOpen(false); resetForm(); }}>
+            <Button
+              title="Cancel"
+              variant="outline"
+              onClick={() => {
+                setIsEditDialogOpen(false);
+                resetForm();
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleEdit} disabled={submitting}>
+            <Button title="Update" onClick={handleEdit} disabled={submitting}>
               {submitting ? "Updating..." : "Update"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
+      
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Category</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentCategory?.name}"? This action cannot be undone.
+              Are you sure you want to delete "{currentCategory?.name}"? This
+              action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
+              title="Cancel"
               variant="outline"
               onClick={() => {
                 setIsDeleteDialogOpen(false);
@@ -422,6 +488,7 @@ export default function CategoryManagement() {
               Cancel
             </Button>
             <Button
+              title="Delete"
               variant="destructive"
               onClick={handleDelete}
               disabled={submitting}

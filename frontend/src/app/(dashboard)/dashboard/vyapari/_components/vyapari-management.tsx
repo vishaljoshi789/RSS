@@ -18,6 +18,8 @@ import {
   ShieldX,
   Ban,
   UnlockKeyhole,
+  Layers,
+  FolderTree,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +52,7 @@ import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import type { Vyapari, Category, SubCategory } from "../types";
 import VyapariFormModal from "./vyapari-form-modal";
+import Link from "next/link";
 
 export default function VyapariManagement() {
   const axios = useAxios();
@@ -227,7 +230,7 @@ export default function VyapariManagement() {
             <CardTitle>Businesses (Vyapari)</CardTitle>
             <CardDescription>Manage registered businesses</CardDescription>
           </div>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Button onClick={() => setIsCreateModalOpen(true)} title="Add a new business">
             <Plus className="mr-2 h-4 w-4" />
             Add Business
           </Button>
@@ -291,30 +294,43 @@ export default function VyapariManagement() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="space-y-1">
-                        <Badge variant="outline">
-                          {getCategoryName(vyapari.category)}
-                        </Badge>
-                        {vyapari.subcategory && (
-                          <Badge variant="secondary" className="ml-1">
-                            {getSubCategoryName(vyapari.subcategory)}
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-1">
+                          <Layers className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Badge variant="outline" className="font-medium">
+                            {getCategoryName(vyapari.category)}
                           </Badge>
+                        </div>
+                        {vyapari.subcategory && (
+                          <div className="flex items-center gap-1 ml-5">
+                            <div className="w-3 h-px bg-border"></div>
+                            <FolderTree className="h-3 w-3 text-muted-foreground" />
+                            <Badge variant="secondary" className="text-xs">
+                              {getSubCategoryName(vyapari.subcategory)}
+                            </Badge>
+                          </div>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1 text-sm">
-                        <div className="flex items-center gap-1">
+                        <Link
+                          href={`tel:${vyapari.phone}`}
+                          className="flex items-center gap-1  hover:text-blue-800 hover:underline transition-colors"
+                        >
                           <Phone className="h-3 w-3" />
                           <span>{vyapari.phone}</span>
-                        </div>
+                        </Link>
                         {vyapari.email && (
-                          <div className="flex items-center gap-1">
+                          <Link
+                            href={`mailto:${vyapari.email}`}
+                            className="flex items-center gap-1 hover:text-blue-800 hover:underline transition-colors"
+                          >
                             <Mail className="h-3 w-3" />
                             <span className="line-clamp-1">
                               {vyapari.email}
                             </span>
-                          </div>
+                          </Link>
                         )}
                       </div>
                     </TableCell>
