@@ -439,7 +439,13 @@ export function TransactionTable({
       return (
         <div className="flex items-center gap-2">
           <div className="h-6 w-6 relative flex items-center justify-center">
-            <Building2 className="h-5 w-5 text-blue-600" />
+            <Image
+              src="/Svg/netBanking.svg"
+              alt="Net Banking"
+              width={24}
+              height={24}
+              className="object-contain"
+            />
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-medium">Net Banking</span>
@@ -458,7 +464,15 @@ export function TransactionTable({
         payment.payment_details?.method_details?.wallet?.wallet;
       return (
         <div className="flex items-center gap-2">
-          <Wallet className="h-6 w-6 text-orange-600" />
+          <div className="h-6 w-6 relative flex items-center justify-center">
+            <Image
+              src="/Svg/wallet.svg"
+              alt="Wallet"
+              width={24}
+              height={24}
+              className="object-contain"
+            />
+          </div>
           <div className="flex flex-col">
             <span className="text-sm font-medium">Wallet</span>
             {walletName && (
@@ -467,6 +481,23 @@ export function TransactionTable({
               </span>
             )}
           </div>
+        </div>
+      );
+    }
+
+    if (methodLower === "cash") {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 relative flex items-center justify-center">
+            <Image
+              src="/Svg/cash.svg"
+              alt="Cash"
+              width={24}
+              height={24}
+              className="object-contain"
+            />
+          </div>
+          <span className="text-sm font-medium">CASH</span>
         </div>
       );
     }

@@ -28,10 +28,19 @@ const AdsManagement = () => {
     fetchVyaparis();
   }, []);
 
-  const fetchAds = async () => {
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchAds(searchQuery);
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  const fetchAds = async (search?: string) => {
     setLoading(true);
     try {
-      const response = await axios.get("/vyapari/advertisement/");
+      const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
+      const response = await axios.get(`/vyapari/advertisement/${searchParam}`);
       setAds(response.data.results || response.data || []);
     } catch (error) {
       console.error("Error fetching ads:", error);
@@ -107,11 +116,7 @@ const AdsManagement = () => {
     }
   };
 
-  const filteredAds = ads.filter(
-    (ad) =>
-      ad.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      ad.ad_type.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
 
   return (
     <div className="space-y-6">
@@ -139,7 +144,7 @@ const AdsManagement = () => {
           </div>
 
           <AdsTable
-            ads={filteredAds}
+            ads={ads}
             vyaparis={vyaparis}
             loading={loading}
             onEdit={handleOpenDialog}

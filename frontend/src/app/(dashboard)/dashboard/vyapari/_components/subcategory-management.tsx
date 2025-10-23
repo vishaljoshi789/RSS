@@ -68,12 +68,13 @@ export default function SubCategoryManagement() {
   const [submitting, setSubmitting] = useState(false);
 
   // Fetch categories and subcategories
-  const fetchData = async () => {
+  const fetchData = async (search?: string) => {
     try {
       setLoading(true);
+      const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
       const [categoriesRes, subcategoriesRes] = await Promise.all([
         axios.get("/vyapari/category/"),
-        axios.get("/vyapari/subcategory/"),
+        axios.get(`/vyapari/subcategory/${searchParam}`),
       ]);
       setCategories(categoriesRes.data.results || categoriesRes.data || []);
       setSubcategories(
@@ -89,6 +90,15 @@ export default function SubCategoryManagement() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Debounced search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchData(searchTerm);
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   // Handle image selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -228,15 +238,6 @@ export default function SubCategoryManagement() {
     }
   };
 
-  // Filter subcategories
-  const filteredSubcategories = subcategories.filter(
-    (sub) =>
-      sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      getCategoryName(sub.category)
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-  );
-
   return (
     <Card>
       <CardHeader>
@@ -254,6 +255,7 @@ export default function SubCategoryManagement() {
           </Button>
         </div>
       </CardHeader>
+
       <CardContent>
         {/* Search */}
         <div className="mb-4 flex items-center gap-2">
@@ -285,14 +287,14 @@ export default function SubCategoryManagement() {
                     Loading...
                   </TableCell>
                 </TableRow>
-              ) : filteredSubcategories.length === 0 ? (
+              ) : subcategories.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center">
                     No subcategories found
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredSubcategories.map((subcategory) => (
+                subcategories.map((subcategory) => (
                   <TableRow key={subcategory.id}>
                     <TableCell>
                       {subcategory.image ? (
@@ -362,11 +364,13 @@ export default function SubCategoryManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="category">
+              <Label htmlFor="category" className="mb-2 block">
                 Category <span className="text-red-500">*</span>
               </Label>
               <Select
-                value={formData.category.toString()}
+                value={
+                  formData.category > 0 ? formData.category.toString() : ""
+                }
                 onValueChange={(value) =>
                   setFormData({ ...formData, category: parseInt(value) })
                 }
@@ -384,7 +388,7 @@ export default function SubCategoryManagement() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="name">
+              <Label htmlFor="name" className="mb-2 block">
                 Name <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -397,7 +401,9 @@ export default function SubCategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description" className="mb-2 block">
+                Description
+              </Label>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -409,7 +415,7 @@ export default function SubCategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="image">
+              <Label htmlFor="image" className="mb-2 block">
                 Image <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -458,11 +464,13 @@ export default function SubCategoryManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit-category">
+              <Label htmlFor="edit-category" className="mb-2 block">
                 Category <span className="text-red-500">*</span>
               </Label>
               <Select
-                value={formData.category.toString()}
+                value={
+                  formData.category > 0 ? formData.category.toString() : ""
+                }
                 onValueChange={(value) =>
                   setFormData({ ...formData, category: parseInt(value) })
                 }
@@ -480,7 +488,7 @@ export default function SubCategoryManagement() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="edit-name">
+              <Label htmlFor="edit-name" className="mb-2 block">
                 Name <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -493,7 +501,9 @@ export default function SubCategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-description">Description</Label>
+              <Label htmlFor="edit-description" className="mb-2 block">
+                Description
+              </Label>
               <Textarea
                 id="edit-description"
                 value={formData.description}
@@ -505,7 +515,9 @@ export default function SubCategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-image">Image</Label>
+              <Label htmlFor="edit-image" className="mb-2 block">
+                Image
+              </Label>
               <Input
                 id="edit-image"
                 type="file"
@@ -548,8 +560,9 @@ export default function SubCategoryManagement() {
           <DialogHeader>
             <DialogTitle>Delete SubCategory</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentSubCategory?.name}"? This
-              action cannot be undone.
+              Are you sure you want to delete "
+              <b>{currentSubCategory?.name.toUpperCase()}</b>"? This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -574,6 +587,7 @@ export default function SubCategoryManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
     </Card>
   );
 }

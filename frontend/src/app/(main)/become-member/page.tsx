@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useEffect, useMemo, useState, useRef, type ChangeEvent } from "react";
 import Image from "next/image";
 import {
   CheckCircle2,
@@ -8,6 +8,7 @@ import {
   CreditCard,
   IndianRupee,
   CheckCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -20,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   PersonalDetailsStep,
   AddressStep,
@@ -133,9 +135,16 @@ const BecomeMemberPage = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isAlreadyMember, setIsAlreadyMember] = useState(false);
   const [storageHydrated, setStorageHydrated] = useState(false);
   const [formState, setFormState] = useState<FormState>(defaultFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  const formDataRef = useRef<{ name: string; phone: string; email: string }>({
+    name: "",
+    phone: "",
+    email: ""
+  });
 
   const stateOptions = useMemo(
     () => getIndianStates(rawStateDistrictData),
@@ -407,10 +416,75 @@ const BecomeMemberPage = () => {
   };
 
   const { submitMemberForm, loading: isMemberSubmitting } = useMemberSubmit();
-  const { processPayment, isProcessing: isPaymentProcessing } =
-    useDonationPayment();
+  const { 
+    processPayment, 
+    isProcessing: isPaymentProcessing,
+    success: paymentSuccess,
+    error: paymentError
+  } = useDonationPayment();
 
   const isSubmitting = isMemberSubmitting || isPaymentProcessing;
+
+  useEffect(() => {
+    if (paymentSuccess && !submitted) {
+      // Use the ref instead of formState to get preserved data
+      const savedFormData = formDataRef.current;
+      
+      toast.success("Payment completed successfully!", {
+        duration: 5000,
+      });
+      
+      setSubmitted(true);
+
+      setTimeout(() => {
+        const receiptParams = new URLSearchParams({
+          name: savedFormData.name || '',
+          phone: savedFormData.phone || '',
+          date: new Date().toLocaleDateString('en-IN'),
+          mode: 'Online payment',
+          amount: '300',
+          amountWords: 'Three Hundred Rupees Only',
+          receiptNumber: 'MEMBER_' + Date.now(),
+          location: formState.state || 'state'
+        });
+
+        const receiptUrl = `/receipt?${receiptParams.toString()}`;
+        
+        // Create a temporary link and click it (bypasses popup blocker)
+        const link = document.createElement('a');
+        link.href = receiptUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        clearStoredForm();
+      }, 500);
+    }
+  }, [paymentSuccess, submitted]);
+
+  useEffect(() => {
+    if (paymentError) {
+      const isAlreadyMemberError = 
+        paymentError.toLowerCase().includes("already a member") ||
+        paymentError.toLowerCase().includes("user already a member");
+
+      if (isAlreadyMemberError) {
+        setIsAlreadyMember(true);
+        toast.error("Already a Member!", {
+          duration: 8000,
+          description: "You are already registered as a member. You cannot register again.",
+        });
+      } else {
+        toast.error(paymentError, {
+          duration: 5000,
+          description: "If the problem persists, please contact support.",
+        });
+      }
+      setShowPaymentModal(false);
+    }
+  }, [paymentError]);
 
   const handleSubmit = async () => {
     if (!validateStep(activeStep)) {
@@ -422,13 +496,24 @@ const BecomeMemberPage = () => {
 
   const handlePaymentConfirm = async () => {
     try {
+      // Store form data in ref before any async operations
+      formDataRef.current = {
+        name: formState.name,
+        phone: formState.phone,
+        email: formState.email
+      };
+      
       // Step 1: Register member
       toast.loading("Registering membership...", { id: "member-registration" });
       await submitMemberForm(formState);
-      toast.success("Registration successful!", { id: "member-registration" });
-
+      
+      // Only show success after registration completes without errors
+      toast.dismiss("member-registration");
+      setShowPaymentModal(false);
+      
       // Step 2: Process payment
       toast.loading("Opening payment gateway...", { id: "payment-processing" });
+      
       await processPayment({
         name: formState.name,
         email: formState.email,
@@ -437,13 +522,11 @@ const BecomeMemberPage = () => {
         payment_for: "member",
         notes: `Membership registration for ${formState.name}`,
       });
-      toast.success("Payment completed successfully!", {
-        id: "payment-processing",
-      });
 
-      clearStoredForm();
-      setShowPaymentModal(false);
-      setSubmitted(true);
+      setTimeout(() => {
+        toast.dismiss("payment-processing");
+      }, 1000);
+      
     } catch (error: any) {
       console.error("Registration or payment failed:", error);
 
@@ -456,10 +539,22 @@ const BecomeMemberPage = () => {
         error?.message ||
         "An error occurred. Please try again later.";
 
-      toast.error(errorMessage, {
-        duration: 5000,
-        description: "If the problem persists, please contact support.",
-      });
+      const isAlreadyMemberError = 
+        errorMessage.toLowerCase().includes("already a member") ||
+        errorMessage.toLowerCase().includes("user already a member");
+
+      if (isAlreadyMemberError) {
+        setIsAlreadyMember(true);
+        toast.error("Already a Member!", {
+          duration: 8000,
+          description: "You are already registered as a member. Please log in to access your account or contact support if you need assistance.",
+        });
+      } else {
+        toast.error(errorMessage, {
+          duration: 5000,
+          description: "If the problem persists, please contact support.",
+        });
+      }
 
       setShowPaymentModal(false);
     }
@@ -518,7 +613,7 @@ const BecomeMemberPage = () => {
           </div>
         </div>
         <Button className="mt-2" onClick={handleReset} size="sm">
-          Fill the form again
+          Download pdf
         </Button>
       </section>
     );
@@ -527,7 +622,7 @@ const BecomeMemberPage = () => {
   return (
     <section className="mx-auto flex min-h-screen w-full items-center justify-center px-4 py-8">
       <div className="flex w-full max-w-7xl gap-6 rounded-xl border bg-card p-6">
-        {/* Left side - Form */}
+        
         <div className="flex w-full max-w-4xl flex-col gap-6">
           <div className="space-y-1.5">
             <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
@@ -538,6 +633,27 @@ const BecomeMemberPage = () => {
               contribute.
             </p>
           </div>
+
+          {isAlreadyMember && (
+            <Alert variant="destructive" className="border-red-500 bg-red-50 dark:bg-red-950">
+              <AlertTriangle className="h-5 w-5" />
+              <AlertTitle className="font-semibold">Already a Member!</AlertTitle>
+              <AlertDescription className="mt-2 space-y-3">
+                <p>
+                  You are already registered as a member of our organization. 
+                  Please log in to your account to access your membership details.
+                </p>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={() => window.location.href = '/login'}
+                  className="mt-2"
+                >
+                  Go to Login
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
 
           <div className="flex items-center justify-center gap-4 mt-6">
             {steps.map((step, index) => {
@@ -585,19 +701,19 @@ const BecomeMemberPage = () => {
               type="button"
               variant="outline"
               onClick={handleBack}
-              disabled={activeStep === 0 || isSubmitting}
+              disabled={activeStep === 0 || isSubmitting || isAlreadyMember}
             >
               Back
             </Button>
             {activeStep < steps.length - 1 ? (
-              <Button type="button" onClick={handleNext} disabled={isSubmitting}>
+              <Button type="button" onClick={handleNext} disabled={isSubmitting || isAlreadyMember}>
                 Next
               </Button>
             ) : (
               <Button
                 type="button"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isAlreadyMember}
               >
                 {isSubmitting ? "Submitting..." : "Review & Pay"}
               </Button>
@@ -605,7 +721,7 @@ const BecomeMemberPage = () => {
           </div>
         </div>
 
-        {/* Right side - Image */}
+        
         <div className="hidden lg:flex w-full max-w-sm items-center justify-center">
           <div className="relative w-full h-full min-h-[600px] rounded-xl overflow-hidden border-2 border-muted">
             <Image
@@ -619,7 +735,7 @@ const BecomeMemberPage = () => {
         </div>
       </div>
 
-      {/* Payment Modal */}
+      
       <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

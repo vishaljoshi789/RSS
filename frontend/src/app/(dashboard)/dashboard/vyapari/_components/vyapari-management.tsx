@@ -72,11 +72,12 @@ export default function VyapariManagement() {
   const [isUnblockDialogOpen, setIsUnblockDialogOpen] = useState(false);
   const [currentVyapari, setCurrentVyapari] = useState<Vyapari | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (search?: string) => {
     try {
       setLoading(true);
+      const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
       const [vyaparisRes, categoriesRes, subcategoriesRes] = await Promise.all([
-        axios.get("/vyapari/vyapari/"),
+        axios.get(`/vyapari/vyapari/${searchParam}`),
         axios.get("/vyapari/category/"),
         axios.get("/vyapari/subcategory/"),
       ]);
@@ -95,6 +96,14 @@ export default function VyapariManagement() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchData(searchTerm.trim() || undefined);
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   const getCategoryName = (categoryId: number | null) => {
     if (!categoryId) return "N/A";
@@ -215,13 +224,6 @@ export default function VyapariManagement() {
     }
   };
 
-  const filteredVyaparis = vyaparis.filter(
-    (v) =>
-      v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.phone.includes(searchTerm) ||
-      (v.email && v.email.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
   return (
     <Card>
       <CardHeader>
@@ -265,14 +267,14 @@ export default function VyapariManagement() {
                     Loading...
                   </TableCell>
                 </TableRow>
-              ) : filteredVyaparis.length === 0 ? (
+              ) : vyaparis.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center">
                     No businesses found
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredVyaparis.map((vyapari) => (
+                vyaparis.map((vyapari) => (
                   <TableRow key={vyapari.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">

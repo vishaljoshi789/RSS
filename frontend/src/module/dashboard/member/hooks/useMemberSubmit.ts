@@ -37,7 +37,7 @@ export const useMemberSubmit = () => {
         payload.append("email", formData.email);
         payload.append("phone", formData.phone);
         payload.append("dob", formData.dob);
-        payload.append("is_member_account", "true");
+        // payload.append("is_member_account", "true");
 
         // Optional fields - only append if they have values
         if (formData.gender) {
@@ -74,13 +74,41 @@ export const useMemberSubmit = () => {
           },
         });
 
+        const responseMessage = response.data?.message?.toLowerCase() || "";
+        const responseError = response.data?.error?.toLowerCase() || "";
+        
+        if (
+          responseMessage.includes("already a member") ||
+          responseMessage.includes("user already a member") ||
+          responseError.includes("already a member") ||
+          responseError.includes("user already a member")
+        ) {
+          // Create an error object that mimics axios error structure
+          const error: any = new Error(response.data.message || response.data.error);
+          error.response = {
+            data: response.data
+          };
+          setError(response.data.message || response.data.error);
+          setLoading(false);
+          throw error;
+        }
+
         setSuccess(true);
         setLoading(false);
         return response.data;
       } catch (err: any) {
+        // Only process error if it's not already processed above
+        if (!err.response) {
+          const errorMessage = "Failed to submit membership form. Please try again.";
+          setError(errorMessage);
+          setLoading(false);
+          throw err;
+        }
+        
         const errorMessage =
           err?.response?.data?.error ||
           err?.response?.data?.message ||
+          err?.message ||
           "Failed to submit membership form. Please try again.";
         setError(errorMessage);
         setLoading(false);

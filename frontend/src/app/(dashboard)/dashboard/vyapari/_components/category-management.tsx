@@ -29,7 +29,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import type { Category, CategoryFormData } from "../types";
@@ -57,11 +56,11 @@ export default function CategoryManagement() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Fetch categories
-  const fetchCategories = async () => {
+  const fetchCategories = async (search?: string) => {
     try {
       setLoading(true);
-      const response = await axios.get("/vyapari/category/");
+      const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
+      const response = await axios.get(`/vyapari/category/${searchParam}`);
       setCategories(response.data.results || response.data || []);
     } catch (error: any) {
       toast.error(
@@ -75,6 +74,14 @@ export default function CategoryManagement() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchCategories(searchTerm.trim() || undefined);
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   // Handle image selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,13 +210,11 @@ export default function CategoryManagement() {
     }
   };
 
-  // Filter categories
-  const filteredCategories = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
 
   return (
     <Card>
+
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -225,6 +230,7 @@ export default function CategoryManagement() {
           </Button>
         </div>
       </CardHeader>
+
       <CardContent>
         
         <div className="mb-4 flex items-center gap-2">
@@ -255,14 +261,14 @@ export default function CategoryManagement() {
                     Loading...
                   </TableCell>
                 </TableRow>
-              ) : filteredCategories.length === 0 ? (
+              ) : categories.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center">
                     No categories found
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredCategories.map((category) => (
+                categories.map((category) => (
                   <TableRow key={category.id}>
                     <TableCell>
                       {category.image ? (
@@ -325,7 +331,7 @@ export default function CategoryManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">
+              <Label htmlFor="name" className="mb-2 block">
                 Name <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -338,7 +344,7 @@ export default function CategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description" className="mb-2 block">Description</Label>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -350,7 +356,7 @@ export default function CategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="image">
+              <Label htmlFor="image" className="mb-2 block">
                 Image <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -404,7 +410,7 @@ export default function CategoryManagement() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit-name">
+              <Label htmlFor="edit-name" className="mb-2 block">
                 Name <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -417,7 +423,7 @@ export default function CategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-description">Description</Label>
+              <Label htmlFor="edit-description" className="mb-2 block">Description</Label>
               <Textarea
                 id="edit-description"
                 value={formData.description}
@@ -429,7 +435,7 @@ export default function CategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-image">Image</Label>
+              <Label htmlFor="edit-image" className="mb-2 block">Image</Label>
               <Input
                 id="edit-image"
                 type="file"

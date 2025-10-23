@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -63,6 +63,66 @@ const NewDonationForm = () => {
     reset,
   } = useDonationPayment();
   const { formatCurrency } = useCurrency();
+
+  // Helper function to convert number to words
+  const convertNumberToWords = (num: number): string => {
+    if (num === 0) return "Zero Rupees Only";
+    
+    const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+    const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    
+    function convertLessThanThousand(n: number): string {
+      if (n === 0) return "";
+      if (n < 10) return ones[n];
+      if (n < 20) return teens[n - 10];
+      if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + ones[n % 10] : "");
+      return ones[Math.floor(n / 100)] + " Hundred" + (n % 100 !== 0 ? " " + convertLessThanThousand(n % 100) : "");
+    }
+    
+    const crore = Math.floor(num / 10000000);
+    const lakh = Math.floor((num % 10000000) / 100000);
+    const thousand = Math.floor((num % 100000) / 1000);
+    const remainder = Math.floor(num % 1000);
+    
+    let result = "";
+    
+    if (crore > 0) result += convertLessThanThousand(crore) + " Crore ";
+    if (lakh > 0) result += convertLessThanThousand(lakh) + " Lakh ";
+    if (thousand > 0) result += convertLessThanThousand(thousand) + " Thousand ";
+    if (remainder > 0) result += convertLessThanThousand(remainder);
+    
+    return result.trim() + " Rupees Only";
+  };
+
+  // Open receipt window when payment is successful
+  useEffect(() => {
+    if (success && formData.amount > 0) {
+      setTimeout(() => {
+        const receiptParams = new URLSearchParams({
+          name: formData.name || '',
+          phone: formData.phone || '',
+          date: new Date().toLocaleDateString('en-IN'),
+          mode: 'Online payment',
+          amount: String(formData.amount),
+          amountWords: convertNumberToWords(formData.amount),
+          receiptNumber: 'DONATION_' + Date.now(),
+          location: formData.payment_for || 'general'
+        });
+
+        const receiptUrl = `/receipt?${receiptParams.toString()}`;
+        
+        // Create a temporary link and click it (bypasses popup blocker)
+        const link = document.createElement('a');
+        link.href = receiptUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, 500);
+    }
+  }, [success, formData]);
 
   const enhancedDonationTypes = [
     {

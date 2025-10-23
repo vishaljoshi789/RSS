@@ -1,4 +1,5 @@
-import { type ChangeEvent } from "react";
+import { type ChangeEvent, useState, useEffect } from "react";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UploadCloud } from "lucide-react";
@@ -16,6 +17,20 @@ export const PhotoUploadStep = ({
   errors,
   onFileChange,
 }: PhotoUploadStepProps) => {
+  const [imagePreview, setImagePreview] = useState<string>("");
+
+  useEffect(() => {
+    if (formData.image) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(formData.image);
+    } else {
+      setImagePreview("");
+    }
+  }, [formData.image]);
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -41,6 +56,20 @@ export const PhotoUploadStep = ({
           <p className="text-sm text-destructive">{errors.image}</p>
         )}
       </div>
+
+      {imagePreview && (
+        <div className="space-y-2">
+          <Label>Photo Preview</Label>
+          <div className="relative h-64 w-48 overflow-hidden rounded-lg border-2 border-muted mx-auto">
+            <Image
+              src={imagePreview}
+              alt="Photo preview"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -124,7 +124,7 @@ export const AdsFormDialog: React.FC<AdsFormDialogProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="vyapari">Business <span className="text-red-500">*</span></Label>
+              <Label htmlFor="vyapari" className="mb-2 block">Business <span className="text-red-500">*</span></Label>
               <Select
                 value={formData.vyapari}
                 onValueChange={(value) =>
@@ -145,7 +145,7 @@ export const AdsFormDialog: React.FC<AdsFormDialogProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ad_type">Advertisement Type <span className="text-red-500">*</span></Label>
+              <Label htmlFor="ad_type" className="mb-2 block">Advertisement Type <span className="text-red-500">*</span></Label>
               <Select
                 value={formData.ad_type}
                 onValueChange={(value) =>
@@ -167,7 +167,7 @@ export const AdsFormDialog: React.FC<AdsFormDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="title">Title <span className="text-red-500">*</span></Label>
+            <Label htmlFor="title" className="mb-2 block">Title <span className="text-red-500">*</span></Label>
             <Input
               id="title"
               value={formData.title}
@@ -180,7 +180,7 @@ export const AdsFormDialog: React.FC<AdsFormDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="mb-2 block">Description</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -194,7 +194,7 @@ export const AdsFormDialog: React.FC<AdsFormDialogProps> = ({
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="start_date">Start Date <span className="text-red-500">*</span></Label>
+              <Label htmlFor="start_date" className="mb-2 block">Start Date <span className="text-red-500">*</span></Label>
               <Input
                 id="start_date"
                 type="date"
@@ -207,7 +207,7 @@ export const AdsFormDialog: React.FC<AdsFormDialogProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="end_date">End Date <span className="text-red-500">*</span></Label>
+              <Label htmlFor="end_date" className="mb-2 block">End Date <span className="text-red-500">*</span></Label>
               <Input
                 id="end_date"
                 type="date"
@@ -221,7 +221,7 @@ export const AdsFormDialog: React.FC<AdsFormDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image">Banner Image (16:9 recommended) <span className="text-red-500">*</span></Label>
+            <Label htmlFor="image" className="mb-2 block">Banner Image (16:9 recommended) <span className="text-red-500">*</span></Label>
             <Input
               id="image"
               type="file"
