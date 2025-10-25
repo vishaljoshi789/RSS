@@ -2,17 +2,19 @@
 
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { 
   Play, 
   Clock, 
-  Calendar, 
-  ChevronLeft, 
-  ChevronRight,
-  Video as VideoIcon
+  Calendar,
+  Video as VideoIcon,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { 
   videoCategories, 
@@ -21,6 +23,10 @@ import {
   formatDate,
   VideoItem 
 } from './Video';
+
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 interface VideoCardProps {
   video: VideoItem;
@@ -34,9 +40,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className="group cursor-pointer bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] flex-shrink-0 w-80">
+        <Card className="group cursor-pointer bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
           <CardContent className="p-0">
-            
             <div className="relative aspect-video overflow-hidden rounded-t-lg">
               {!imageError ? (
                 <>
@@ -117,7 +122,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
       </DialogTrigger>
 
       
-      <DialogContent className="max-w-6xl w-full p-0 bg-transparent border-0">
+      <DialogContent className="max-w-6xl w-full p-0 bg-black border-0">
         <DialogTitle className="sr-only">
           {video.title} - Video Player
         </DialogTitle>
@@ -132,35 +137,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               allowFullScreen
             />
           </div>
-          
-          
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6">
-            <div className="text-white">
-              <h3 className="text-xl font-bold mb-2">{video.title}</h3>
-              <p className="text-gray-200 mb-3">{video.description}</p>
-              <div className="flex items-center gap-4 text-sm">
-                <Badge 
-                  variant="secondary"
-                  className={`
-                    ${video.category === 'event' ? 'bg-blue-600 text-white' : ''}
-                    ${video.category === 'training' ? 'bg-green-600 text-white' : ''}
-                    ${video.category === 'ceremony' ? 'bg-purple-600 text-white' : ''}
-                    ${video.category === 'other' ? 'bg-gray-600 text-white' : ''}
-                  `}
-                >
-                  {video.category.charAt(0).toUpperCase() + video.category.slice(1)}
-                </Badge>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  {formatDuration(video.duration)}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {formatDate(video.uploadDate)}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
@@ -169,25 +145,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
 
 const VideoGallery: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
-  
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   const filteredVideos = useMemo(() => {
     return getVideosByCategory(activeCategory);
   }, [activeCategory]);
-
-  const handleScroll = (direction: 'left' | 'right') => {
-    if (!scrollContainerRef.current) return;
-    
-    const container = scrollContainerRef.current;
-    const scrollAmount = 320; // Card width + gap
-    
-    if (direction === 'left') {
-      container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
 
   return (
     <div className="w-full">
@@ -217,54 +179,63 @@ const VideoGallery: React.FC = () => {
         </p>
       </div>
 
-      
-      <div className="relative">
-        
-        {filteredVideos.length > 0 && (
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white"
-              onClick={() => handleScroll('left')}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white"
-              onClick={() => handleScroll('right')}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </>
-        )}
-
-        
-        <div 
-          ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide px-8 py-4"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      {/* Swiper Video Gallery */}
+      <div className="relative max-w-2xl mx-auto">
+        {/* Custom Navigation Buttons */}
+        <button
+          onClick={() => swiperInstance?.slidePrev()}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={filteredVideos.length === 0}
         >
-          {filteredVideos.map((video, index) => (
-            <VideoCard key={video.id} video={video} index={index} />
-          ))}
-        </div>
+          <ChevronLeft className="w-5 h-5 text-gray-700" />
+        </button>
+        
+        <button
+          onClick={() => swiperInstance?.slideNext()}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={filteredVideos.length === 0}
+        >
+          <ChevronRight className="w-5 h-5 text-gray-700" />
+        </button>
+
+        {filteredVideos.length > 0 ? (
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={30}
+            slidesPerView={1}
+            onSwiper={setSwiperInstance}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            className="pb-12"
+          >
+            {filteredVideos.map((video, index) => (
+              <SwiperSlide key={video.id}>
+                <VideoCard video={video} index={index} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <div className="text-center py-16">
+            <VideoIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No videos found</h3>
+            <p className="text-gray-600">
+              No videos available in the {activeCategory} category.
+            </p>
+          </div>
+        )}
       </div>
 
-      
-      {filteredVideos.length === 0 && (
-        <div className="text-center py-16">
-          <VideoIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No videos found</h3>
-          <p className="text-gray-600">
-            No videos available in the {activeCategory} category.
-          </p>
-        </div>
-      )}
-
+      <style jsx global>{`
+        .swiper-pagination-bullet {
+          background: #f97316;
+          opacity: 0.5;
+        }
+        .swiper-pagination-bullet-active {
+          opacity: 1;
+        }
+      `}</style>
     </div>
   );
 };

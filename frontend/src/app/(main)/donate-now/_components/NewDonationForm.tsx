@@ -40,6 +40,15 @@ import {
   type DonationFormData,
 } from "@/module/donation";
 
+const impactAmounts = [
+  { amount: 151, label: "₹151", desc: "एक बच्चे का एक दिन का भोजन" },
+  { amount: 501, label: "₹501", desc: "एक बहन की आपातकालीन सुरक्षा" },
+  { amount: 1100, label: "₹1,100", desc: "एक यज्ञ, कथा या भंडारे में भागीदारी" },
+  { amount: 5100, label: "₹5,100", desc: "एक कन्या विवाह सहयोग" },
+  { amount: 11000, label: "₹11,000", desc: "एक गुरुकुल निर्माण में योगदान" },
+  { amount: 21000, label: "₹21,000", desc: "वैदिक राष्ट्र बनाने में स्थायी सहयोग" },
+];
+
 const NewDonationForm = () => {
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -64,7 +73,7 @@ const NewDonationForm = () => {
   } = useDonationPayment();
   const { formatCurrency } = useCurrency();
 
-  // Helper function to convert number to words
+  
   const convertNumberToWords = (num: number): string => {
     if (num === 0) return "Zero Rupees Only";
     
@@ -95,7 +104,7 @@ const NewDonationForm = () => {
     return result.trim() + " Rupees Only";
   };
 
-  // Open receipt window when payment is successful
+  
   useEffect(() => {
     if (success && formData.amount > 0) {
       setTimeout(() => {
@@ -112,7 +121,7 @@ const NewDonationForm = () => {
 
         const receiptUrl = `/receipt?${receiptParams.toString()}`;
         
-        // Create a temporary link and click it (bypasses popup blocker)
+        
         const link = document.createElement('a');
         link.href = receiptUrl;
         link.target = '_blank';
@@ -326,18 +335,7 @@ const NewDonationForm = () => {
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-3">
-            <Heart className="h-6 w-6 text-primary" />
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
-            Support RSS Community
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Your contribution makes a difference in building our nation
-          </p>
-        </div>
-
+       
         {error && (
           <Alert variant="destructive" className="mb-6">
             <AlertCircle className="h-4 w-4" />
@@ -348,49 +346,58 @@ const NewDonationForm = () => {
         <Card className="border rounded-xl">
           <form onSubmit={handleSubmit}>
             <CardContent className="p-6 space-y-6">
-              <div className="text-center">
-                <h2 className="text-lg font-semibold text-foreground mb-5">
-                  Choose Your Contribution
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
-                  {donationAmounts.map((amount) => (
-                    <Button
-                      key={amount.value}
+              {/* Impact Amounts Section */}
+              <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-5">
+                <h3 className="text-base font-semibold text-foreground mb-4 text-center">
+                  आपका दान कैसे बदलेगा जीवन
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                  {impactAmounts.map((item, index) => (
+                    <button
+                      key={index}
                       type="button"
-                      variant={
-                        selectedAmount === amount.value ? "default" : "outline"
-                      }
-                      className={`h-auto py-3 flex flex-col items-center justify-center gap-0.5 ${
-                        selectedAmount === amount.value
-                          ? ""
-                          : ""
+                      onClick={() => handleAmountSelect(item.amount)}
+                      className={`p-3 rounded-lg border transition-all text-left ${
+                        selectedAmount === item.amount
+                          ? "border-primary bg-primary/10 shadow-md"
+                          : "border-orange-300 dark:border-orange-700 bg-white dark:bg-background hover:border-primary hover:shadow-sm"
                       }`}
-                      onClick={() => handleAmountSelect(amount.value)}
                     >
-                      <IndianRupee className="h-3.5 w-3.5" />
-                      <span className="font-bold text-base">{amount.label}</span>
-                      <span className="text-xs opacity-70">
-                        {amount.description}
-                      </span>
-                    </Button>
+                      <p className="text-lg font-black text-primary mb-1">
+                        {item.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground leading-tight">
+                        {item.desc}
+                      </p>
+                    </button>
                   ))}
-                  <Button
+                  {/* Custom Amount Button */}
+                  <button
                     type="button"
-                    variant={isCustomAmount ? "default" : "outline"}
-                    className={`h-auto py-3 flex flex-col items-center justify-center gap-0.5 ${
-                      isCustomAmount
-                        ? ""
-                        : ""
-                    }`}
                     onClick={() => handleAmountSelect(-1)}
+                    className={`p-3 rounded-lg border transition-all flex flex-col items-center justify-center ${
+                      isCustomAmount
+                        ? "border-primary bg-primary/10 shadow-md"
+                        : "border-orange-300 dark:border-orange-700 bg-white dark:bg-background hover:border-primary hover:shadow-sm"
+                    }`}
                   >
-                    <Gift className="h-3.5 w-3.5" />
-                    <span className="font-bold text-base">Custom</span>
-                    <span className="text-xs opacity-70">Enter amount</span>
-                  </Button>
+                    <Gift className="h-5 w-5 text-primary mb-1" />
+                    <p className="text-lg font-black text-primary mb-1">
+                      Custom
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-tight text-center">
+                      अपनी राशि दर्ज करें
+                    </p>
+                  </button>
                 </div>
+              </div>
 
-                {isCustomAmount && (
+              {/* Custom Amount Input */}
+              {isCustomAmount && (
+                <div>
+                  <Label className="text-sm font-medium text-foreground mb-2 block text-center">
+                    Enter Custom Amount
+                  </Label>
                   <div className="max-w-xs mx-auto">
                     <div className="relative">
                       <IndianRupee className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -410,18 +417,18 @@ const NewDonationForm = () => {
                       />
                     </div>
                     {errors.amount && (
-                      <p className="text-sm text-destructive mt-2">
+                      <p className="text-sm text-destructive mt-2 text-center">
                         {errors.amount}
                       </p>
                     )}
                   </div>
-                )}
-                {errors.amount && !isCustomAmount && (
-                  <p className="text-sm text-destructive mt-2">
-                    {errors.amount}
-                  </p>
-                )}
-              </div>
+                </div>
+              )}
+              {errors.amount && !isCustomAmount && (
+                <p className="text-sm text-destructive text-center">
+                  {errors.amount}
+                </p>
+              )}
 
               <Separator className="my-6" />
 
@@ -460,6 +467,7 @@ const NewDonationForm = () => {
                         className="pl-10 h-12 border-2 focus-ring rounded-lg"
                         placeholder="10-digit mobile number"
                         value={formData.phone}
+                        maxLength={10}
                         onChange={(e) =>
                           handleInputChange("phone", e.target.value)
                         }

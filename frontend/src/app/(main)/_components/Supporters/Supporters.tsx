@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { pageContent, supporterImages, videoInfo } from "./SupporterInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
-import { Card, CardContent } from "@/components/ui/card";
 import { Play, Target } from "lucide-react";
 
 const Supporters = () => {
@@ -124,7 +123,7 @@ const Supporters = () => {
 
         
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-8 lg:mb-12">
+          <div className="grid grid-cols-4 gap-4 sm:gap-6 lg:gap-12 mb-6 lg:mb-12">
             {row1.map((supporter) => (
               <div
                 key={supporter.id}
@@ -135,25 +134,25 @@ const Supporters = () => {
                   alt={supporter.alt}
                   width={180}
                   height={120}
-                  className="object-contain w-full h-16 lg:h-20 transition-all duration-300"
+                  className="object-contain w-full h-10 sm:h-14 lg:h-20 transition-all duration-300"
                 />
               </div>
             ))}
           </div>
 
           {row2.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-12 max-w-4xl mx-auto">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-12 max-w-4xl mx-auto">
               {row2.map((supporter) => (
                 <div
                   key={supporter.id}
-                  className="flex items-center justify-center p-4 lg:p-6 opacity-80 rounded-xl transition-all duration-300 "
+                  className="flex items-center justify-center opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-105"
                 >
                   <Image
                     src={supporter.imageUrl}
                     alt={supporter.alt}
                     width={180}
                     height={120}
-                    className="object-contain w-full h-16 lg:h-20 transition-all duration-300"
+                    className="object-contain w-full h-10 sm:h-14 lg:h-20 transition-all duration-300"
                   />
                 </div>
               ))}

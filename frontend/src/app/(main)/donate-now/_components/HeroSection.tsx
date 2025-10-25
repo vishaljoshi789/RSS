@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Heart, Shield, CreditCard, Sparkles } from 'lucide-react';
+import { Heart, Shield, CreditCard, Sparkles, BookOpen } from 'lucide-react';
 
 const HeroSection = () => {
   return (
@@ -13,38 +13,52 @@ const HeroSection = () => {
         <svg className="absolute -bottom-10 -left-10 w-72 h-72 text-white/5" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
           <path fill="currentColor" d="M39.5,-62.4C51.1,-54.7,60.3,-43.1,66.8,-29.9C73.3,-16.7,77.1,-1.9,75.4,12.3C73.7,26.5,66.5,40.1,56,49.9C45.5,59.7,31.7,65.7,17.3,68.3C2.9,70.9,-12.1,70.1,-25.3,65.1C-38.5,60.1,-50,50.9,-58.4,38.9C-66.8,26.9,-72.1,12.1,-71.9,-2.8C-71.7,-17.7,-66,-32.8,-56.6,-43.7C-47.2,-54.6,-34.1,-61.3,-20.8,-67.1C-7.5,-72.9,5.9,-77.8,18.9,-76.5C31.9,-75.2,27.9,-70.1,39.5,-62.4Z" transform="translate(100 100)" />
         </svg>
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
       </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="text-center">
-          <Badge className="mb-6 px-4 py-1.5 bg-white/20 text-white border-white/30 backdrop-blur-sm">
-            <Heart className="w-3.5 h-3.5 mr-1.5" />
-            दान करें - सेवा करें
-          </Badge>
+          {/* Sanskrit Quote Badge */}
+          <div className="mb-6 inline-flex flex-col items-center gap-3">
+            <Badge className="px-5 py-2 bg-white/20 text-white border-white/30 backdrop-blur-sm text-sm">
+              <Sparkles className="w-4 h-4 mr-2" />
+              सर्वेषामप्युपायानां दानं श्रेष्ठतमं मतम्
+            </Badge>
+          </div>
           
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-white">
-            राष्ट्र सेवा में योगदान करें
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black mb-6 leading-tight text-white">
+            राष्ट्रीय सेवा संघ धर्मार्थ ट्रस्ट
           </h1>
           
-          <p className="text-base sm:text-lg text-white/90 max-w-3xl mx-auto leading-relaxed mb-10">
-            आपका हर योगदान समाज सेवा, शिक्षा और राष्ट्रीय एकता के कार्यों में उपयोग होता है।
-            एक बेहतर समाज के निर्माण में अपना योगदान दें।
-          </p>
+          <div className="max-w-4xl mx-auto mb-8">
+            <p className="text-lg sm:text-xl text-white/95 font-medium leading-relaxed mb-4">
+              सनातनी हिंदू रक्षा अभियान (भारत)
+            </p>
+            <p className="text-base sm:text-lg text-white/85 leading-relaxed">
+              धार्मिक मूल्यों की रक्षा, बहन बेटियों की सुरक्षा, मठ मंदिरों का संरक्षण, शिक्षा स्वास्थ्य एवं रोजगार की स्थिति सुधार, धार्मिक संस्कारों को बचाने हेतु गुरुकुल संचालन एवं भारतीय संस्कृति को पुनः गौरव प्रदान करने में अपना योगदान दें।
+            </p>
+          </div>
           
-          <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
-              <Shield className="w-4 h-4 text-white/90" />
-              <span className="font-medium text-white">सुरक्षित भुगतान</span>
+          {/* Feature Highlights */}
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8">
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <Shield className="w-5 h-5 text-white/90" />
+              <span className="font-semibold text-white text-sm">80G & 12AA कर मुक्त</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
-              <CreditCard className="w-4 h-4 text-white/90" />
-              <span className="font-medium text-white">त्वरित और आसान</span>
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <CreditCard className="w-5 h-5 text-white/90" />
+              <span className="font-semibold text-white text-sm">सुरक्षित भुगतान</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/20">
-              <Heart className="w-4 h-4 text-white/90" />
-              <span className="font-medium text-white">पारदर्शी उपयोग</span>
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <Heart className="w-5 h-5 text-white/90" />
+              <span className="font-semibold text-white text-sm">पारदर्शी उपयोग</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <BookOpen className="w-5 h-5 text-white/90" />
+              <span className="font-semibold text-white text-sm">निःशुल्क सेवाएं</span>
             </div>
           </div>
+
         </div>
       </div>
       
