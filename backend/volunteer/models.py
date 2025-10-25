@@ -33,5 +33,11 @@ class Volunteer(models.Model):
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True, related_name='volunteers')
     joined_date = models.DateField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not getattr(self.user, "is_volunteer", False):
+            self.user.is_volunteer = True
+            self.user.save(update_fields=["is_volunteer"])
+
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.user.first_name} {self.user.last_name}"
