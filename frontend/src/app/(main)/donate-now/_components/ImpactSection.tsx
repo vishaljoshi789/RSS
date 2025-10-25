@@ -1,102 +1,104 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Heart, Shield, Users, Globe, TrendingUp } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Shield,
+  BookOpen,
+  TrendingUp,
+  Home,
+  Wheat,
+  Building2,
+  Ambulance,
+} from "lucide-react";
 
 const impactItems = [
   {
-    icon: <Heart className="w-8 h-8 text-red-500" />,
-    title: "सामाजिक कल्याण",
-    description: "रक्तदान शिविर, स्वास्थ्य सेवा और आपातकालीन सहायता में योगदान",
-    stats: "50,000+ लाभार्थी"
+    icon: <Shield className="w-8 h-8 text-red-500" />,
+    title: "बहन बेटियों की सुरक्षा",
+    description: "महिला सुरक्षा और सशक्तिकरण के लिए विशेष कार्यक्रम एवं संसाधन",
+    stats: "हजारों परिवार सुरक्षित",
+    color: "from-red-500/10 to-pink-500/10",
   },
   {
-    icon: <Users className="w-8 h-8 text-blue-500" />,
-    title: "शिक्षा और प्रशिक्षण",
-    description: "युवा प्रशिक्षण कार्यक्रम और चरित्र निर्माण गतिविधियों में सहयोग",
-    stats: "25,000+ छात्र"
+    icon: <BookOpen className="w-8 h-8 text-blue-500" />,
+    title: "गुरुकुल और शिक्षा",
+    description:
+      "धार्मिक संस्कारों के साथ निःशुल्क शिक्षा, पुस्तकें, वस्त्र और भोजन सामग्री",
+    stats: "25,000+ छात्र लाभान्वित",
+    color: "from-blue-500/10 to-cyan-500/10",
   },
   {
-    icon: <Globe className="w-8 h-8 text-green-500" />,
-    title: "सांस्कृतिक संरक्षण",
-    description: "भारतीय संस्कृति और परंपरा के संरक्षण में योगदान",
-    stats: "1,000+ कार्यक्रम"
+    icon: <Wheat className="w-8 h-8 text-green-500" />,
+    title: "गौशाला संरक्षण",
+    description: "गौमाता की सुरक्षा एवं जीवन यापन हेतु चारा और अन्य सुविधाएं",
+    stats: "1,000+ गौमाता संरक्षित",
+    color: "from-green-500/10 to-emerald-500/10",
   },
   {
-    icon: <Shield className="w-8 h-8 text-purple-500" />,
-    title: "राष्ट्र सेवा",
-    description: "राष्ट्रीय एकता और धार्मिक मूल्यों के संवर्धन में सहयोग",
-    stats: "सभी राज्यों में सक्रिय"
+    icon: <Home className="w-8 h-8 text-purple-500" />,
+    title: "मठ मंदिर संरक्षण",
+    description:
+      "सनातन धर्म के मठ मंदिरों का संरक्षण और धार्मिक स्थलों का विकास",
+    stats: "100+ मंदिर संरक्षित",
+    color: "from-purple-500/10 to-violet-500/10",
+  },
+  {
+    icon: <Ambulance className="w-8 h-8 text-orange-500" />,
+    title: "निःशुल्क स्वास्थ्य सेवा",
+    description: "वंचितों के लिए एम्बुलेंस सेवा और मुफ्त चिकित्सा सहायता",
+    stats: "50,000+ सेवाएं प्रदान",
+    color: "from-orange-500/10 to-amber-500/10",
+  },
+  {
+    icon: <Building2 className="w-8 h-8 text-indigo-500" />,
+    title: "बुनियादी ढांचा विकास",
+    description: "गुरुकुल निर्माण, स्थाई भवन और अन्य मूलभूत सुविधाओं का विकास",
+    stats: "20+ प्रोजेक्ट पूर्ण",
+    color: "from-indigo-500/10 to-blue-500/10",
   },
 ];
 
 const ImpactSection = () => {
   return (
-    <section className="py-12 lg:py-16 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <Badge variant="outline" className="mb-4 px-3 py-1">
-            <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-            प्रभाव और परिणाम
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3">
-            आपका दान कैसे उपयोग होता है
-          </h2>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            हमारे संगठन द्वारा किए जाने वाले विभिन्न सेवा कार्यों में आपका योगदान प्रभावी रूप से उपयोग होता है।
-            पारदर्शिता और जवाबदेही हमारे मुख्य सिद्धांत हैं।
-          </p>
-        </div>
-        
-        {/* Impact Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {impactItems.map((item, index) => (
-            <Card 
-              key={index} 
-              className="text-center p-5 border rounded-xl"
-            >
-              <CardHeader className="pb-3">
-                <div className="flex justify-center mb-3">
-                  <div className="p-2.5 bg-muted rounded-lg">
-                    {item.icon}
-                  </div>
-                </div>
-                <CardTitle className="text-base font-semibold text-foreground">
-                  {item.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {item.description}
-                </p>
-                <div className="pt-2 border-t">
-                  <Badge variant="secondary" className="text-xs font-medium bg-primary/10 text-primary">
-                    {item.stats}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        
-        {/* Call to Action */}
-        <div className="text-center mt-12">
-          <div className="bg-muted/30 rounded-xl p-6 border">
-            <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
-              आज ही योगदान करें और बदलाव का हिस्सा बनें
-            </h3>
-            <p className="text-sm text-muted-foreground mb-4 max-w-2xl mx-auto">
-              आपका हर योगदान हजारों लोगों के जीवन में सकारात्मक बदलाव लाता है
-            </p>
-            <div className="flex justify-center">
-              <div className="flex items-center gap-2 text-sm text-primary">
-                <Heart className="w-4 h-4" />
-                <span className="font-medium">मिलकर करें समाज सेवा</span>
+    <section className="mb-8 max-w-7xl mx-auto">
+      <div className="text-center mb-6">
+        <Badge variant="outline" className="mb-3 px-4 py-1.5">
+          <TrendingUp className="w-4 h-4 mr-2 text-primary" />
+          हमारा प्रभाव
+        </Badge>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+          आपका दान कैसे उपयोग होता है
+        </h2>
+      </div>
+
+      <div className="grid sm:grid-cols-4 gap-4">
+        {impactItems.map((item, index) => (
+          <Card
+            key={index}
+            className="group overflow-hidden border hover:border-primary/50 transition-all hover:shadow-md"
+          >
+            <div className={`h-1 `}></div>
+            <CardHeader className="pb-2 ">
+              <div className="flex items-start justify-between mb-2">
+                <div className="p-2 bg-muted rounded-lg">{item.icon}</div>
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-primary/10 text-primary"
+                >
+                  {item.stats}
+                </Badge>
               </div>
-            </div>
-          </div>
-        </div>
+              <CardTitle className="text-base font-bold text-foreground">
+                {item.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pb-4">
+              <p className="text-sm text-muted-foreground">
+                {item.description}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </section>
   );
