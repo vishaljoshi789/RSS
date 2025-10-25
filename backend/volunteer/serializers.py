@@ -28,3 +28,23 @@ class ApplicationSerializer(ModelSerializer):
     class Meta:
         model = Application
         fields = '__all__'
+
+class NestedDesignationSerializer(ModelSerializer):
+    volunteer_count = serializers.IntegerField(read_only=True)
+    class Meta:
+        model = Designation
+        fields = ('id', 'title', 'total_positions', 'volunteer_count')
+
+class NestedLevelSerializer(ModelSerializer):
+    designations = NestedDesignationSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Level
+        fields = ('id', 'name', 'designations')
+
+class WingDetailSerializer(ModelSerializer):
+    levels = NestedLevelSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Wing
+        fields = ('id', 'name', 'description', 'levels') 

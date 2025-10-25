@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from dashboard.permissions import IsAdminOrIsStaff
 from .models import Volunteer, Wing, Level, Designation, Application
-from .serializers import VolunteerSerializer, WingSerializer, LevelSerializer, DesignationSerializer, ApplicationSerializer
+from .serializers import VolunteerSerializer, WingSerializer, LevelSerializer, DesignationSerializer, ApplicationSerializer, NestedDesignationSerializer, NestedLevelSerializer, WingDetailSerializer
 from .filters import VolunteerFilter, LevelFilter, DesignationFilter
 
 class WingListCreateView(ListCreateAPIView):
@@ -27,6 +27,13 @@ class WingDetailView(RetrieveUpdateDestroyAPIView):
     def get_permissions(self):
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
             return [IsAdminOrIsStaff()]
+        return [AllowAny()]
+    
+class WingDetailWithLevelsView(ListCreateAPIView):
+    queryset = Wing.objects.all()
+    serializer_class = WingDetailSerializer
+
+    def get_permissions(self):
         return [AllowAny()]
     
 class LevelListCreateView(ListCreateAPIView):
