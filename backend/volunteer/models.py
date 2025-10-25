@@ -41,3 +41,16 @@ class Volunteer(models.Model):
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
+    
+class Application(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='volunteer_applications')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    wing = models.ForeignKey(Wing, on_delete=models.SET_NULL, null=True)
+    level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True)
+    designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True)
+    affidavit = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
+    status = models.CharField(max_length=50)
+    remarks = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"ApplicationLog for {self.user.username} on {self.timestamp}"

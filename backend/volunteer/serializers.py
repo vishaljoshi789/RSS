@@ -1,5 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Wing, Level, Designation, Volunteer
+
+from rest_framework import serializers
+from .models import Wing, Level, Designation, Volunteer, Application
 
 class WingSerializer(ModelSerializer):
     class Meta:
@@ -12,6 +14,7 @@ class LevelSerializer(ModelSerializer):
         fields = '__all__'
 
 class DesignationSerializer(ModelSerializer):
+    volunteer_count = serializers.IntegerField(read_only=True)
     class Meta:
         model = Designation
         fields = '__all__'
@@ -21,4 +24,7 @@ class VolunteerSerializer(ModelSerializer):
         model = Volunteer
         fields = '__all__'
 
-        
+class ApplicationSerializer(ModelSerializer):
+    class Meta:
+        model = Application
+        fields = '__all__'
