@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'payment',
     'adminpanel',
     'vyapari',
+    'volunteer',
 ]
 
 MIDDLEWARE = [
