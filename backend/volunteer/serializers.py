@@ -32,7 +32,7 @@ class ApplicationSerializer(ModelSerializer):
     designation_title = serializers.CharField(source='designation.title', read_only=True)
     class Meta:
         model = Application
-        fields = ['__all__', 'user_name', 'wing_name', 'level_name', 'designation_title']
+        fields = ['id', 'user', 'user_name', 'timestamp', 'wing', 'wing_name', 'level', 'level_name', 'designation', 'designation_title', 'phone_number', 'affidavit', 'aadhar_card_front', 'aadhar_card_back', 'image', 'status', 'remarks']
 
 class ApplicationDetailSerializer(ModelSerializer):
     user = UserInfoSerializer(read_only=True)
