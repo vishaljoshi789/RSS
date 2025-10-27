@@ -50,6 +50,9 @@ class Application(models.Model):
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     affidavit = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
+    aadhar_card_front = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
+    aadhar_card_back = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
+    image = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     status = models.CharField(max_length=50)
     remarks = models.TextField(blank=True, null=True)
 

@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from dashboard.permissions import IsAdminOrIsStaff
 from .models import Volunteer, Wing, Level, Designation, Application
-from .serializers import VolunteerSerializer, WingSerializer, LevelSerializer, DesignationSerializer, ApplicationSerializer, NestedDesignationSerializer, NestedLevelSerializer, WingDetailSerializer
+from .serializers import VolunteerSerializer, WingSerializer, LevelSerializer, DesignationSerializer, ApplicationSerializer, ApplicationDetailSerializer
 from .filters import VolunteerFilter, LevelFilter, DesignationFilter
 
 class WingListCreateView(ListCreateAPIView):
@@ -19,7 +19,7 @@ class WingListCreateView(ListCreateAPIView):
         if self.request.method in ['POST']:
             return [IsAdminOrIsStaff()]
         return [AllowAny()]
-    
+
 class WingDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Wing.objects.all()
     serializer_class = WingSerializer
@@ -28,14 +28,7 @@ class WingDetailView(RetrieveUpdateDestroyAPIView):
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
             return [IsAdminOrIsStaff()]
         return [AllowAny()]
-    
-class WingDetailWithLevelsView(ListCreateAPIView):
-    queryset = Wing.objects.all()
-    serializer_class = WingDetailSerializer
 
-    def get_permissions(self):
-        return [AllowAny()]
-    
 class LevelListCreateView(ListCreateAPIView):
     queryset = Level.objects.all()
     serializer_class = LevelSerializer
@@ -108,7 +101,7 @@ class ApplicationListCreateView(ListCreateAPIView):
 
 class ApplicationDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Application.objects.all()
-    serializer_class = ApplicationSerializer
+    serializer_class = ApplicationDetailSerializer
 
     def get_permissions(self):
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
