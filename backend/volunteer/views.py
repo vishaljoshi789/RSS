@@ -137,6 +137,9 @@ class AssignVolunteerFromApplicationView(RetrieveUpdateDestroyAPIView):
                 'level': application.level,
                 'designation': application.designation,
                 'affidavit': application.affidavit,
+                'aadhar_card_front': application.aadhar_card_front,
+                'aadhar_card_back': application.aadhar_card_back,
+                'image': application.image,
             }
         )
         if not created:

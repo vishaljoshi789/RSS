@@ -27,11 +27,14 @@ class Designation(models.Model):
 class Volunteer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='volunteer')
     phone_number = models.CharField(max_length=15, unique=True)
-    affidavit = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
+    affidavit = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     wing = models.ForeignKey(Wing, on_delete=models.SET_NULL, null=True, related_name='volunteers')
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, related_name='volunteers')
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True, related_name='volunteers')
     joined_date = models.DateField(auto_now_add=True)
+    aadhar_card_front = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
+    aadhar_card_back = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
+    image = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -49,9 +52,9 @@ class Application(models.Model):
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True)
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
-    affidavit = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
-    aadhar_card_front = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
-    aadhar_card_back = models.FileField(upload_to=volunteer_directory_path, blank=True, null=True)
+    affidavit = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
+    aadhar_card_front = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
+    aadhar_card_back = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     image = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     status = models.CharField(max_length=50)
     remarks = models.TextField(blank=True, null=True)
