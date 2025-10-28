@@ -15,10 +15,10 @@ import {
   User,
   Search,
   RefreshCcw,
+  Network,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useAxios from "@/hooks/use-axios";
-import { toast } from "sonner";
 
 interface Position {
   id: number;
@@ -337,9 +337,9 @@ const HierarchyTree = () => {
   if (loading) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center py-8">
-          <RefreshCcw className="h-8 w-8 animate-spin mr-2" />
-          <span>Loading hierarchy...</span>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+          <p className="text-muted-foreground">Loading hierarchy...</p>
         </CardContent>
       </Card>
     );
@@ -365,7 +365,7 @@ const HierarchyTree = () => {
         <div className="relative mt-4">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search categories..."
+            placeholder="Search wings..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -375,13 +375,22 @@ const HierarchyTree = () => {
       <CardContent>
         <div className="space-y-2">
           {filteredCategories.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <Folder className="h-12 w-12 text-muted-foreground mb-2" />
-              <p className="text-sm text-muted-foreground">
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <Network className="h-12 w-12 mb-4 opacity-50" />
+              <h3 className="font-semibold text-lg mb-1">
+                {searchTerm ? "No results found" : "No hierarchy available"}
+              </h3>
+              <p className="text-sm mb-4">
                 {searchTerm
                   ? `No results matching "${searchTerm}"`
-                  : "No categories found"}
+                  : "Create wings, levels, and designations to see the hierarchy"}
               </p>
+              {!searchTerm && (
+                <Button variant="outline" size="sm" onClick={fetchHierarchy}>
+                  <RefreshCcw className="mr-2 h-4 w-4" />
+                  Refresh
+                </Button>
+              )}
             </div>
           ) : (
             filteredCategories.map((category) => (

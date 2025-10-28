@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -29,268 +28,123 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import useAxios from "@/hooks/use-axios";
-import { toast } from "sonner";
+import { Plus, Pencil, Trash2, Search, Award } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-interface Category {
-  id: number;
-  name: string;
-}
-
-interface Level {
-  id: number;
-  name: string;
-  category: number;
-}
-
-interface Pad {
-  id: number;
-  name: string;
-  description: string;
-  level: number;
-  level_name?: string;
-  category_name?: string;
-  total_positions: number;
-  filled_positions: number;
-}
+import { useWings, useLevels, useDesignations } from "@/module/dashboard/volunteer";
+import type { Designation, DesignationFormData } from "@/module/dashboard/volunteer";
 
 const PadManagement = () => {
-  const axios = useAxios();
-  const [pads, setPads] = useState<Pad[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [levels, setLevels] = useState<Level[]>([]);
-  const [filteredLevels, setFilteredLevels] = useState<Level[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { wings } = useWings();
+  const { levels } = useLevels();
+  const { designations, loading, createDesignation, updateDesignation, deleteDesignation } = useDesignations();
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentPad, setCurrentPad] = useState<Pad | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+  const [currentDesignation, setCurrentDesignation] = useState<Designation | null>(null);
+  const [formData, setFormData] = useState<DesignationFormData>({
+    title: "",
     level: 0,
     total_positions: 1,
   });
-  const [selectedCategory, setSelectedCategory] = useState(0);
+  const [selectedWing, setSelectedWing] = useState<number>(0);
+  const [filteredLevels, setFilteredLevels] = useState(levels);
   const [submitting, setSubmitting] = useState(false);
 
+  // Filter levels when wing selection changes
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (selectedCategory > 0) {
-      setFilteredLevels(levels.filter((l) => l.category === selectedCategory));
+    if (selectedWing > 0) {
+      setFilteredLevels((levels || []).filter((l) => l.wing === selectedWing));
     } else {
-      setFilteredLevels(levels);
+      setFilteredLevels(levels || []);
     }
-  }, [selectedCategory, levels]);
-
-  const fetchData = async () => {
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setLoading(true);
-    //   const [padsRes, categoriesRes, levelsRes] = await Promise.all([
-    //     axios.get("/volunteer/pad/"),
-    //     axios.get("/volunteer/category/"),
-    //     axios.get("/volunteer/level/"),
-    //   ]);
-    //   setPads(padsRes.data.results || padsRes.data || []);
-    //   setCategories(categoriesRes.data.results || categoriesRes.data || []);
-    //   setLevels(levelsRes.data.results || levelsRes.data || []);
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to fetch data");
-    // } finally {
-    //   setLoading(false);
-    // }
-
-    // Dummy data for now
-    setLoading(true);
-    setTimeout(() => {
-      const dummyCategories: Category[] = [
-        { id: 1, name: "Shakha Level" },
-        { id: 2, name: "Zila Level" },
-        { id: 3, name: "Prant Level" },
-      ];
-      const dummyLevels: Level[] = [
-        { id: 1, name: "Junior Level", category: 1 },
-        { id: 2, name: "Senior Level", category: 1 },
-        { id: 3, name: "District Coordination", category: 2 },
-      ];
-      const dummyPads: Pad[] = [
-        {
-          id: 1,
-          name: "Swayamsevak",
-          description: "Basic volunteer",
-          level: 1,
-          total_positions: 5,
-          filled_positions: 3,
-        },
-        {
-          id: 2,
-          name: "Sahayak",
-          description: "Assistant volunteer",
-          level: 1,
-          total_positions: 3,
-          filled_positions: 2,
-        },
-        {
-          id: 3,
-          name: "Mukhya Shikshak",
-          description: "Chief instructor",
-          level: 2,
-          total_positions: 2,
-          filled_positions: 1,
-        },
-        {
-          id: 4,
-          name: "Zila Karyavah",
-          description: "District secretary",
-          level: 3,
-          total_positions: 1,
-          filled_positions: 1,
-        },
-        {
-          id: 5,
-          name: "Zila Pracharak",
-          description: "District organizer",
-          level: 3,
-          total_positions: 2,
-          filled_positions: 0,
-        },
-      ];
-      setCategories(dummyCategories);
-      setLevels(dummyLevels);
-      setPads(dummyPads);
-      setLoading(false);
-    }, 500);
-  };
+  }, [selectedWing, levels]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.post("/volunteer/pad/", formData);
-    //   toast.success("Pad (Designation) created successfully");
-    //   setIsCreateDialogOpen(false);
-    //   setFormData({ name: "", description: "", level: 0, total_positions: 1 });
-    //   setSelectedCategory(0);
-    //   fetchData();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to create pad");
-    // } finally {
-    //   setSubmitting(false);
-    // }
-
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Pad (Designation) created successfully");
+    if (!formData.title.trim() || !formData.level || !formData.total_positions) return;
+    
+    try {
+      setSubmitting(true);
+      await createDesignation(formData);
       setIsCreateDialogOpen(false);
-      setFormData({ name: "", description: "", level: 0, total_positions: 1 });
-      setSelectedCategory(0);
+      setFormData({ title: "", level: 0, total_positions: 1 });
+      setSelectedWing(0);
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchData();
-    }, 500);
+    }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentPad) return;
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.put(`/volunteer/pad/${currentPad.id}/`, formData);
-    //   toast.success("Pad (Designation) updated successfully");
-    //   setIsEditDialogOpen(false);
-    //   setCurrentPad(null);
-    //   setFormData({ name: "", description: "", level: 0, total_positions: 1 });
-    //   setSelectedCategory(0);
-    //   fetchData();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to update pad");
-    // } finally {
-    //   setSubmitting(false);
-    // }
+    if (!currentDesignation || !formData.title.trim() || !formData.level) return;
 
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Pad (Designation) updated successfully");
+    try {
+      setSubmitting(true);
+      await updateDesignation(currentDesignation.id, formData);
       setIsEditDialogOpen(false);
-      setCurrentPad(null);
-      setFormData({ name: "", description: "", level: 0, total_positions: 1 });
-      setSelectedCategory(0);
+      setCurrentDesignation(null);
+      setFormData({ title: "", level: 0, total_positions: 1 });
+      setSelectedWing(0);
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchData();
-    }, 500);
+    }
   };
 
   const handleDelete = async () => {
-    if (!currentPad) return;
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.delete(`/volunteer/pad/${currentPad.id}/`);
-    //   toast.success("Pad (Designation) deleted successfully");
-    //   setIsDeleteDialogOpen(false);
-    //   setCurrentPad(null);
-    //   fetchData();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to delete pad");
-    // } finally {
-    //   setSubmitting(false);
-    // }
+    if (!currentDesignation) return;
 
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Pad (Designation) deleted successfully");
+    try {
+      setSubmitting(true);
+      await deleteDesignation(currentDesignation.id);
       setIsDeleteDialogOpen(false);
-      setCurrentPad(null);
+      setCurrentDesignation(null);
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchData();
-    }, 500);
+    }
   };
 
-  const openEditDialog = (pad: Pad) => {
-    setCurrentPad(pad);
-    const level = levels.find((l) => l.id === pad.level);
-    if (level) {
-      setSelectedCategory(level.category);
-    }
+  const openEditDialog = (designation: Designation) => {
+    setCurrentDesignation(designation);
     setFormData({
-      name: pad.name,
-      description: pad.description,
-      level: pad.level,
-      total_positions: pad.total_positions,
+      title: designation.title,
+      level: designation.level,
+      total_positions: designation.total_positions,
     });
+    // Set the wing based on the level
+    const level = (levels || []).find((l) => l.id === designation.level);
+    if (level) {
+      setSelectedWing(level.wing);
+    }
     setIsEditDialogOpen(true);
   };
 
-  const openDeleteDialog = (pad: Pad) => {
-    setCurrentPad(pad);
+  const openDeleteDialog = (designation: Designation) => {
+    setCurrentDesignation(designation);
     setIsDeleteDialogOpen(true);
   };
 
   const getLevelName = (levelId: number) => {
-    return levels.find((l) => l.id === levelId)?.name || "Unknown";
+    return (levels || []).find((l) => l.id === levelId)?.name || "Unknown";
   };
 
-  const getCategoryName = (levelId: number) => {
-    const level = levels.find((l) => l.id === levelId);
+  const getWingName = (levelId: number) => {
+    const level = (levels || []).find((l) => l.id === levelId);
     if (level) {
-      return categories.find((c) => c.id === level.category)?.name || "Unknown";
+      return (wings || []).find((w) => w.id === level.wing)?.name || "Unknown";
     }
     return "Unknown";
   };
 
-  const filteredPads = pads.filter((pad) =>
-    pad.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredDesignations = (designations || []).filter((designation) =>
+    designation.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -318,65 +172,67 @@ const PadManagement = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Wing</TableHead>
                 <TableHead>Level</TableHead>
                 <TableHead>Total Positions</TableHead>
-                <TableHead>Filled</TableHead>
-                <TableHead>Vacant</TableHead>
-                <TableHead>Description</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center">
-                    Loading...
+                  <TableCell colSpan={5} className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                      <p>Loading designations...</p>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ) : filteredPads.length === 0 ? (
+              ) : filteredDesignations.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center">
-                    No pads found
+                  <TableCell colSpan={5} className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground">
+                      <Award className="h-12 w-12 mb-4 opacity-50" />
+                      <h3 className="font-semibold text-lg mb-1">No designations found</h3>
+                      <p className="text-sm mb-4">
+                        {searchTerm
+                          ? `No designations match "${searchTerm}"`
+                          : "Create wings and levels first, then add designations"}
+                      </p>
+                      {!searchTerm && wings.length > 0 && levels.length > 0 && (
+                        <Button
+                          onClick={() => setIsCreateDialogOpen(true)}
+                          size="sm"
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Designation
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredPads.map((pad) => (
-                  <TableRow key={pad.id}>
-                    <TableCell className="font-medium">{pad.name}</TableCell>
-                    <TableCell>{getCategoryName(pad.level)}</TableCell>
-                    <TableCell>{getLevelName(pad.level)}</TableCell>
+                filteredDesignations.map((designation) => (
+                  <TableRow key={designation.id}>
+                    <TableCell className="font-medium">{designation.title}</TableCell>
+                    <TableCell>{getWingName(designation.level)}</TableCell>
+                    <TableCell>{getLevelName(designation.level)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{pad.total_positions}</Badge>
+                      <Badge variant="outline">{designation.total_positions}</Badge>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant="default">{pad.filled_positions}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          pad.total_positions - pad.filled_positions === 0
-                            ? "secondary"
-                            : "destructive"
-                        }
-                      >
-                        {pad.total_positions - pad.filled_positions}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{pad.description}</TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => openEditDialog(pad)}
+                        onClick={() => openEditDialog(designation)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => openDeleteDialog(pad)}
+                        onClick={() => openDeleteDialog(designation)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -401,22 +257,20 @@ const PadManagement = () => {
           <form onSubmit={handleCreate}>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="category" className="mb-2 block">
-                  Category <span className="text-red-500">*</span>
+                <Label htmlFor="wing" className="mb-2 block">
+                  Wing <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={selectedCategory > 0 ? selectedCategory.toString() : ""}
-                  onValueChange={(value) =>
-                    setSelectedCategory(parseInt(value))
-                  }
+                  value={selectedWing > 0 ? selectedWing.toString() : ""}
+                  onValueChange={(value) => setSelectedWing(parseInt(value))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category first" />
+                    <SelectValue placeholder="Select wing first" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id.toString()}>
-                        {cat.name}
+                    {wings.map((wing) => (
+                      <SelectItem key={wing.id} value={wing.id.toString()}>
+                        {wing.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -431,7 +285,7 @@ const PadManagement = () => {
                   onValueChange={(value) =>
                     setFormData({ ...formData, level: parseInt(value) })
                   }
-                  disabled={selectedCategory === 0}
+                  disabled={selectedWing === 0}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select level" />
@@ -446,14 +300,14 @@ const PadManagement = () => {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="name" className="mb-2 block">
-                  Pad Name (Designation) <span className="text-red-500">*</span>
+                <Label htmlFor="title" className="mb-2 block">
+                  Pad Title (Designation) <span className="text-red-500">*</span>
                 </Label>
                 <Input
-                  id="name"
-                  value={formData.name}
+                  id="title"
+                  value={formData.title}
                   onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
+                    setFormData({ ...formData, title: e.target.value })
                   }
                   placeholder="e.g., Pracharak, Karyavah, etc."
                   required
@@ -467,29 +321,15 @@ const PadManagement = () => {
                   id="total_positions"
                   type="number"
                   min="1"
-                  value={formData.total_positions}
+                  value={formData.total_positions || ""}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      total_positions: parseInt(e.target.value),
+                      total_positions: parseInt(e.target.value) || 0,
                     })
                   }
                   placeholder="Enter number of positions"
                   required
-                />
-              </div>
-              <div>
-                <Label htmlFor="description" className="mb-2 block">
-                  Description
-                </Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Enter pad description"
-                  rows={3}
                 />
               </div>
             </div>
@@ -499,7 +339,7 @@ const PadManagement = () => {
                 variant="outline"
                 onClick={() => {
                   setIsCreateDialogOpen(false);
-                  setSelectedCategory(0);
+                  setSelectedWing(0);
                 }}
                 disabled={submitting}
               >
@@ -523,22 +363,20 @@ const PadManagement = () => {
           <form onSubmit={handleUpdate}>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="edit-category" className="mb-2 block">
-                  Category <span className="text-red-500">*</span>
+                <Label htmlFor="edit-wing" className="mb-2 block">
+                  Wing <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={selectedCategory > 0 ? selectedCategory.toString() : ""}
-                  onValueChange={(value) =>
-                    setSelectedCategory(parseInt(value))
-                  }
+                  value={selectedWing > 0 ? selectedWing.toString() : ""}
+                  onValueChange={(value) => setSelectedWing(parseInt(value))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category first" />
+                    <SelectValue placeholder="Select wing first" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id.toString()}>
-                        {cat.name}
+                    {wings.map((wing) => (
+                      <SelectItem key={wing.id} value={wing.id.toString()}>
+                        {wing.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -553,7 +391,7 @@ const PadManagement = () => {
                   onValueChange={(value) =>
                     setFormData({ ...formData, level: parseInt(value) })
                   }
-                  disabled={selectedCategory === 0}
+                  disabled={selectedWing === 0}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select level" />
@@ -568,14 +406,14 @@ const PadManagement = () => {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="edit-name" className="mb-2 block">
-                  Pad Name (Designation) <span className="text-red-500">*</span>
+                <Label htmlFor="edit-title" className="mb-2 block">
+                  Pad Title (Designation) <span className="text-red-500">*</span>
                 </Label>
                 <Input
-                  id="edit-name"
-                  value={formData.name}
+                  id="edit-title"
+                  value={formData.title}
                   onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
+                    setFormData({ ...formData, title: e.target.value })
                   }
                   placeholder="e.g., Pracharak, Karyavah, etc."
                   required
@@ -589,29 +427,15 @@ const PadManagement = () => {
                   id="edit-total_positions"
                   type="number"
                   min="1"
-                  value={formData.total_positions}
+                  value={formData.total_positions || ""}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      total_positions: parseInt(e.target.value),
+                      total_positions: parseInt(e.target.value) || 0,
                     })
                   }
                   placeholder="Enter number of positions"
                   required
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-description" className="mb-2 block">
-                  Description
-                </Label>
-                <Textarea
-                  id="edit-description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Enter pad description"
-                  rows={3}
                 />
               </div>
             </div>
@@ -621,7 +445,7 @@ const PadManagement = () => {
                 variant="outline"
                 onClick={() => {
                   setIsEditDialogOpen(false);
-                  setSelectedCategory(0);
+                  setSelectedWing(0);
                 }}
                 disabled={submitting}
               >
@@ -641,7 +465,7 @@ const PadManagement = () => {
           <DialogHeader>
             <DialogTitle>Delete Pad (Designation)</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentPad?.name}"? This will also
+              Are you sure you want to delete "{currentDesignation?.title}"? This will also
               remove all position assignments.
             </DialogDescription>
           </DialogHeader>

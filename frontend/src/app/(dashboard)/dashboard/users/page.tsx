@@ -28,7 +28,7 @@ export default function UsersPage() {
   const [currentPage, setCurrentPage] = useState(pageFromUrl);
   const [pageSize, setPageSize] = useState(pageSizeFromUrl);
 
-  const { users, loading, error, pagination, updateUser, searchUser, refetch } =
+  const { users, loading, error, pagination, updateUser } =
     useUsers(currentPage, pageSize);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);

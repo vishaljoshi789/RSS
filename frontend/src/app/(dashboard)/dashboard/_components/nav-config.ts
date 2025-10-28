@@ -125,6 +125,13 @@ export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
     description: "Manage referrals",
     roles: ["admin", "staff"],
   },
+  {
+    title: "Volunteer Registration",
+    url: "/dashboard/volunteer-registration",
+    icon: CreditCard,
+    description: "Volunteer Registration",
+    roles: ["volunteer", "admin"],
+  }
 ];
 
 export const deriveDashboardRoles = (user: User | null): DashboardRole[] => {

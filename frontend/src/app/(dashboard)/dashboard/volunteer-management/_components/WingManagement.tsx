@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,181 +22,87 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import useAxios from "@/hooks/use-axios";
-import { toast } from "sonner";
+import { Plus, Pencil, Trash2, Search, FolderOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useWings } from "@/module/dashboard/volunteer";
+import type { Wing, WingFormData } from "@/module/dashboard/volunteer";
 
-interface Category {
-  id: number;
-  name: string;
-  description: string;
-  created_at: string;
-  level_count?: number;
-}
-
-const CategoryManagement = () => {
-  const axios = useAxios();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+const WingManagement = () => {
+  const { wings, loading, createWing, updateWing, deleteWing } = useWings();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState({
+  const [currentWing, setCurrentWing] = useState<Wing | null>(null);
+  const [formData, setFormData] = useState<WingFormData>({
     name: "",
     description: "",
   });
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setLoading(true);
-    //   const response = await axios.get("/volunteer/category/");
-    //   setCategories(response.data.results || response.data || []);
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to fetch categories");
-    // } finally {
-    //   setLoading(false);
-    // }
-
-    // Dummy data for now
-    setLoading(true);
-    setTimeout(() => {
-      const dummyData: Category[] = [
-        {
-          id: 1,
-          name: "Shakha Level",
-          description: "Local branch level volunteers",
-          created_at: "2024-01-15T10:30:00Z",
-          level_count: 2,
-        },
-        {
-          id: 2,
-          name: "Zila Level",
-          description: "District level coordination",
-          created_at: "2024-01-16T11:00:00Z",
-          level_count: 1,
-        },
-        {
-          id: 3,
-          name: "Prant Level",
-          description: "State level management",
-          created_at: "2024-01-17T09:15:00Z",
-          level_count: 0,
-        },
-      ];
-      setCategories(dummyData);
-      setLoading(false);
-    }, 500);
-  };
-
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.post("/volunteer/category/", formData);
-    //   toast.success("Category created successfully");
-    //   setIsCreateDialogOpen(false);
-    //   setFormData({ name: "", description: "" });
-    //   fetchCategories();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to create category");
-    // } finally {
-    //   setSubmitting(false);
-    // }
-
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Category created successfully");
+    if (!formData.name.trim()) return;
+    
+    try {
+      setSubmitting(true);
+      await createWing(formData);
       setIsCreateDialogOpen(false);
       setFormData({ name: "", description: "" });
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchCategories();
-    }, 500);
+    }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentCategory) return;
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.put(`/volunteer/category/${currentCategory.id}/`, formData);
-    //   toast.success("Category updated successfully");
-    //   setIsEditDialogOpen(false);
-    //   setCurrentCategory(null);
-    //   setFormData({ name: "", description: "" });
-    //   fetchCategories();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to update category");
-    // } finally {
-    //   setSubmitting(false);
-    // }
+    if (!currentWing || !formData.name.trim()) return;
 
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Category updated successfully");
+    try {
+      setSubmitting(true);
+      await updateWing(currentWing.id, formData);
       setIsEditDialogOpen(false);
-      setCurrentCategory(null);
+      setCurrentWing(null);
       setFormData({ name: "", description: "" });
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchCategories();
-    }, 500);
+    }
   };
 
   const handleDelete = async () => {
-    if (!currentCategory) return;
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.delete(`/volunteer/category/${currentCategory.id}/`);
-    //   toast.success("Category deleted successfully");
-    //   setIsDeleteDialogOpen(false);
-    //   setCurrentCategory(null);
-    //   fetchCategories();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to delete category");
-    // } finally {
-    //   setSubmitting(false);
-    // }
+    if (!currentWing) return;
 
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Category deleted successfully");
+    try {
+      setSubmitting(true);
+      await deleteWing(currentWing.id);
       setIsDeleteDialogOpen(false);
-      setCurrentCategory(null);
+      setCurrentWing(null);
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchCategories();
-    }, 500);
+    }
   };
-
-  const openEditDialog = (category: Category) => {
-    setCurrentCategory(category);
+  const openEditDialog = (wing: Wing) => {
+    setCurrentWing(wing);
     setFormData({
-      name: category.name,
-      description: category.description,
+      name: wing.name,
+      description: wing.description,
     });
     setIsEditDialogOpen(true);
   };
 
-  const openDeleteDialog = (category: Category) => {
-    setCurrentCategory(category);
+  const openDeleteDialog = (wing: Wing) => {
+    setCurrentWing(wing);
     setIsDeleteDialogOpen(true);
   };
 
-  const filteredCategories = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredWings = (wings || []).filter((wing) =>
+    wing.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -204,16 +110,16 @@ const CategoryManagement = () => {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Category Management</CardTitle>
+            <CardTitle>Wing Management</CardTitle>
             <Button onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Category
+              Add Wing
             </Button>
           </div>
           <div className="relative mt-4">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search categories..."
+              placeholder="Search wings..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -226,43 +132,59 @@ const CategoryManagement = () => {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead>Levels</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    Loading...
+                  <TableCell colSpan={3} className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                      <p>Loading wings...</p>
+                    </div>
                   </TableCell>
                 </TableRow>
-              ) : filteredCategories.length === 0 ? (
+              ) : filteredWings.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    No categories found
+                  <TableCell colSpan={3} className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground">
+                      <FolderOpen className="h-12 w-12 mb-4 opacity-50" />
+                      <h3 className="font-semibold text-lg mb-1">No wings found</h3>
+                      <p className="text-sm mb-4">
+                        {searchTerm
+                          ? `No wings match "${searchTerm}"`
+                          : "Get started by creating your first wing"}
+                      </p>
+                      {!searchTerm && (
+                        <Button
+                          onClick={() => setIsCreateDialogOpen(true)}
+                          size="sm"
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Wing
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredCategories.map((category) => (
-                  <TableRow key={category.id}>
-                    <TableCell className="font-medium">{category.name}</TableCell>
-                    <TableCell>{category.description}</TableCell>
-                    <TableCell>
-                      <Badge>{category.level_count || 0} Levels</Badge>
-                    </TableCell>
+                filteredWings.map((wing) => (
+                  <TableRow key={wing.id}>
+                    <TableCell className="font-medium">{wing.name}</TableCell>
+                    <TableCell>{wing.description}</TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => openEditDialog(category)}
+                        onClick={() => openEditDialog(wing)}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => openDeleteDialog(category)}
+                        onClick={() => openDeleteDialog(wing)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -279,8 +201,8 @@ const CategoryManagement = () => {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create Category</DialogTitle>
-            <DialogDescription>Add a new volunteer category</DialogDescription>
+            <DialogTitle>Create Wing</DialogTitle>
+            <DialogDescription>Add a new volunteer wing</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreate}>
             <div className="space-y-4">
@@ -294,7 +216,7 @@ const CategoryManagement = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  placeholder="Enter category name"
+                  placeholder="Enter wing name"
                   required
                 />
               </div>
@@ -308,7 +230,7 @@ const CategoryManagement = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  placeholder="Enter category description"
+                  placeholder="Enter wing description"
                   rows={3}
                 />
               </div>
@@ -334,8 +256,8 @@ const CategoryManagement = () => {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>Update category details</DialogDescription>
+            <DialogTitle>Edit Wing</DialogTitle>
+            <DialogDescription>Update wing details</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdate}>
             <div className="space-y-4">
@@ -349,7 +271,7 @@ const CategoryManagement = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  placeholder="Enter category name"
+                  placeholder="Enter wing name"
                   required
                 />
               </div>
@@ -363,7 +285,7 @@ const CategoryManagement = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  placeholder="Enter category description"
+                  placeholder="Enter wing description"
                   rows={3}
                 />
               </div>
@@ -389,9 +311,9 @@ const CategoryManagement = () => {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Category</DialogTitle>
+            <DialogTitle>Delete Wing</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentCategory?.name}"? This action
+              Are you sure you want to delete "{currentWing?.name}"? This action
               cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -417,4 +339,4 @@ const CategoryManagement = () => {
   );
 };
 
-export default CategoryManagement;
+export default WingManagement;

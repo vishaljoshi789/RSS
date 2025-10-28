@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -29,195 +28,78 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import useAxios from "@/hooks/use-axios";
-import { toast } from "sonner";
+import { Plus, Pencil, Trash2, Search, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-interface Category {
-  id: number;
-  name: string;
-}
-
-interface Level {
-  id: number;
-  name: string;
-  description: string;
-  category: number;
-  category_name?: string;
-  order: number;
-  pad_count?: number;
-}
+import { useWings, useLevels } from "@/module/dashboard/volunteer";
+import type { Level, LevelFormData } from "@/module/dashboard/volunteer";
 
 const LevelManagement = () => {
-  const axios = useAxios();
-  const [levels, setLevels] = useState<Level[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { wings } = useWings();
+  const { levels, loading, createLevel, updateLevel, deleteLevel } = useLevels();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentLevel, setCurrentLevel] = useState<Level | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LevelFormData>({
     name: "",
-    description: "",
-    category: 0,
-    order: 1,
+    wing: 0,
   });
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setLoading(true);
-    //   const [levelsRes, categoriesRes] = await Promise.all([
-    //     axios.get("/volunteer/level/"),
-    //     axios.get("/volunteer/category/"),
-    //   ]);
-    //   setLevels(levelsRes.data.results || levelsRes.data || []);
-    //   setCategories(categoriesRes.data.results || categoriesRes.data || []);
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to fetch data");
-    // } finally {
-    //   setLoading(false);
-    // }
-
-    // Dummy data for now
-    setLoading(true);
-    setTimeout(() => {
-      const dummyCategories: Category[] = [
-        { id: 1, name: "Shakha Level" },
-        { id: 2, name: "Zila Level" },
-        { id: 3, name: "Prant Level" },
-      ];
-      const dummyLevels: Level[] = [
-        {
-          id: 1,
-          name: "Junior Level",
-          description: "Entry level positions",
-          category: 1,
-          order: 1,
-          pad_count: 2,
-        },
-        {
-          id: 2,
-          name: "Senior Level",
-          description: "Experienced volunteers",
-          category: 1,
-          order: 2,
-          pad_count: 1,
-        },
-        {
-          id: 3,
-          name: "District Coordination",
-          description: "District level management",
-          category: 2,
-          order: 1,
-          pad_count: 2,
-        },
-      ];
-      setCategories(dummyCategories);
-      setLevels(dummyLevels);
-      setLoading(false);
-    }, 500);
-  };
-
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.post("/volunteer/level/", formData);
-    //   toast.success("Level created successfully");
-    //   setIsCreateDialogOpen(false);
-    //   setFormData({ name: "", description: "", category: 0, order: 1 });
-    //   fetchData();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to create level");
-    // } finally {
-    //   setSubmitting(false);
-    // }
-
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Level created successfully");
+    if (!formData.name.trim() || !formData.wing) return;
+    
+    try {
+      setSubmitting(true);
+      await createLevel(formData);
       setIsCreateDialogOpen(false);
-      setFormData({ name: "", description: "", category: 0, order: 1 });
+      setFormData({ name: "", wing: 0 });
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchData();
-    }, 500);
+    }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentLevel) return;
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.put(`/volunteer/level/${currentLevel.id}/`, formData);
-    //   toast.success("Level updated successfully");
-    //   setIsEditDialogOpen(false);
-    //   setCurrentLevel(null);
-    //   setFormData({ name: "", description: "", category: 0, order: 1 });
-    //   fetchData();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to update level");
-    // } finally {
-    //   setSubmitting(false);
-    // }
+    if (!currentLevel || !formData.name.trim() || !formData.wing) return;
 
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Level updated successfully");
+    try {
+      setSubmitting(true);
+      await updateLevel(currentLevel.id, formData);
       setIsEditDialogOpen(false);
       setCurrentLevel(null);
-      setFormData({ name: "", description: "", category: 0, order: 1 });
+      setFormData({ name: "", wing: 0 });
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchData();
-    }, 500);
+    }
   };
 
   const handleDelete = async () => {
     if (!currentLevel) return;
-    // TODO: Uncomment when API is ready
-    // try {
-    //   setSubmitting(true);
-    //   await axios.delete(`/volunteer/level/${currentLevel.id}/`);
-    //   toast.success("Level deleted successfully");
-    //   setIsDeleteDialogOpen(false);
-    //   setCurrentLevel(null);
-    //   fetchData();
-    // } catch (error: any) {
-    //   toast.error(error.response?.data?.message || "Failed to delete level");
-    // } finally {
-    //   setSubmitting(false);
-    // }
 
-    // Dummy implementation for now
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success("Level deleted successfully");
+    try {
+      setSubmitting(true);
+      await deleteLevel(currentLevel.id);
       setIsDeleteDialogOpen(false);
       setCurrentLevel(null);
+    } catch (error) {
+      // Error already handled by hook
+    } finally {
       setSubmitting(false);
-      fetchData();
-    }, 500);
+    }
   };
 
   const openEditDialog = (level: Level) => {
     setCurrentLevel(level);
     setFormData({
       name: level.name,
-      description: level.description,
-      category: level.category,
-      order: level.order,
+      wing: level.wing,
     });
     setIsEditDialogOpen(true);
   };
@@ -227,11 +109,11 @@ const LevelManagement = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  const getCategoryName = (categoryId: number) => {
-    return categories.find((c) => c.id === categoryId)?.name || "Unknown";
+  const getWingName = (wingId: number) => {
+    return (wings || []).find((w) => w.id === wingId)?.name || "Unknown";
   };
 
-  const filteredLevels = levels.filter((level) =>
+  const filteredLevels = (levels || []).filter((level) =>
     level.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -261,37 +143,49 @@ const LevelManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Order</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Pads</TableHead>
+                <TableHead>Wing</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    Loading...
+                  <TableCell colSpan={3} className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                      <p>Loading levels...</p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : filteredLevels.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    No levels found
+                  <TableCell colSpan={3} className="text-center py-12">
+                    <div className="flex flex-col items-center justify-center text-muted-foreground">
+                      <Layers className="h-12 w-12 mb-4 opacity-50" />
+                      <h3 className="font-semibold text-lg mb-1">No levels found</h3>
+                      <p className="text-sm mb-4">
+                        {searchTerm
+                          ? `No levels match "${searchTerm}"`
+                          : "Create wings first, then add levels to organize them"}
+                      </p>
+                      {!searchTerm && wings.length > 0 && (
+                        <Button
+                          onClick={() => setIsCreateDialogOpen(true)}
+                          size="sm"
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Level
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
                 filteredLevels.map((level) => (
                   <TableRow key={level.id}>
                     <TableCell className="font-medium">{level.name}</TableCell>
-                    <TableCell>{getCategoryName(level.category)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{level.order}</Badge>
-                    </TableCell>
-                    <TableCell>{level.description}</TableCell>
-                    <TableCell>
-                      <Badge>{level.pad_count || 0} Pads</Badge>
+                      <Badge variant="secondary">{getWingName(level.wing)}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -322,27 +216,27 @@ const LevelManagement = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Level</DialogTitle>
-            <DialogDescription>Add a new level to a category</DialogDescription>
+            <DialogDescription>Add a new level to a wing</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreate}>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="category" className="mb-2 block">
-                  Category <span className="text-red-500">*</span>
+                <Label htmlFor="wing" className="mb-2 block">
+                  Wing <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formData.category > 0 ? formData.category.toString() : ""}
+                  value={formData.wing > 0 ? formData.wing.toString() : ""}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, category: parseInt(value) })
+                    setFormData({ ...formData, wing: parseInt(value) })
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Select wing" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id.toString()}>
-                        {cat.name}
+                    {wings.map((wing) => (
+                      <SelectItem key={wing.id} value={wing.id.toString()}>
+                        {wing.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -360,36 +254,6 @@ const LevelManagement = () => {
                   }
                   placeholder="Enter level name"
                   required
-                />
-              </div>
-              <div>
-                <Label htmlFor="order" className="mb-2 block">
-                  Order <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="order"
-                  type="number"
-                  min="1"
-                  value={formData.order}
-                  onChange={(e) =>
-                    setFormData({ ...formData, order: parseInt(e.target.value) })
-                  }
-                  placeholder="Enter order"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="description" className="mb-2 block">
-                  Description
-                </Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Enter level description"
-                  rows={3}
                 />
               </div>
             </div>
@@ -420,22 +284,22 @@ const LevelManagement = () => {
           <form onSubmit={handleUpdate}>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="edit-category" className="mb-2 block">
-                  Category <span className="text-red-500">*</span>
+                <Label htmlFor="edit-wing" className="mb-2 block">
+                  Wing <span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formData.category > 0 ? formData.category.toString() : ""}
+                  value={formData.wing > 0 ? formData.wing.toString() : ""}
                   onValueChange={(value) =>
-                    setFormData({ ...formData, category: parseInt(value) })
+                    setFormData({ ...formData, wing: parseInt(value) })
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder="Select wing" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id.toString()}>
-                        {cat.name}
+                    {wings.map((wing) => (
+                      <SelectItem key={wing.id} value={wing.id.toString()}>
+                        {wing.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -453,36 +317,6 @@ const LevelManagement = () => {
                   }
                   placeholder="Enter level name"
                   required
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-order" className="mb-2 block">
-                  Order <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="edit-order"
-                  type="number"
-                  min="1"
-                  value={formData.order}
-                  onChange={(e) =>
-                    setFormData({ ...formData, order: parseInt(e.target.value) })
-                  }
-                  placeholder="Enter order"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-description" className="mb-2 block">
-                  Description
-                </Label>
-                <Textarea
-                  id="edit-description"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  placeholder="Enter level description"
-                  rows={3}
                 />
               </div>
             </div>
