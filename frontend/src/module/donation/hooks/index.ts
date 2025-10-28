@@ -272,7 +272,7 @@ export function useDonationPayment() {
                 setReceiptUrl(verificationResponse.receipt_url || null);
                 setCurrentStep("completed");
 
-                // Navigate to receipt page instead of opening popup
+                
                 setTimeout(() => {
                   const receiptParams = new URLSearchParams({
                     name: formData.name || '',
@@ -282,12 +282,15 @@ export function useDonationPayment() {
                     amount: String(formData.amount / 100),
                     amountWords: convertNumberToWords(formData.amount / 100),
                     receiptNumber: verificationResponse.payment_id || verificationResponse.order_id || 'N/A',
-                    location: 'state'
+                    country: user?.country || 'N/A',
+                    state: user?.state || 'N/A',
+                    city: user?.city || 'N/A',
+                    postal_code: user?.postal_code || 'N/A',
                   });
 
                   const receiptUrl = `/receipt?${receiptParams.toString()}`;
                   
-                  // Create a temporary link and click it (works without popup blocker)
+                  
                   const link = document.createElement('a');
                   link.href = receiptUrl;
                   link.target = '_blank';

@@ -10,7 +10,6 @@ import {
   DesignationFormData,
   VolunteerFormData,
   VolunteerFilters,
-  DesignationCombination,
   User,
   UserListResponse,
   Application,
@@ -21,11 +20,13 @@ import {
 export class VolunteerAPI {
   constructor(private axios: AxiosInstance) {}
 
-  
   async getWings(): Promise<Wing[]> {
     const response = await this.axios.get("/volunteer/wings/");
-    
-    return Array.isArray(response.data) ? response.data : (response.data.results || []);
+    const payload = response.data;
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload.results)) return payload.results;
+    if (Array.isArray(payload.data)) return payload.data;
+    return [];
   }
 
   async getWing(id: number): Promise<Wing> {
@@ -50,12 +51,15 @@ export class VolunteerAPI {
     await this.axios.delete(`/volunteer/wings/${id}/`);
   }
 
-  
-  async getLevels(wingId?: number): Promise<Level[]> {
-    const params = wingId ? { wing: wingId } : {};
+  async getLevels(wingName?: string): Promise<Level[]> {
+    const params: any = {};
+    if (wingName !== undefined && wingName !== null) params.wings = wingName;
     const response = await this.axios.get("/volunteer/levels/", { params });
-    
-    return Array.isArray(response.data) ? response.data : (response.data.results || []);
+    const payload = response.data;
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload.results)) return payload.results;
+    if (Array.isArray(payload.data)) return payload.data;
+    return [];
   }
 
   async getLevel(id: number): Promise<Level> {
@@ -64,14 +68,39 @@ export class VolunteerAPI {
   }
 
   async createLevel(data: LevelFormData): Promise<Level> {
-    const response = await this.axios.post<Level>("/volunteer/levels/", data);
+    const payload: any = {
+      wing: data.wing,
+      level: Array.isArray(data.name)
+        ? data.name.map((n: any) =>
+            typeof n === "string" ? n : n?.en ?? String(n)
+          )
+        : [String(data.name as any)],
+    };
+
+    const response = await this.axios.post<Level>(
+      "/volunteer/levels/",
+      payload
+    );
     return response.data;
   }
 
   async updateLevel(id: number, data: Partial<LevelFormData>): Promise<Level> {
+    let payload: any = { ...data };
+    if (data.name) {
+      payload = {
+        ...payload,
+        level: Array.isArray(data.name)
+          ? data.name.map((n: any) =>
+              typeof n === "string" ? n : n?.en ?? String(n)
+            )
+          : [String(data.name as any)],
+      };
+      delete payload.name;
+    }
+
     const response = await this.axios.patch<Level>(
       `/volunteer/levels/${id}/`,
-      data
+      payload
     );
     return response.data;
   }
@@ -80,17 +109,26 @@ export class VolunteerAPI {
     await this.axios.delete(`/volunteer/levels/${id}/`);
   }
 
-  
-  async getDesignations(levelId?: number): Promise<Designation[]> {
-    const params = levelId ? { level: levelId } : {};
-    const response = await this.axios.get("/volunteer/designations/", { params });
-    
-    return Array.isArray(response.data) ? response.data : (response.data.results || []);
+  async getDesignations(
+    levelName?: string,
+    wingName?: string
+  ): Promise<Designation[]> {
+    const params: any = {};
+    if (levelName !== undefined && levelName !== null) params.level = levelName;
+    if (wingName !== undefined && wingName !== null) params.wings = wingName;
+    const response = await this.axios.get("/volunteer/designations/", {
+      params,
+    });
+    const payload = response.data;
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload.results)) return payload.results;
+    if (Array.isArray(payload.data)) return payload.data;
+    return [];
   }
 
-  async getDesignation(id: number): Promise<Designation> {
+  async getDesignation(level: string, wing: string): Promise<Designation> {
     const response = await this.axios.get<Designation>(
-      `/volunteer/designations/${id}/`
+      `/volunteer/designations/?level=${level}&wings=${wing}`
     );
     return response.data;
   }
@@ -116,20 +154,6 @@ export class VolunteerAPI {
 
   async deleteDesignation(id: number): Promise<void> {
     await this.axios.delete(`/volunteer/designations/${id}/`);
-  }
-
-  
-  async getVolunteers(
-    filters?: VolunteerFilters,
-    page: number = 1
-  ): Promise<PaginatedResponse<DesignationCombination>> {
-    const response = await this.axios.get<PaginatedResponse<DesignationCombination>>(
-      "/volunteer/wings/details/",
-      {
-        params: { ...filters, page },
-      }
-    );
-    return response.data;
   }
 
   async getVolunteer(id: number): Promise<Volunteer> {
@@ -162,7 +186,6 @@ export class VolunteerAPI {
     await this.axios.delete(`/volunteer/volunteers/${id}/`);
   }
 
-  
   async getVolunteerStats(): Promise<{
     total_volunteers: number;
     by_wing: Record<string, number>;
@@ -209,17 +232,25 @@ export class VolunteerAPI {
 
   async createApplication(data: ApplicationFormData): Promise<Application> {
     const formData = new FormData();
-    
+
     if (data.user) {
       formData.append("user", data.user.toString());
     }
-    
-    formData.append("wing", data.wing.toString());
-    formData.append("level", data.level.toString());
-    formData.append("designation", data.designation.toString());
-    formData.append("phone_number", data.phone_number);
+
+    if (data.wing !== undefined && data.wing !== null) {
+      formData.append("wing", data.wing.toString());
+    }
+    if (data.level !== undefined && data.level !== null) {
+      formData.append("level", data.level.toString());
+    }
+    if (data.designation !== undefined && data.designation !== null) {
+      formData.append("designation", data.designation.toString());
+    }
+    if (data.phone_number !== undefined && data.phone_number !== null) {
+      formData.append("phone_number", data.phone_number);
+    }
     formData.append("status", "pending");
-    
+
     if (data.affidavit) {
       formData.append("affidavit", data.affidavit);
     }
@@ -250,10 +281,11 @@ export class VolunteerAPI {
     data: Partial<ApplicationFormData & { status?: string; remarks?: string }>
   ): Promise<Application> {
     const formData = new FormData();
-    
+
     if (data.wing) formData.append("wing", data.wing.toString());
     if (data.level) formData.append("level", data.level.toString());
-    if (data.designation) formData.append("designation", data.designation.toString());
+    if (data.designation)
+      formData.append("designation", data.designation.toString());
     if (data.status) formData.append("status", data.status);
     if (data.remarks) formData.append("remarks", data.remarks);
     if (data.affidavit) formData.append("affidavit", data.affidavit);
@@ -274,7 +306,6 @@ export class VolunteerAPI {
     await this.axios.delete(`/volunteer/applications/${id}/`);
   }
 }
-
 
 export const createVolunteerAPI = (axios: AxiosInstance) =>
   new VolunteerAPI(axios);

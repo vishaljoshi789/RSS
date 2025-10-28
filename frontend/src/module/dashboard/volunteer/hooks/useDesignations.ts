@@ -4,7 +4,7 @@ import useAxios from "@/hooks/use-axios";
 import { createVolunteerAPI } from "../api";
 import { Designation, DesignationFormData } from "../types";
 
-export const useDesignations = (levelId?: number) => {
+export const useDesignations = (levelName?: string, wingName?: string) => {
   const axios = useAxios();
   const api = createVolunteerAPI(axios);
 
@@ -16,7 +16,7 @@ export const useDesignations = (levelId?: number) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await api.getDesignations(levelId);
+      const data = await api.getDesignations(levelName, wingName);
       setDesignations(data);
     } catch (err: any) {
       const errorMsg =
@@ -26,7 +26,7 @@ export const useDesignations = (levelId?: number) => {
     } finally {
       setLoading(false);
     }
-  }, [levelId]);
+  }, [levelName, wingName]);
 
   const createDesignation = useCallback(async (data: DesignationFormData) => {
     try {

@@ -54,7 +54,7 @@ export interface WingFormData {
 }
 
 export interface LevelFormData {
-  name: string;
+  name: string[];
   wing: number;
 }
 
@@ -76,20 +76,6 @@ export interface VolunteerFilters {
   level?: number;
   designation?: number;
   search?: string;
-}
-
-// Flattened combination of Wing -> Level -> Designation
-export interface DesignationCombination {
-  wing_id: number;
-  wing_name: string;
-  wing_description: string;
-  level_id: number;
-  level_name: string;
-  designation_id: number;
-  designation_title: string;
-  total_positions: number;
-  volunteer_count: number;
-  available_positions: number;
 }
 
 export interface Application {
@@ -114,14 +100,14 @@ export interface Application {
 
 export interface ApplicationFormData {
   user?: number;
-  wing: number;
-  level: number;
-  designation: number;
-  phone_number: string;
-  affidavit?: File;
-  aadhar_card_front?: File;
-  aadhar_card_back?: File;
-  image?: File;
+  wing: number | null;
+  level: number | null;
+  designation: number | null;
+  phone_number: string | null;
+  affidavit?: File | null;
+  aadhar_card_front?: File | null;
+  aadhar_card_back?: File | null;
+  image?: File | null;
 }
 
 export interface ApplicationFilters {

@@ -31,6 +31,7 @@ type PersonalDetailsStepProps = {
   };
   errors: Record<string, string>;
   onChange: (field: string, value: string) => void;
+  readOnlyFields?: Partial<Record<string, boolean>>;
 };
 
 const calculateAge = (birthDate: Date): number => {
@@ -56,66 +57,75 @@ export const PersonalDetailsStep = ({
   formData,
   errors,
   onChange,
+  readOnlyFields,
 }: PersonalDetailsStepProps) => {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Full name</Label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => onChange("name", e.target.value)}
-            placeholder="Enter your name"
-          />
+          {readOnlyFields?.name ? (
+            <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formData.name}</div>
+          ) : (
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => onChange("name", e.target.value)}
+              placeholder="Enter your name"
+            />
+          )}
           {errors.name && (
             <p className="text-sm text-destructive">{errors.name}</p>
           )}
         </div>
         <div className="space-y-2">
           <Label>Date of birth</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !formData.dob && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData.dob ? format(new Date(formData.dob), "PPP") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                captionLayout="dropdown"
-                selected={formData.dob ? new Date(formData.dob) : undefined}
-                onSelect={(date) => {
-                  if (date) {
-                    const age = calculateAge(date);
-                    if (age < 18) {
-                      toast.error("You must be at least 18 years old to register.");
-                      return;
+          {readOnlyFields?.dob ? (
+            <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formData.dob ? format(new Date(formData.dob), "PPP") : ""}</div>
+          ) : (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !formData.dob && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.dob ? format(new Date(formData.dob), "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  captionLayout="dropdown"
+                  selected={formData.dob ? new Date(formData.dob) : undefined}
+                  onSelect={(date) => {
+                    if (date) {
+                      const age = calculateAge(date);
+                      if (age < 18) {
+                        toast.error("You must be at least 18 years old to register.");
+                        return;
+                      }
+                      if (age > 100) {
+                        toast.error("Please enter a valid date of birth.");
+                        return;
+                      }
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      onChange('dob', `${year}-${month}-${day}`);
                     }
-                    if (age > 100) {
-                      toast.error("Please enter a valid date of birth.");
-                      return;
-                    }
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
-                    onChange('dob', `${year}-${month}-${day}`);
+                  }}
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
                   }
-                }}
-                disabled={(date) =>
-                  date > new Date() || date < new Date("1900-01-01")
-                }
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          )}
           {errors.dob && (
             <p className="text-sm text-destructive">{errors.dob}</p>
           )}
@@ -125,29 +135,38 @@ export const PersonalDetailsStep = ({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label>Gender</Label>
-          <Select value={formData.gender} onValueChange={(value) => onChange("gender", value)}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
+          {readOnlyFields?.gender ? (
+            <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formData.gender}</div>
+          ) : (
+            <Select value={formData.gender} onValueChange={(value) => onChange("gender", value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="male">Male</SelectItem>
+                <SelectItem value="female">Female</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
           {errors.gender && (
             <p className="text-sm text-destructive">{errors.gender}</p>
           )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="phone">Mobile number</Label>
-          <Input
-            id="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={(e) => onChange("phone", e.target.value)}
-            placeholder="Enter your mobile number"
-          />
+          {readOnlyFields?.phone ? (
+            <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formData.phone}</div>
+          ) : (
+            <Input
+              id="phone"
+              type="tel"
+              value={formData.phone}
+              maxLength={10}
+              onChange={(e) => onChange("phone", e.target.value)}
+              placeholder="Enter your mobile number"
+            />
+          )}
           {errors.phone && (
             <p className="text-sm text-destructive">{errors.phone}</p>
           )}
@@ -156,21 +175,25 @@ export const PersonalDetailsStep = ({
 
       <div className="space-y-2">
         <Label>Profession</Label>
-        <Select
-          value={formData.profession}
-          onValueChange={(value) => onChange("profession", value)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent>
-            {professionOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {readOnlyFields?.profession ? (
+          <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formData.profession}</div>
+        ) : (
+          <Select
+            value={formData.profession}
+            onValueChange={(value) => onChange("profession", value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              {professionOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         {errors.profession && (
           <p className="text-sm text-destructive">{errors.profession}</p>
         )}
@@ -178,13 +201,17 @@ export const PersonalDetailsStep = ({
 
       <div className="space-y-2">
         <Label htmlFor="email">Email address</Label>
-        <Input
-          id="email"
-          type="email"
-          value={formData.email}
-          onChange={(e) => onChange("email", e.target.value)}
-          placeholder="name@example.com"
-        />
+        {readOnlyFields?.email ? (
+          <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formData.email}</div>
+        ) : (
+          <Input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(e) => onChange("email", e.target.value)}
+            placeholder="name@example.com"
+          />
+        )}
         {errors.email && (
           <p className="text-sm text-destructive">{errors.email}</p>
         )}
@@ -194,13 +221,17 @@ export const PersonalDetailsStep = ({
         <Label htmlFor="referred_by">
           Referral Code <span className="text-muted-foreground">(Optional)</span>
         </Label>
-        <Input
-          id="referred_by"
-          type="text"
-          value={formData.referred_by || ""}
-          onChange={(e) => onChange("referred_by", e.target.value)}
-          placeholder="Enter referral code if you have one"
-        />
+        {readOnlyFields?.referred_by ? (
+          <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formData.referred_by || ''}</div>
+        ) : (
+          <Input
+            id="referred_by"
+            type="text"
+            value={formData.referred_by || ""}
+            onChange={(e) => onChange("referred_by", e.target.value)}
+            placeholder="Enter referral code if you have one"
+          />
+        )}
         {errors.referred_by && (
           <p className="text-sm text-destructive">{errors.referred_by}</p>
         )}

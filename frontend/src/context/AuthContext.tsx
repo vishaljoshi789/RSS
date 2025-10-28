@@ -10,7 +10,6 @@ import {
 import { useRouter } from "next/navigation";
 import {
   User,
-  AuthTokens,
   AuthContextType,
   LoginResponse,
   RegisterRequest,

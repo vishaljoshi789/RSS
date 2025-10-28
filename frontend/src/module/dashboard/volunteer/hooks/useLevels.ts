@@ -4,7 +4,7 @@ import useAxios from "@/hooks/use-axios";
 import { createVolunteerAPI } from "../api";
 import { Level, LevelFormData } from "../types";
 
-export const useLevels = (wingId?: number) => {
+export const useLevels = (wingName?: string) => {
   const axios = useAxios();
   const api = createVolunteerAPI(axios);
 
@@ -16,7 +16,7 @@ export const useLevels = (wingId?: number) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await api.getLevels(wingId);
+      const data = await api.getLevels(wingName);
       setLevels(data);
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || "Failed to fetch levels";
@@ -25,11 +25,20 @@ export const useLevels = (wingId?: number) => {
     } finally {
       setLoading(false);
     }
-  }, [wingId]);
+  }, [wingName]);
 
   const createLevel = useCallback(async (data: LevelFormData) => {
     try {
-      const newLevel = await api.createLevel(data);
+      const payload: LevelFormData = {
+        ...data,
+        name: Array.isArray(data.name)
+          ? data.name.map((n: any) =>
+              typeof n === "string" ? n : n?.en ?? String(n)
+            )
+          : [String(data.name as any)],
+      };
+
+      const newLevel = await api.createLevel(payload);
       setLevels((prev) => [...prev, newLevel]);
       toast.success("Level created successfully");
       return newLevel;
@@ -43,7 +52,18 @@ export const useLevels = (wingId?: number) => {
   const updateLevel = useCallback(
     async (id: number, data: Partial<LevelFormData>) => {
       try {
-        const updatedLevel = await api.updateLevel(id, data);
+      // Normalize name field to English-only if present
+      let payload: Partial<LevelFormData> = { ...data };
+      if (data.name) {
+        payload = {
+          ...payload,
+          name: Array.isArray(data.name)
+            ? data.name.map((n: any) => (typeof n === "string" ? n : n?.en ?? String(n)))
+            : [String((data.name as any))],
+        };
+      }
+
+      const updatedLevel = await api.updateLevel(id, payload);
         setLevels((prev) =>
           prev.map((level) => (level.id === id ? updatedLevel : level))
         );

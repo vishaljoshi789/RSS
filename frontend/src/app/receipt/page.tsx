@@ -16,7 +16,10 @@ function ReceiptContent() {
     donationAmountWords: '',
     donationAmountNumbers: 0,
     receiptNumber: '',
-    location: 'state',
+    country: '',
+    state: '',
+    city: '',
+    postal_code: '',
   });
 
   useEffect(() => {
@@ -28,18 +31,19 @@ function ReceiptContent() {
       donationAmountWords: searchParams.get('amountWords') || '',
       donationAmountNumbers: Number(searchParams.get('amount')) || 0,
       receiptNumber: searchParams.get('receiptNumber') || '',
-      location: searchParams.get('location') || 'state',
+      country: searchParams.get('country') || '',
+      state: searchParams.get('state') || '',
+      city: searchParams.get('city') || '',
+      postal_code: searchParams.get('postal_code') || '',
     });
   }, [searchParams]);
 
   const handleDownload = () => {
-    // Trigger print dialog which allows "Save as PDF"
     window.print();
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
-      {/* Download button - hidden when printing */}
       <div className="max-w-4xl mx-auto mb-4 print:hidden flex gap-4 justify-center">
         <Button 
           onClick={handleDownload}
@@ -51,7 +55,6 @@ function ReceiptContent() {
         </Button>
       </div>
 
-      {/* Receipt */}
       <Receipt {...receiptData} />
     </div>
   );

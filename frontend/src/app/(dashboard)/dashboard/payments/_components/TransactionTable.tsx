@@ -628,7 +628,7 @@ export function TransactionTable({
                     </div>
                   </TableCell>
                   <TableCell className="font-semibold">
-                    {formatCurrency(payment.amount, "INR")}
+                    {formatCurrency(payment.amount/100, "INR")}
                   </TableCell>
                   <TableCell>{getTypeBadge(payment.payment_for)}</TableCell>
                   <TableCell>{getPaymentMethodIcon(payment)}</TableCell>
