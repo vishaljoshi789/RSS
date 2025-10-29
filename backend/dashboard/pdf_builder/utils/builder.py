@@ -96,7 +96,7 @@ def generate_qr(data: str, box_size=2):
 # Main PDF generator (with config inside)
 # -------------------------------
 
-def generate_pdf(template_path, data_fields, image_file=None):
+def generate_pdf(template_path, data_fields, image_file=None, qr_text=None):
     """
     Generic PDF builder with integrated ID_CARD_LAYOUT for debugging.
     """
@@ -113,7 +113,7 @@ def generate_pdf(template_path, data_fields, image_file=None):
             {"name": "state", "x": 50, "y": 44, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
         ],
         "image": {"x": 8, "y": 123, "width": 63, "height": 69, "shape": "soft_round", "radius": 10},
-        "qr": {"x": 93, "y": 155, "width": 37, "height": 37, "data": "Sample QR"},
+        "qr": {"x": 93, "y": 155, "width": 37, "height": 37, "data": qr_text},
     }
 
     # --- Read template & get size ---

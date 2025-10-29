@@ -106,9 +106,8 @@ class GetDocumentView(APIView):
             "district": user.district,
             "state": user.state,
         }
-        qr_text = f"{settings.FRONTEND_URL}/verify/{user.user_id}/{doc_type}"
-        layout["qr"]["data"] = qr_text
-        pdf_buffer = generate_pdf(template_path, data, image_file=photo)
+        qr_text = f"{settings.FRONTEND_URL}/idcard-verify/{user.user_id}"
+        pdf_buffer = generate_pdf(template_path, data, image_file=photo, qr_text=qr_text)
         return FileResponse(
             pdf_buffer,
             as_attachment=True,
