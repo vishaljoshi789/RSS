@@ -98,7 +98,7 @@ class GetDocumentView(APIView):
         
         data = {
             "name": user.name,
-            "reg_id": f'R{user.user_id}',
+            "reg_no": f'R{user.user_id}',
             "in": user.volunteer.designation if user.is_volunteer else "Member",
             "mob": user.phone,
             "date": user.volunteer.joining_date.strftime("%d-%m-%Y") if user.is_volunteer else user.date_joined.strftime("%d-%m-%Y"),
