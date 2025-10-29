@@ -96,7 +96,7 @@ const FoundersTeamPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background mt-3">
       <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-primary/80 pt-4">
         <div className="absolute inset-0 overflow-hidden">
           <svg
@@ -282,38 +282,39 @@ const FoundersTeamPage = () => {
         </Tabs>
 
         <div className="mt-16 pt-12 border-t">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <Card className="p-6 border rounded-xl">
+          {/* Mobile: stacked cards with smaller icons/text for compact display; Desktop: grid with 3 columns */}
+          <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center px-0">
+            <Card className="p-3 sm:p-6 border rounded-xl">
               <CardContent className="pt-0">
-                <Crown className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-foreground mb-1">
+                <Crown className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                   {foundersTeam.length}
                 </h3>
-                <p className="text-sm text-muted-foreground font-medium">
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                   मुख्य नेतृत्व
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="p-6 border rounded-xl">
+            <Card className="p-3 sm:p-6 border rounded-xl">
               <CardContent className="pt-0">
-                <MapPin className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-foreground mb-1">
+                <MapPin className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                   {uniqueStates.length}
                 </h3>
-                <p className="text-sm text-muted-foreground font-medium">
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                   राज्य कवरेज
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="p-6 border rounded-xl">
+            <Card className="p-3 sm:p-6 border rounded-xl">
               <CardContent className="pt-0">
-                <Users className="w-12 h-12 text-primary mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-foreground mb-1">
+                <Users className="w-8 h-8 sm:w-12 sm:h-12 text-primary mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                   {stateTeam.length}
                 </h3>
-                <p className="text-sm text-muted-foreground font-medium">
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                   राज्य टीम सदस्य
                 </p>
               </CardContent>

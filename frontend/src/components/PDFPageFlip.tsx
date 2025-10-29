@@ -31,10 +31,13 @@ const PDFPageFlip: React.FC<PDFPageFlipProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [dimensions, setDimensions] = useState({ width, height });
+  const [screenWidth, setScreenWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : width);
 
   
   useEffect(() => {
     const updateDimensions = () => {
+      const sw = window.innerWidth;
+      setScreenWidth(sw);
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
       
@@ -115,6 +118,8 @@ const PDFPageFlip: React.FC<PDFPageFlipProps> = ({
     loadPDF();
   }, [pdfUrl, dimensions.height]);
 
+  const isMobile = screenWidth <= 640;
+
   const onFlip = (e: any) => {
     setCurrentPage(e.data);
   };
@@ -158,7 +163,7 @@ const PDFPageFlip: React.FC<PDFPageFlipProps> = ({
               ref={bookRef}
               width={dimensions.width}
               height={dimensions.height}
-              size="stretch"
+              size={isMobile ? "fixed" : "stretch"}
               minWidth={300}
               maxWidth={1000}
               minHeight={400}
@@ -172,7 +177,7 @@ const PDFPageFlip: React.FC<PDFPageFlipProps> = ({
               startPage={0}
               drawShadow={true}
               flippingTime={1000}
-              usePortrait={false}
+              usePortrait={isMobile}
               startZIndex={0}
               autoSize={true}
               clickEventForward={true}

@@ -180,7 +180,7 @@ const VideoGallery: React.FC = () => {
       </div>
 
       {/* Swiper Video Gallery */}
-      <div className="relative max-w-2xl mx-auto">
+      <div className="relative max-w-5xl mx-auto">
         {/* Custom Navigation Buttons */}
         <button
           onClick={() => swiperInstance?.slidePrev()}
@@ -203,6 +203,17 @@ const VideoGallery: React.FC = () => {
             modules={[Navigation, Pagination]}
             spaceBetween={30}
             slidesPerView={1}
+            breakpoints={{
+              640: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3.5,
+              },
+            }}
             onSwiper={setSwiperInstance}
             pagination={{
               clickable: true,

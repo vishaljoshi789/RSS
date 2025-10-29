@@ -9,8 +9,6 @@ export {
   useWings,
   useLevels,
   useDesignations,
-  useVolunteers,
-  useVolunteerStats,
   useUsers,
   useApplications,
 } from './hooks';

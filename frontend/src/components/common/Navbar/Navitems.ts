@@ -41,7 +41,7 @@ export const navigationItems: NavItem[] = [
       {
         id: "constitution",
         title: "Constitution & Principles",
-        href: "/category/upcomming_events",
+        href: "#",
         icon: FileText,
         description: "संविधान और सिद्धांत",
       },
@@ -51,20 +51,13 @@ export const navigationItems: NavItem[] = [
         href: "/#our-work",
         icon: Award,
         description: "हमारे कार्य और उपलब्धियां",
-      },
-      {
-        id: "office-login",
-        title: "Office Login",
-        href: "https://app.joinrss.org.in/login",
-        icon: LogIn,
-        description: "कार्यालय लॉगिन पोर्टल",
-      },
+      }
     ],
   },
   {
     id: "join-us",
     title: "Join Us",
-    href: "/category/upcomming_events",
+    href: "#",
     icon: UserPlus,
     description: "हमसे जुड़ें",
     submenu: [
@@ -76,19 +69,12 @@ export const navigationItems: NavItem[] = [
         description: "सदस्यता के लिए पंजीकरण",
       },
       {
-        id: "volunteer-registration",
-        title: "Volunteer Registration",
+        id: "Vyapari-registration",
+        title: "Vyapari Registration",
         href: "/vyapari",
         icon: Users,
         description: "स्वयंसेवक बनें",
-      },
-      {
-        id: "get-id-card",
-        title: "Get ID Card",
-        href: "https://app.joinrss.org.in/member_card_download",
-        icon: IdCard,
-        description: "सदस्य पहचान पत्र डाउनलोड करें",
-      },
+      }
     ],
   },
   {
@@ -101,7 +87,7 @@ export const navigationItems: NavItem[] = [
   {
     id: "news-updates",
     title: "News & Updates",
-    href: "/category/upcomming_events",
+    href: "#",
     icon: Newspaper,
     description: "समाचार और अपडेट्स",
     submenu: [
