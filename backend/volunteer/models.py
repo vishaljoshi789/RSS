@@ -35,6 +35,7 @@ class Volunteer(models.Model):
     aadhar_card_front = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     aadhar_card_back = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     image = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
+    can_view_member_data = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
