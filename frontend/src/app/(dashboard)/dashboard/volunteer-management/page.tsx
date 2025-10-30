@@ -3,12 +3,14 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Users, Briefcase, Award, UserCheck, UserCog } from "lucide-react";
+import { Users, Briefcase, Award, UserCheck } from "lucide-react";
 import WingManagement from "./_components/WingManagement";
 import LevelManagement from "./_components/LevelManagement";
 import PadManagement from "./_components/PadManagement";
-import VolunteerAssignment from "./_components/VolunteerAssignment";
+// import VolunteerAssignment from "./_components/VolunteerAssignment";
 import HierarchyTree from "./_components/HierarchyTree";
+import VolunteerAssignment from "./_components/VolunteerAssignment";
+import VolunteerTable from "./_components/volunterManagement";
 
 
 const VolunteerManagement = () => {
@@ -47,6 +49,10 @@ const VolunteerManagement = () => {
             <Users className="h-4 w-4" />
             Assignments
           </TabsTrigger>
+          <TabsTrigger value="volunteers" className="gap-2">
+            <Users className="h-4 w-4" />
+            Volunteers
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="hierarchy" className="space-y-4">
@@ -67,6 +73,10 @@ const VolunteerManagement = () => {
 
         <TabsContent value="assignments" className="space-y-4">
           <VolunteerAssignment />
+        </TabsContent>
+
+        <TabsContent value="volunteers" className="space-y-4">
+          <VolunteerTable />
         </TabsContent>
       </Tabs>
 

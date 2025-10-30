@@ -47,7 +47,7 @@ const GalleryPage = () => {
   const filteredVideos = getVideosByCategory(selectedVideoCategory);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-6">
       <section className="relative">
         <div className="absolute inset-0 h-[23rem]">
           <Image
@@ -78,7 +78,7 @@ const GalleryPage = () => {
         </div>
       </section>
 
-      <section className="py-12 lg:py-16">
+      <section className="py-12 lg:py-16 mt-20 lg:mt-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue="photos" className="w-full">
             <div className="flex justify-center mb-8">
