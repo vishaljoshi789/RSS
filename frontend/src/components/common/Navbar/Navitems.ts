@@ -108,7 +108,7 @@ export const navigationItems: NavItem[] = [
       {
         id: "blog-articles",
         title: "Blog / Articles",
-        href: "/blog",
+        href: "#",
         icon: Edit3,
         description: "ब्लॉग और लेख",
       },

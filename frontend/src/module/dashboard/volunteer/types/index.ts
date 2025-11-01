@@ -39,6 +39,24 @@ export interface Volunteer {
   designation_details?: Designation;
 }
 
+export interface VolunteerWithUser {
+  id: number;
+  user: import('@/types/auth.types').User;
+  wing_name: string;
+  level_name: string;
+  designation_title: string;
+  phone_number: string;
+  affidavit: string | null;
+  joined_date: string;
+  aadhar_card_front: string | null;
+  aadhar_card_back: string | null;
+  image: string | null;
+  can_view_member_data: boolean;
+  wing: number | null;
+  level: number | null;
+  designation: number | null;
+}
+
 
 export interface PaginatedResponse<T> {
   count: number;
@@ -102,12 +120,24 @@ export interface ApplicationFormData {
   user?: number;
   wing: number | null;
   level: number | null;
+  level_name?: string | null;
   designation: number | null;
   phone_number: string | null;
   affidavit?: File | null;
   aadhar_card_front?: File | null;
   aadhar_card_back?: File | null;
   image?: File | null;
+}
+
+export interface AddressFormData {
+  street?: string;
+  sub_district?: string;
+  district?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postal_code?: string;
+  mandal?: string;
 }
 
 export interface ApplicationFilters {

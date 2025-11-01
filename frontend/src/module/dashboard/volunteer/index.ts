@@ -12,3 +12,6 @@ export {
   useUsers,
   useApplications,
 } from './hooks';
+
+// Models - UI Components/Modals
+export { ViewVolunteerModal } from './models';

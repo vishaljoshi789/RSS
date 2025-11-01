@@ -276,18 +276,18 @@ const LevelManagement = () => {
                     >
                       <Input
                         type="checkbox"
-                        id={level.en}
-                        checked={formData.name.includes(level.en)}
+                        id={level.hi}
+                        checked={formData.name.includes(level.hi)}
                         onChange={(e) => {
                           const newNames = e.target.checked
-                            ? [...formData.name, level.en]
-                            : formData.name.filter((n) => n !== level.en);
+                            ? [...formData.name, level.hi]
+                            : formData.name.filter((n) => n !== level.hi);
                           setFormData({ ...formData, name: newNames });
                         }}
                         className="h-4 w-4 accent-primary"
                       />
                       <Label
-                        htmlFor={level.en}
+                        htmlFor={level.hi}
                         className="cursor-pointer text-sm"
                       >
                         {level.en}{" "}
@@ -374,7 +374,7 @@ const LevelManagement = () => {
                         htmlFor={`edit-${level.en}`}
                         className="cursor-pointer text-sm"
                       >
-                        {level.en}{" "}
+                        {level.en}
                         <span className="text-muted-foreground ml-1">
                           ({level.hi})
                         </span>

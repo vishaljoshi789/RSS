@@ -3,8 +3,8 @@ import { HeroSection, ImpactSection, DetailedInfoSection, EmotionalAppealSection
 
 const DonateNowPage = () => {
   return (
-    <div className="min-h-screen bg-background pt-3">
-      <div className="">
+    <div className="min-h-screen bg-background lg:pt-2 mt-16">
+      <div className="px-0">
         <HeroSection />
         <ImpactSection />
         <DetailedInfoSection />

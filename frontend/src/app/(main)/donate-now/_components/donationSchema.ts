@@ -16,15 +16,6 @@ export const donationFormSchema = z.object({
 
 export type DonationFormData = z.infer<typeof donationFormSchema>;
 
-export const donationAmounts = [
-  { value: 100, label: "₹100", description: "Basic Support" },
-  { value: 200, label: "₹200", description: "Monthly Support" },
-  { value: 500, label: "₹500", description: "Special Support" },
-  { value: 1000, label: "₹1000", description: "Major Support" },
-  { value: 5000, label: "₹5000", description: "Premium Support" },
-  { value: 10000, label: "₹10000", description: "Elite Support" },
-];
-
 export const donationTypes = [
   { value: "general", label: "General Donation", description: "Support overall activities" },
   { value: "education", label: "Education", description: "Support educational programs" },

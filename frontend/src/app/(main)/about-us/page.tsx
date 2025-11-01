@@ -13,7 +13,6 @@ import {
   OurCallSection,
   CommunityServiceSection,
   GoalsSection,
-  FinalCTASection
 } from './_components';
 
 const AboutUsPage = () => {
@@ -42,7 +41,6 @@ const AboutUsPage = () => {
       
       <GoalsSection goals={aboutPageData.sections.goals} />
       
-      <FinalCTASection finalMessage={aboutPageData.finalMessage} />
     </div>
   );
 };

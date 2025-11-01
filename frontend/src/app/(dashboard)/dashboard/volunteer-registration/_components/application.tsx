@@ -12,14 +12,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { ApplicationFormData } from "../page";
+
 
 import {
   useDesignations,
   useLevels,
   useWings,
 } from "@/module/dashboard/volunteer";
-import { Wing, Level, Designation } from "@/module/dashboard/volunteer/types";
+import { Wing, Level, Designation, ApplicationFormData } from "@/module/dashboard/volunteer/types";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { FileText } from "lucide-react";

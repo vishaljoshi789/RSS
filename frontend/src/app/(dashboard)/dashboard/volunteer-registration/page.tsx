@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import useAuth from "@/hooks/use-auth";
-import { createVolunteerAPI } from "@/module/dashboard/volunteer";
+import { AddressFormData, ApplicationFormData, createVolunteerAPI } from "@/module/dashboard/volunteer";
 import ApplicationForm from "./_components/application";
 import AddressForm from "./_components/address";
 import PaymentForm from "./_components/payment";
@@ -15,30 +15,6 @@ import {
   getFromLocalStorage,
   clearFromLocalStorage,
 } from "@/lib/localstoragehelper";
-
-export interface ApplicationFormData {
-  user?: number;
-  wing: number | null;
-  level: number | null;
-  level_name?: string | null;
-  designation: number | null;
-  phone_number: string | null;
-  affidavit?: File | null;
-  aadhar_card_front?: File | null;
-  aadhar_card_back?: File | null;
-  image?: File | null;
-}
-
-export interface AddressFormData {
-  street?: string;
-  sub_district?: string;
-  district?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postal_code?: string;
-  mandal?: string;
-}
 
 const CareersPage = () => {
   const axios = useAxios();

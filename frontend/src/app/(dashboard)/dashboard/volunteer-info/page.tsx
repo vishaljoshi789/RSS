@@ -3,16 +3,11 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Users} from "lucide-react";
+import { Users } from "lucide-react";
 import Member from "./_components/Member";
 import VolunteerCard from "./_components/Volunteercards";
 
-
-
 const VolunteerManagement = () => {
-
-  const canView = false;
-
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
@@ -27,8 +22,7 @@ const VolunteerManagement = () => {
       </div>
 
       <Tabs defaultValue="volunteers" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-        
+        <TabsList className="grid w-full max-w-md grid-cols-2">
           <TabsTrigger value="volunteers" className="gap-2">
             <Users className="h-4 w-4" />
             Volunteers
@@ -39,16 +33,14 @@ const VolunteerManagement = () => {
           </TabsTrigger>
         </TabsList>
 
-
         <TabsContent value="members" className="space-y-4">
           <Member />
         </TabsContent>
 
         <TabsContent value="volunteers" className="space-y-4">
-          <VolunteerCard canView={canView}  />
+          <VolunteerCard />
         </TabsContent>
       </Tabs>
-
     </div>
   );
 };

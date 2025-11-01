@@ -63,7 +63,7 @@ const Member: React.FC = () => {
 
     fetchUsers()
     return () => { mounted = false }
-  }, [api, page, pageSize, debouncedTerm, filterType])
+  }, [page, pageSize, debouncedTerm, filterType])
 
   const toggleSortOrder = () => setSortOrder((s) => (s === 'asc' ? 'desc' : 'asc'))
 

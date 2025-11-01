@@ -608,22 +608,22 @@ const BecomeMemberPage = () => {
 
   if (submitted) {
     return (
-      <section className="mx-auto flex min-h-screen w-full max-w-2xl flex-col items-center justify-center gap-5 rounded-xl border bg-card p-6 text-center">
+      <section className="mx-auto flex min-h-screen w-full max-w-2xl flex-col items-center justify-center gap-4 sm:gap-5 rounded-xl border bg-card p-4 sm:p-6 text-center">
         <div className="flex flex-col items-center gap-3">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <CheckCircle2 className="h-6 w-6" />
+          <span className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" />
           </span>
           <div className="space-y-1.5">
-            <h2 className="text-xl font-semibold text-foreground">
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">
               Payment details captured
             </h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-xs sm:text-sm px-2">
               Thanks for confirming your membership information. We&apos;ll
               email you a receipt and next steps shortly.
             </p>
           </div>
         </div>
-        <Button className="mt-2" onClick={handleReset} size="sm">
+        <Button className="mt-2 w-full sm:w-auto" onClick={handleReset} size="sm">
           Download pdf
         </Button>
       </section>
@@ -631,14 +631,14 @@ const BecomeMemberPage = () => {
   }
 
   return (
-    <section className="mx-auto flex min-h-screen w-full items-center justify-center px-4 py-8">
-      <div className="flex flex-col lg:flex-row w-full lg:max-w-5xl gap-6 rounded-xl border bg-card p-6">
-        <div className="flex w-full  flex-col gap-6">
+    <section className="mx-auto flex min-h-screen w-full items-center justify-center px-2 sm:px-4 py-4 sm:py-8">
+      <div className="flex flex-col lg:flex-row w-full lg:max-w-5xl gap-4 sm:gap-6 rounded-xl border bg-card p-3 sm:p-6">
+        <div className="flex w-full flex-col gap-4 sm:gap-6">
           <div className="space-y-1.5">
-            <h1 className="text-xl sm:text-2xl font-semibold text-foreground">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-foreground">
               Membership interest form
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Complete the short form below to let us know how you&apos;d like
               to contribute.
             </p>
@@ -671,53 +671,56 @@ const BecomeMemberPage = () => {
             </Alert>
           )}
 
-          <div className="flex items-center gap-4 mt-6 overflow-x-auto px-2">
-            {steps.map((step, index) => {
-              const isActive = index === activeStep;
-              const isCompleted = index < activeStep;
+          <div className="mt-4 sm:mt-6 overflow-x-auto pb-2 -mx-3 sm:mx-0 px-3 sm:px-0">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-max">
+              {steps.map((step, index) => {
+                const isActive = index === activeStep;
+                const isCompleted = index < activeStep;
 
-              return (
-                <div key={step.title} className="flex items-center gap-2">
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors ${
-                      isActive || isCompleted
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-muted-foreground/30 text-muted-foreground"
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <CheckCircle className="h-5 w-5" />
-                    ) : (
-                      <span className="text-sm font-medium">{index + 1}</span>
+                return (
+                  <div key={step.title} className="flex items-center gap-1.5 sm:gap-2">
+                    <div
+                      className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border-2 transition-colors ${
+                        isActive || isCompleted
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-muted-foreground/30 text-muted-foreground"
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+                      ) : (
+                        <span className="text-xs sm:text-sm font-medium">{index + 1}</span>
+                      )}
+                    </div>
+                    <span
+                      className={`text-xs sm:text-sm font-medium whitespace-nowrap ${
+                        isActive || isCompleted
+                          ? "text-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {step.title}
+                    </span>
+                    {index < steps.length - 1 && (
+                      <div className="h-0.5 w-8 sm:w-12 bg-muted-foreground/30 flex-shrink-0" />
                     )}
                   </div>
-                  <span
-                    className={`text-sm font-medium ${
-                      isActive || isCompleted
-                        ? "text-foreground"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    {step.title}
-                  </span>
-                  {index < steps.length - 1 && (
-                    <div className="h-0.5 w-12 bg-muted-foreground/30" />
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
-          <div className="rounded-lg border bg-background p-5 w-full">
+          <div className="rounded-lg border bg-background p-3 sm:p-5 w-full">
             {renderStepContent()}
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex flex-row justify-between gap-3 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={handleBack}
               disabled={activeStep === 0 || isSubmitting || isAlreadyMember}
+              className="w-auto"
             >
               Back
             </Button>
@@ -726,6 +729,7 @@ const BecomeMemberPage = () => {
                 type="button"
                 onClick={handleNext}
                 disabled={isSubmitting || isAlreadyMember}
+                className="w-auto"
               >
                 Next
               </Button>
@@ -734,6 +738,7 @@ const BecomeMemberPage = () => {
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting || isAlreadyMember}
+                className="w-auto"
               >
                 {isSubmitting ? "Submitting..." : "Review & Pay"}
               </Button>
@@ -743,52 +748,52 @@ const BecomeMemberPage = () => {
       </div>
 
       <Dialog open={showPaymentModal} onOpenChange={setShowPaymentModal}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md mx-auto">
           <DialogHeader>
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              <IndianRupee className="h-5 w-5 text-primary" />
+            <div className="mx-auto flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-primary/10">
+              <IndianRupee className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             </div>
-            <DialogTitle className="text-center text-xl">
+            <DialogTitle className="text-center text-lg sm:text-xl">
               Membership Payment
             </DialogTitle>
-            <DialogDescription className="text-center text-sm">
+            <DialogDescription className="text-center text-xs sm:text-sm">
               Complete your RSS membership registration
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3 py-3">
-            <div className="rounded-lg border bg-muted/30 p-3">
+          <div className="space-y-2.5 sm:space-y-3 py-2 sm:py-3">
+            <div className="rounded-lg border bg-muted/30 p-2.5 sm:p-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs sm:text-sm text-muted-foreground">
                   Membership Fee
                 </span>
-                <span className="text-xl font-bold text-foreground">₹300</span>
+                <span className="text-lg sm:text-xl font-bold text-foreground">₹300</span>
               </div>
-              <p className="mt-1.5 text-xs text-muted-foreground">
+              <p className="mt-1 sm:mt-1.5 text-xs text-muted-foreground">
                 One-time registration fee for RSS membership
               </p>
             </div>
 
-            <div className="space-y-2 rounded-lg border border-dashed bg-background p-3">
-              <h4 className="text-sm font-medium text-foreground">
+            <div className="space-y-1.5 sm:space-y-2 rounded-lg border border-dashed bg-background p-2.5 sm:p-3">
+              <h4 className="text-xs sm:text-sm font-medium text-foreground">
                 What you get:
               </h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
-                  Official RSS membership certificate
+                <li className="flex items-start sm:items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <span>Official RSS membership certificate</span>
                 </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
-                  Access to training programs & events
+                <li className="flex items-start sm:items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <span>Access to training programs & events</span>
                 </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
-                  Connect with RSS community nationwide
+                <li className="flex items-start sm:items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <span>Connect with RSS community nationwide</span>
                 </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0" />
-                  Monthly newsletters & updates
+                <li className="flex items-start sm:items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-primary flex-shrink-0 mt-0.5 sm:mt-0" />
+                  <span>Monthly newsletters & updates</span>
                 </li>
               </ul>
             </div>
@@ -812,18 +817,18 @@ const BecomeMemberPage = () => {
             >
               {isMemberSubmitting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Registering...
+                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                  <span className="text-xs sm:text-sm">Registering...</span>
                 </>
               ) : isPaymentProcessing ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Processing Payment...
+                  <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                  <span className="text-xs sm:text-sm">Processing Payment...</span>
                 </>
               ) : (
                 <>
-                  <CreditCard className="h-4 w-4" />
-                  Pay ₹300
+                  <CreditCard className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">Pay ₹300</span>
                 </>
               )}
             </Button>

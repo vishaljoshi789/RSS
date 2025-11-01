@@ -16,46 +16,46 @@ const HeroSection = () => {
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
       </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-24">
         <div className="text-center">
           {/* Sanskrit Quote Badge */}
-          <div className="mb-6 inline-flex flex-col items-center gap-3">
-            <Badge className="px-5 py-2 bg-white/20 text-white border-white/30 backdrop-blur-sm text-sm">
-              <Sparkles className="w-4 h-4 mr-2" />
-              सर्वेषामप्युपायानां दानं श्रेष्ठतमं मतम्
+          <div className="mb-4 sm:mb-6 inline-flex flex-col items-center gap-3">
+            <Badge className="px-3 sm:px-5 py-1.5 sm:py-2 bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs sm:text-sm">
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+              <span className="whitespace-nowrap">सर्वेषामप्युपायानां दानं श्रेष्ठतमं मतम्</span>
             </Badge>
           </div>
           
-          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black mb-6 leading-tight text-white">
+          <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight text-white px-2">
             राष्ट्रीय सेवा संघ धर्मार्थ ट्रस्ट
           </h1>
           
-          <div className="max-w-4xl mx-auto mb-8">
-            <p className="text-lg sm:text-xl text-white/95 font-medium leading-relaxed mb-4">
+          <div className="max-w-4xl mx-auto mb-6 sm:mb-8 px-2">
+            <p className="text-base sm:text-lg md:text-xl text-white/95 font-medium leading-relaxed mb-3 sm:mb-4">
               सनातनी हिंदू रक्षा अभियान (भारत)
             </p>
-            <p className="text-base sm:text-lg text-white/85 leading-relaxed">
+            <p className="text-xs sm:text-base md:text-lg text-white/85 leading-relaxed">
               धार्मिक मूल्यों की रक्षा, बहन बेटियों की सुरक्षा, मठ मंदिरों का संरक्षण, शिक्षा स्वास्थ्य एवं रोजगार की स्थिति सुधार, धार्मिक संस्कारों को बचाने हेतु गुरुकुल संचालन एवं भारतीय संस्कृति को पुनः गौरव प्रदान करने में अपना योगदान दें।
             </p>
           </div>
           
           {/* Feature Highlights */}
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8">
-            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
-              <Shield className="w-5 h-5 text-white/90" />
-              <span className="font-semibold text-white text-sm">80G & 12AA कर मुक्त</span>
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mb-6 sm:mb-8 px-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 sm:px-4 py-1.5 sm:py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <Shield className="w-3 h-3 sm:w-5 sm:h-5 text-white/90 flex-shrink-0" />
+              <span className="font-semibold text-white text-[10px] sm:text-sm whitespace-nowrap">80G & 12AA कर मुक्त</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
-              <CreditCard className="w-5 h-5 text-white/90" />
-              <span className="font-semibold text-white text-sm">सुरक्षित भुगतान</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 sm:px-4 py-1.5 sm:py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <CreditCard className="w-3 h-3 sm:w-5 sm:h-5 text-white/90 flex-shrink-0" />
+              <span className="font-semibold text-white text-[10px] sm:text-sm whitespace-nowrap">सुरक्षित भुगतान</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
-              <Heart className="w-5 h-5 text-white/90" />
-              <span className="font-semibold text-white text-sm">पारदर्शी उपयोग</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 sm:px-4 py-1.5 sm:py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <Heart className="w-3 h-3 sm:w-5 sm:h-5 text-white/90 flex-shrink-0" />
+              <span className="font-semibold text-white text-[10px] sm:text-sm whitespace-nowrap">पारदर्शी उपयोग</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
-              <BookOpen className="w-5 h-5 text-white/90" />
-              <span className="font-semibold text-white text-sm">निःशुल्क सेवाएं</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm rounded-lg sm:rounded-xl px-2.5 sm:px-4 py-1.5 sm:py-2.5 border border-white/20 hover:bg-white/20 transition-colors">
+              <BookOpen className="w-3 h-3 sm:w-5 sm:h-5 text-white/90 flex-shrink-0" />
+              <span className="font-semibold text-white text-[10px] sm:text-sm whitespace-nowrap">निःशुल्क सेवाएं</span>
             </div>
           </div>
 

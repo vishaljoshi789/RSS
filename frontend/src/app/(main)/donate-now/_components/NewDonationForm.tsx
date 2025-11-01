@@ -33,7 +33,6 @@ import {
   Stethoscope,
   Wrench,
 } from "lucide-react";
-import { donationAmounts } from "./donationSchema";
 import {
   useDonationPayment,
   useCurrency,
@@ -277,25 +276,25 @@ const NewDonationForm = () => {
 
   if (success) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-3 sm:p-6">
         <Card className="w-full border-0 shadow-2xl">
-          <CardHeader className="text-center bg-primary/5 rounded-t-lg">
-            <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="h-10 w-10 text-primary" />
+          <CardHeader className="text-center bg-primary/5 rounded-t-lg p-4 sm:p-6">
+            <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+              <CheckCircle className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
             </div>
-            <CardTitle className="text-3xl text-primary font-bold">
+            <CardTitle className="text-xl sm:text-2xl md:text-3xl text-primary font-bold">
               Payment Successful!
             </CardTitle>
-            <CardDescription className="text-lg text-foreground">
+            <CardDescription className="text-sm sm:text-base md:text-lg text-foreground">
               Thank you for your generous contribution to RSS
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-8 space-y-6">
-            <div className="bg-primary/5 border border-primary/20 p-6 rounded-lg space-y-3">
-              <p className="font-semibold text-primary text-lg">
+          <CardContent className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+            <div className="bg-primary/5 border border-primary/20 p-4 sm:p-6 rounded-lg space-y-3">
+              <p className="font-semibold text-primary text-base sm:text-lg">
                 Donation Details:
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                 <p className="flex justify-between">
                   <span className="text-muted-foreground">Amount:</span>
                   <span className="font-semibold text-primary">
@@ -320,9 +319,9 @@ const NewDonationForm = () => {
             <div className="flex flex-col gap-4">
               <Button
                 onClick={handleStartNewDonation}
-                className="w-full h-12 text-lg btn-primary"
+                className="w-full h-11 sm:h-12 text-base sm:text-lg btn-primary"
               >
-                <Heart className="h-5 w-5 mr-2" />
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 Make Another Donation
               </Button>
             </div>
@@ -333,76 +332,74 @@ const NewDonationForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-background py-4 sm:py-8 px-2 sm:px-4">
       <div className="max-w-2xl mx-auto">
        
         {error && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" className="mb-4 sm:mb-6">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="text-xs sm:text-sm">{error}</AlertDescription>
           </Alert>
         )}
 
         <Card className="border rounded-xl">
           <form onSubmit={handleSubmit}>
-            <CardContent className="p-6 space-y-6">
+            <CardContent className="p-3 sm:p-6 space-y-4 sm:space-y-6">
               {/* Impact Amounts Section */}
-              <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-5">
-                <h3 className="text-base font-semibold text-foreground mb-4 text-center">
+              <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-3 sm:p-5">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground mb-3 sm:mb-4 text-center">
                   आपका दान कैसे बदलेगा जीवन
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
                   {impactAmounts.map((item, index) => (
                     <button
                       key={index}
                       type="button"
                       onClick={() => handleAmountSelect(item.amount)}
-                      className={`p-3 rounded-lg border transition-all text-left ${
+                      className={`p-2 sm:p-3 rounded-lg border transition-all text-left ${
                         selectedAmount === item.amount
                           ? "border-primary bg-primary/10 shadow-md"
                           : "border-orange-300 dark:border-orange-700 bg-white dark:bg-background hover:border-primary hover:shadow-sm"
                       }`}
                     >
-                      <p className="text-lg font-black text-primary mb-1">
+                      <p className="text-sm sm:text-lg font-black text-primary mb-0.5 sm:mb-1">
                         {item.label}
                       </p>
-                      <p className="text-xs text-muted-foreground leading-tight">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight">
                         {item.desc}
                       </p>
                     </button>
                   ))}
-                  {/* Custom Amount Button */}
                   <button
                     type="button"
                     onClick={() => handleAmountSelect(-1)}
-                    className={`p-3 rounded-lg border transition-all flex flex-col items-center justify-center ${
+                    className={`p-2 sm:p-3 rounded-lg border transition-all flex flex-col items-center justify-center ${
                       isCustomAmount
                         ? "border-primary bg-primary/10 shadow-md"
                         : "border-orange-300 dark:border-orange-700 bg-white dark:bg-background hover:border-primary hover:shadow-sm"
                     }`}
                   >
-                    <Gift className="h-5 w-5 text-primary mb-1" />
-                    <p className="text-lg font-black text-primary mb-1">
+                    <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-primary mb-0.5 sm:mb-1" />
+                    <p className="text-sm sm:text-lg font-black text-primary mb-0.5 sm:mb-1">
                       Custom
                     </p>
-                    <p className="text-xs text-muted-foreground leading-tight text-center">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground leading-tight text-center">
                       अपनी राशि दर्ज करें
                     </p>
                   </button>
                 </div>
               </div>
 
-              {/* Custom Amount Input */}
               {isCustomAmount && (
                 <div>
-                  <Label className="text-sm font-medium text-foreground mb-2 block text-center">
+                  <Label className="text-xs sm:text-sm font-medium text-foreground mb-2 block text-center">
                     Enter Custom Amount
                   </Label>
                   <div className="max-w-xs mx-auto">
                     <div className="relative">
-                      <IndianRupee className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <IndianRupee className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
                       <Input
-                        className="pl-12 h-14 text-center text-xl font-semibold border-2 focus-ring rounded-xl"
+                        className="pl-10 sm:pl-12 h-12 sm:h-14 text-center text-lg sm:text-xl font-semibold border-2 focus-ring rounded-xl"
                         type="number"
                         placeholder="0"
                         min={1}
@@ -417,7 +414,7 @@ const NewDonationForm = () => {
                       />
                     </div>
                     {errors.amount && (
-                      <p className="text-sm text-destructive mt-2 text-center">
+                      <p className="text-xs sm:text-sm text-destructive mt-2 text-center">
                         {errors.amount}
                       </p>
                     )}
@@ -425,26 +422,26 @@ const NewDonationForm = () => {
                 </div>
               )}
               {errors.amount && !isCustomAmount && (
-                <p className="text-sm text-destructive text-center">
+                <p className="text-xs sm:text-sm text-destructive text-center">
                   {errors.amount}
                 </p>
               )}
 
-              <Separator className="my-6" />
+              <Separator className="my-4 sm:my-6" />
 
-              <div className="space-y-5">
-                <h3 className="text-base font-semibold text-foreground text-center">
+              <div className="space-y-4 sm:space-y-5">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground text-center">
                   Your Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-foreground">
+                    <Label className="text-xs sm:text-sm font-medium text-foreground">
                       Full Name *
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                       <Input
-                        className="pl-10 h-12 border-2 focus-ring rounded-lg"
+                        className="pl-9 sm:pl-10 h-10 sm:h-12 border-2 focus-ring rounded-lg text-sm sm:text-base"
                         placeholder="Enter your full name"
                         value={formData.name}
                         onChange={(e) =>
@@ -453,18 +450,18 @@ const NewDonationForm = () => {
                       />
                     </div>
                     {errors.name && (
-                      <p className="text-sm text-destructive">{errors.name}</p>
+                      <p className="text-xs sm:text-sm text-destructive">{errors.name}</p>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-foreground">
+                    <Label className="text-xs sm:text-sm font-medium text-foreground">
                       Phone Number *
                     </Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                       <Input
-                        className="pl-10 h-12 border-2 focus-ring rounded-lg"
+                        className="pl-9 sm:pl-10 h-10 sm:h-12 border-2 focus-ring rounded-lg text-sm sm:text-base"
                         placeholder="10-digit mobile number"
                         value={formData.phone}
                         maxLength={10}
@@ -474,19 +471,19 @@ const NewDonationForm = () => {
                       />
                     </div>
                     {errors.phone && (
-                      <p className="text-sm text-destructive">{errors.phone}</p>
+                      <p className="text-xs sm:text-sm text-destructive">{errors.phone}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">
+                  <Label className="text-xs sm:text-sm font-medium text-foreground">
                     Email Address *
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
                     <Input
-                      className="pl-10 h-12 border-2 focus-ring rounded-lg"
+                      className="pl-9 sm:pl-10 h-10 sm:h-12 border-2 focus-ring rounded-lg text-sm sm:text-base"
                       type="email"
                       placeholder="Enter your email address"
                       value={formData.email}
@@ -496,16 +493,16 @@ const NewDonationForm = () => {
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email}</p>
+                    <p className="text-xs sm:text-sm text-destructive">{errors.email}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-foreground">
+                  <Label className="text-xs sm:text-sm font-medium text-foreground">
                     Notes (Optional)
                   </Label>
                   <Input
-                    className="h-12 border-2 focus-ring rounded-lg"
+                    className="h-10 sm:h-12 border-2 focus-ring rounded-lg text-sm sm:text-base"
                     placeholder="Add a personal note"
                     value={formData.notes}
                     onChange={(e) => handleInputChange("notes", e.target.value)}
@@ -513,19 +510,19 @@ const NewDonationForm = () => {
                 </div>
               </div>
 
-              <Separator className="my-6" />
+              <Separator className="my-4 sm:my-6" />
 
-              <div className="space-y-4">
-                <h3 className="text-base font-semibold text-foreground text-center">
+              <div className="space-y-3 sm:space-y-4">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground text-center">
                   Choose Purpose
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3">
                   {enhancedDonationTypes.map((type) => {
                     const IconComponent = type.icon;
                     return (
                       <div
                         key={type.value}
-                        className={`border rounded-lg p-3 cursor-pointer ${
+                        className={`border rounded-lg p-2.5 sm:p-3 cursor-pointer ${
                           formData.payment_for === type.value
                             ? "border-primary bg-primary/5"
                             : "border-border"
@@ -534,7 +531,7 @@ const NewDonationForm = () => {
                           handleInputChange("payment_for", type.value)
                         }
                       >
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
                           <input
                             type="radio"
                             id={type.value}
@@ -544,19 +541,19 @@ const NewDonationForm = () => {
                             onChange={(e) =>
                               handleInputChange("payment_for", e.target.value)
                             }
-                            className="w-4 h-4 text-primary focus:ring-primary/20"
+                            className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary focus:ring-primary/20 flex-shrink-0"
                           />
-                          <div className={`p-2 rounded-lg ${type.color}`}>
-                            <IconComponent className="h-5 w-5" />
+                          <div className={`p-1.5 sm:p-2 rounded-lg ${type.color}`}>
+                            <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
                           </div>
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <Label
                               htmlFor={type.value}
-                              className="font-medium cursor-pointer text-foreground"
+                              className="text-xs sm:text-sm font-medium cursor-pointer text-foreground block"
                             >
                               {type.label}
                             </Label>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground">
                               {type.description}
                             </p>
                           </div>
@@ -567,25 +564,25 @@ const NewDonationForm = () => {
                 </div>
               </div>
 
-              <Separator className="my-6" />
+              <Separator className="my-4 sm:my-6" />
 
-              <div className="space-y-4">
-                <div className="bg-muted/30 p-3 rounded-lg border">
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <Shield className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium text-foreground">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="bg-muted/30 p-2.5 sm:p-3 rounded-lg border">
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-1">
+                    <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                    <span className="text-xs sm:text-sm font-medium text-foreground">
                       100% Secure Payment
                     </span>
                     <Badge
                       variant="secondary"
-                      className="bg-primary/10 text-primary text-xs"
+                      className="bg-primary/10 text-primary text-[10px] sm:text-xs"
                     >
                       SSL
                     </Badge>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-                      <Lock className="h-3 w-3" />
+                    <p className="text-[10px] sm:text-xs text-muted-foreground flex items-center justify-center gap-1">
+                      <Lock className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                       256-bit encryption • Razorpay • Instant receipt
                     </p>
                   </div>
@@ -594,30 +591,34 @@ const NewDonationForm = () => {
 
               <Button
                 type="submit"
-                className="w-full h-12 text-base font-semibold rounded-lg"
+                className="w-full h-11 sm:h-12 text-sm sm:text-base font-semibold rounded-lg"
                 disabled={isProcessing}
               >
                 {isProcessing ? (
                   <>
-                    <Loader2 className="h-6 w-6 mr-3 animate-spin" />
-                    {currentStep === "creating-order" && "Creating Order..."}
-                    {currentStep === "waiting-payment" &&
-                      "Opening Payment Gateway..."}
-                    {currentStep === "verifying" && "Verifying Payment..."}
-                    {!currentStep && "Processing Payment..."}
+                    <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 animate-spin" />
+                    <span className="text-xs sm:text-base">
+                      {currentStep === "creating-order" && "Creating Order..."}
+                      {currentStep === "waiting-payment" &&
+                        "Opening Payment Gateway..."}
+                      {currentStep === "verifying" && "Verifying Payment..."}
+                      {!currentStep && "Processing Payment..."}
+                    </span>
                   </>
                 ) : (
                   <>
-                    <Heart className="h-6 w-6 mr-3" />
-                    Donate{" "}
-                    {formData.amount > 0
-                      ? formatCurrency(formData.amount)
-                      : "Now"}
+                    <Heart className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
+                    <span className="text-sm sm:text-base">
+                      Donate{" "}
+                      {formData.amount > 0
+                        ? formatCurrency(formData.amount)
+                        : "Now"}
+                    </span>
                   </>
                 )}
               </Button>
 
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-[10px] sm:text-xs text-muted-foreground text-center">
                 By proceeding, you agree to our Terms of Service and Privacy
                 Policy
               </p>
