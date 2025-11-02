@@ -196,37 +196,39 @@ const LevelManagement = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredLevels.map((level) => (
-                  <TableRow key={level.id}>
-                    <TableCell className="font-medium">
-                      {Array.isArray(level.name)
-                        ? level.name.join(", ")
-                        : level.name}
-                    </TableCell>
+                <>
+                  {filteredLevels.map((level, index) => (
+                    <TableRow key={`${level.id}-${index}`}>
+                      <TableCell className="font-medium">
+                        {Array.isArray(level.name)
+                          ? level.name.join(", ")
+                          : level.name}
+                      </TableCell>
 
-                    <TableCell>
-                      <Badge variant="secondary">
-                        {getWingName(level.wing)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEditDialog(level)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDeleteDialog(level)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                      <TableCell>
+                        <Badge variant="secondary">
+                          {getWingName(level.wing)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEditDialog(level)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openDeleteDialog(level)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </>
               )}
             </TableBody>
           </Table>

@@ -15,8 +15,8 @@ import { Card, CardContent } from "@/components/ui/card";
 
 
 import {
-  useDesignations,
-  useLevels,
+  useDesignationsById,
+  useLevelsById,
   useWings,
 } from "@/module/dashboard/volunteer";
 import { Wing, Level, Designation, ApplicationFormData } from "@/module/dashboard/volunteer/types";
@@ -49,14 +49,9 @@ const ApplicationForm = ({
 
   const { wings, loading: wingsLoading } = useWings();
 
-  const { levels, loading: levelsLoading } = useLevels(
-    selectedWingName || undefined
-  );
+  const { levels, loading: levelsLoading, fetchLevelsByWingId } = useLevelsById();
 
-  const { designations, loading: designationsLoading } = useDesignations(
-    selectedLevelName || undefined,
-    selectedWingName || undefined
-  );
+  const { designations, loading: designationsLoading, fetchDesignationsByIds } = useDesignationsById();
 
   const [affidavit, setAffidavit] = useState<File | null>(null);
   const [aadharCardFront, setAadharCardFront] = useState<File | null>(null);
@@ -78,7 +73,7 @@ const ApplicationForm = ({
 
   useEffect(() => {
     if (levels && data.level) {
-      const foundLevel = levels.find((l) => l.id === data.level);
+      const foundLevel = levels.find((l: Level) => l.id === data.level);
       if (foundLevel) {
         setSelectedLevel(foundLevel.id);
         setSelectedLevelName(foundLevel.name);
@@ -89,13 +84,27 @@ const ApplicationForm = ({
   useEffect(() => {
     if (designations && data.designation) {
       const foundDesignation = designations.find(
-        (d) => d.id === data.designation
+        (d: Designation) => d.id === data.designation
       );
       if (foundDesignation) {
         setSelectedDesignation(foundDesignation.id);
       }
     }
   }, [designations, data.designation]);
+
+  
+  useEffect(() => {
+    if (selectedWing) {
+      fetchLevelsByWingId(selectedWing);
+    }
+  }, [selectedWing, fetchLevelsByWingId]);
+
+  
+  useEffect(() => {
+    if (selectedWing && selectedLevel) {
+      fetchDesignationsByIds(selectedWing, selectedLevel);
+    }
+  }, [selectedWing, selectedLevel, fetchDesignationsByIds]);
 
   useEffect(() => {
     setSelectedLevelName(null);
