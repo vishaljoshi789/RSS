@@ -13,6 +13,7 @@ export const useLevels = (wingName?: string) => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchLevels = useCallback(async () => {
+    
     try {
       setLoading(true);
       setError(null);
@@ -39,7 +40,7 @@ export const useLevels = (wingName?: string) => {
       };
 
       const newLevel = await api.createLevel(payload);
-      setLevels((prev) => [...prev, newLevel]);
+      await fetchLevels();
       toast.success("Level created successfully");
       return newLevel;
     } catch (err: any) {
@@ -52,7 +53,7 @@ export const useLevels = (wingName?: string) => {
   const updateLevel = useCallback(
     async (id: number, data: Partial<LevelFormData>) => {
       try {
-      // Normalize name field to English-only if present
+      
       let payload: Partial<LevelFormData> = { ...data };
       if (data.name) {
         payload = {
@@ -64,9 +65,8 @@ export const useLevels = (wingName?: string) => {
       }
 
       const updatedLevel = await api.updateLevel(id, payload);
-        setLevels((prev) =>
-          prev.map((level) => (level.id === id ? updatedLevel : level))
-        );
+        
+        await fetchLevels();
         toast.success("Level updated successfully");
         return updatedLevel;
       } catch (err: any) {

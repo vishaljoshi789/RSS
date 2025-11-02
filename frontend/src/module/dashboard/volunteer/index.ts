@@ -9,6 +9,8 @@ export {
   useWings,
   useLevels,
   useDesignations,
+  useLevelsById,
+  useDesignationsById,
   useUsers,
   useApplications,
 } from './hooks';
