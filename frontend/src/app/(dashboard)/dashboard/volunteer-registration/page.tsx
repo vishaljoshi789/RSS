@@ -151,13 +151,11 @@ const CareersPage = () => {
 
       const applicationPayload = { ...applicationData, user: user?.id };
 
-      const response = await Promise.all([
-        api.createApplication(applicationPayload),
-        updateAddress(addressData),
-        handlePaymentConfirm(),
-      ]);
+      const applicationResponse = await api.createApplication(applicationPayload);
+      await updateAddress(addressData);
+      await handlePaymentConfirm();
 
-      if(response){
+      if(applicationResponse){
         toast.success("Application submitted successfully!");
 
       toast.success("Application submitted successfully!", {

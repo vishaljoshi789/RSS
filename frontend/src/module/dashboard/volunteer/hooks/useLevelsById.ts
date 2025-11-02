@@ -13,7 +13,6 @@ export const useLevelsById = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchLevelsByWingId = useCallback(async (wingId: number | null) => {
-    // Skip fetching if wingId is not provided
     if (!wingId) {
       setLevels([]);
       return;
@@ -23,9 +22,8 @@ export const useLevelsById = () => {
       setLoading(true);
       setError(null);
       
-      // First get the wing to get its name
       const wing = await api.getWing(wingId);
-      // Then fetch levels using the wing name
+
       const data = await api.getLevels(wing.name);
       setLevels(data);
     } catch (err: any) {

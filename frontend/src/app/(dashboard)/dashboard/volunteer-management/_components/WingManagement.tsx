@@ -222,7 +222,7 @@ const WingManagement = () => {
               </div>
               <div>
                 <Label htmlFor="description" className="mb-2 block">
-                  Description
+                  Description <span className="text-red-500">*</span>
                 </Label>
                 <Textarea
                   id="description"
@@ -232,6 +232,7 @@ const WingManagement = () => {
                   }
                   placeholder="Enter wing description"
                   rows={3}
+                  required
                 />
               </div>
             </div>

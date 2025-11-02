@@ -53,7 +53,7 @@ export class VolunteerAPI {
 
   async getLevels(wingName?: string): Promise<Level[]> {
     const params: any = {};
-    if (wingName !== undefined && wingName !== null) params.wings = wingName;
+    if (wingName !== undefined && wingName !== null) params.wing = wingName;
     const response = await this.axios.get("/volunteer/levels/", { params });
     const payload = response.data;
     if (Array.isArray(payload)) return payload;
