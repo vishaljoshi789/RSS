@@ -114,6 +114,10 @@ export function useDonationPayment() {
   const createOrder = useCallback(
     async (formData: DonationFormData): Promise<OrderCreateResponse> => {
       try {
+        if (!axios) {
+          throw new Error("Axios instance not available. Please login and try again.");
+        }
+
         const response = await axios.post("/payment/init/", {
           name: formData.name,
           email: formData.email,
@@ -161,18 +165,42 @@ export function useDonationPayment() {
           message: "Order created successfully",
         };
       } catch (error: any) {
-        console.error("Order creation error:", error);
+        
+        const errorDetails = {
+          message: error?.message || "Unknown error",
+          response: error?.response?.data || null,
+          status: error?.response?.status || null,
+          config: {
+            url: error?.config?.url || "Unknown URL",
+            method: error?.config?.method || "Unknown method",
+          }
+        };
+        console.error("Order creation error:", errorDetails);
+        
+        
+        let errorMessage = "Failed to create order";
+        
+        if (error?.response?.data?.error) {
+          errorMessage = error.response.data.error;
+        } else if (error?.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error?.message) {
+          errorMessage = error.message;
+        } else if (error?.response?.status === 401) {
+          errorMessage = "Please login to continue with payment";
+        } else if (error?.response?.status === 500) {
+          errorMessage = "Server error. Please try again later";
+        } else if (error?.code === 'ERR_NETWORK') {
+          errorMessage = "Network error. Please check your internet connection";
+        }
+        
         return {
           success: false,
-          error:
-            error.response?.data?.error ||
-            error.response?.data?.message ||
-            error.message ||
-            "Failed to create order",
+          error: errorMessage,
         };
       }
     },
-    []
+    [axios]
   );
 
   const verifyPayment = useCallback(
@@ -182,6 +210,10 @@ export function useDonationPayment() {
       razorpaySignature: string
     ): Promise<PaymentVerificationResponse> => {
       try {
+        if (!axios) {
+          throw new Error("Axios instance not available");
+        }
+
         const response = await axios.post("/payment/verify/", {
           order_id: razorpayOrderId,
           payment_id: razorpayPaymentId,
@@ -197,18 +229,30 @@ export function useDonationPayment() {
           status: response.data.status,
         };
       } catch (error: any) {
-        console.error("Payment verification error:", error);
+        // Improved error logging
+        console.error("Payment verification error:", {
+          message: error?.message || "Unknown error",
+          response: error?.response?.data || null,
+          status: error?.response?.status || null,
+        });
+        
+        let errorMessage = "Payment verification failed";
+        
+        if (error?.response?.data?.error) {
+          errorMessage = error.response.data.error;
+        } else if (error?.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
+        
         return {
           success: false,
-          error:
-            error.response?.data?.error ||
-            error.response?.data?.message ||
-            error.message ||
-            "Payment verification failed",
+          error: errorMessage,
         };
       }
     },
-    []
+    [axios]
   );
 
   const processPayment = useCallback(
@@ -221,6 +265,7 @@ export function useDonationPayment() {
 
         const orderResponse = await createOrder(formData);
 
+        // Handle "already a member" error gracefully
         if(orderResponse.error?.includes("already a member")) {
           setError(orderResponse.error);
           setIsProcessing(false);
@@ -228,14 +273,20 @@ export function useDonationPayment() {
           return;
         }
 
+        // Handle any other errors from order creation
         if (!orderResponse.success) {
-          throw new Error(
-            orderResponse.error || "Failed to create payment order"
-          );
+          const errorMsg = orderResponse.error || "Failed to create payment order. Please try again.";
+          setError(errorMsg);
+          setIsProcessing(false);
+          setCurrentStep("idle");
+          return;
         }
 
         if (!orderResponse.order_id) {
-          throw new Error("No order ID received from server");
+          setError("No order ID received from server. Please try again.");
+          setIsProcessing(false);
+          setCurrentStep("idle");
+          return;
         }
 
         setOrderData(orderResponse);

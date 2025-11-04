@@ -7,7 +7,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import rawStateDistrictData from "@/lib/state-district.json";
+import { useMemo, useState } from "react";
 
 type AddressStepProps = {
   formData: {
@@ -23,10 +26,18 @@ type AddressStepProps = {
   readOnlyFields?: Partial<Record<string, boolean>>;
 };
 export const AddressStep = ({ formData, errors, onChange, stateOptions, readOnlyFields }: AddressStepProps) => {
+  const [showCustomDistrictInput, setShowCustomDistrictInput] = useState(false);
   
   const derivedStates: string[] = (stateOptions && stateOptions.length > 0)
     ? stateOptions
     : Object.keys((rawStateDistrictData as any)?.India || {}).sort((a: string, b: string) => a.localeCompare(b));
+
+  const availableDistricts = useMemo(() => {
+    if (!formData.state) return [];
+    const stateData = (rawStateDistrictData as any)?.India?.[formData.state];
+    if (!stateData?.districts) return [];
+    return Object.keys(stateData.districts).sort((a: string, b: string) => a.localeCompare(b));
+  }, [formData.state]);
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -60,12 +71,62 @@ export const AddressStep = ({ formData, errors, onChange, stateOptions, readOnly
           {readOnlyFields?.district ? (
             <div className="px-3 py-1 h-9 rounded-md border bg-transparent">{formStateLabel(formData.district)}</div>
           ) : (
-            <Input
-              id="district"
-              value={formData.district}
-              onChange={(e) => onChange("district", e.target.value)}
-              placeholder="Enter district"
-            />
+            <>
+              {!showCustomDistrictInput ? (
+                <Select
+                  value={formData.district || undefined}
+                  onValueChange={(value) => {
+                    if (value === "__ADD_CUSTOM__") {
+                      setShowCustomDistrictInput(true);
+                      onChange("district", "");
+                    } else {
+                      onChange("district", value);
+                    }
+                  }}
+                  disabled={!formData.state}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={formData.state ? "Select a district" : "Select state first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableDistricts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
+                    {formData.state && availableDistricts.length > 0 && (
+                      <SelectItem value="__ADD_CUSTOM__" className="text-primary font-medium">
+                        <div className="flex items-center">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add your district
+                        </div>
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="space-y-2">
+                  <Input
+                    id="district"
+                    value={formData.district}
+                    onChange={(e) => onChange("district", e.target.value)}
+                    placeholder="Enter your district"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => {
+                      setShowCustomDistrictInput(false);
+                      onChange("district", "");
+                    }}
+                  >
+                    Back to district list
+                  </Button>
+                </div>
+              )}
+            </>
           )}
           {errors.district && (
             <p className="text-sm text-destructive">{errors.district}</p>

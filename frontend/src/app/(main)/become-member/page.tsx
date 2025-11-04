@@ -446,8 +446,8 @@ const BecomeMemberPage = () => {
           phone: savedFormData.phone || "",
           date: new Date().toLocaleDateString("en-IN"),
           mode: "Online payment",
-          amount: "300",
-          amountWords: "Three Hundred Rupees Only",
+          amount: "199",
+          amountWords: "One Hundred Ninety Nine Rupees Only",
           receiptNumber: "MEMBER_" + Date.now(),
           country: savedFormData.country || "India",
           state: savedFormData.state || "",
@@ -767,7 +767,7 @@ const BecomeMemberPage = () => {
                 <span className="text-xs sm:text-sm text-muted-foreground">
                   Membership Fee
                 </span>
-                <span className="text-lg sm:text-xl font-bold text-foreground">₹300</span>
+                <span className="text-lg sm:text-xl font-bold text-foreground">₹199</span>
               </div>
               <p className="mt-1 sm:mt-1.5 text-xs text-muted-foreground">
                 One-time registration fee for RSS membership
@@ -828,7 +828,7 @@ const BecomeMemberPage = () => {
               ) : (
                 <>
                   <CreditCard className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="text-xs sm:text-sm">Pay ₹300</span>
+                  <span className="text-xs sm:text-sm">Pay ₹199</span>
                 </>
               )}
             </Button>
