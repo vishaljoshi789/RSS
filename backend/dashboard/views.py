@@ -87,16 +87,12 @@ class GetDocumentView(APIView):
         photo = user.image if user.image else None
         if not doc_type:
             return Response({"error": "Missing document type"}, status=400)
+        
+        qr_text = f"{settings.FRONTEND_URL}/idcard-verify/{user.user_id}"
         if doc_type == "idcard":
             template_path = os.path.join(settings.BASE_DIR, "dashboard", "pdf_builder", "templates", "documents", "id_card.pdf")
             layout = ID_CARD_LAYOUT
-        elif doc_type == "certificate":
-            template_path = os.path.join(settings.BASE_DIR, "dashboard", "pdf_builder", "templates", "documents", "certificate.pdf")
-            layout = CERTIFICATE_LAYOUT
-        else:
-            return Response({"error": "Unknown document type"}, status=400)
-        
-        data = {
+            data = {
             "name": user.name,
             "reg_no": f'R{user.user_id}',
             "in": user.volunteer.designation if user.is_volunteer else "Member",
@@ -105,9 +101,26 @@ class GetDocumentView(APIView):
             "block": f'{user.sub_district}, {user.city}',
             "district": user.district,
             "state": user.state,
-        }
-        qr_text = f"{settings.FRONTEND_URL}/idcard-verify/{user.user_id}"
-        pdf_buffer = generate_pdf(template_path, data, image_file=photo, qr_text=qr_text)
+            }
+            qr_text = f"{settings.FRONTEND_URL}/idcard-verify/{user.user_id}"
+            pdf_buffer = generate_pdf(template_path, data, document_type=doc_type, layout=layout, image_file=photo, qr_text=qr_text)
+        elif doc_type == "certificate":
+            if not user.is_volunteer:
+                return Response({"error": "User is not a volunteer"}, status=400)
+            template_path = os.path.join(settings.BASE_DIR, "dashboard", "pdf_builder", "templates", "documents", "niyukti.pdf")
+            layout = CERTIFICATE_LAYOUT
+            data = {
+                "image": user.volunteer.image,
+                "name": user.name,
+                "reg_no": f'R{user.user_id}',
+                "reg_date": user.volunteer.joined_date.strftime("%d-%m-%Y"),
+                "valid_till": user.volunteer.joined_date.replace(year=user.volunteer.joined_date.year + 1).strftime("%d-%m-%Y"),
+            }
+            
+        else:
+            return Response({"error": "Unknown document type"}, status=400)
+        
+       
         return FileResponse(
             pdf_buffer,
             as_attachment=True,

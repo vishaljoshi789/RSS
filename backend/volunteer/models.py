@@ -48,9 +48,11 @@ class Volunteer(models.Model):
     
 class Application(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='volunteer_applications')
+    hindi_name = models.CharField(max_length=150, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     wing = models.ForeignKey(Wing, on_delete=models.SET_NULL, null=True)
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True)
+    level_hindi_value = models.CharField(max_length=150, blank=True, null=True)
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     affidavit = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)

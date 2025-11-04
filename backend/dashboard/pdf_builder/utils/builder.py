@@ -4,10 +4,23 @@ from PyPDF2 import PdfReader, PdfWriter
 from PIL import Image, ImageDraw, ImageEnhance
 import qrcode
 from io import BytesIO
+import barcode
+from barcode.writer import ImageWriter
+
+from .templates import ID_CARD_LAYOUT, CERTIFICATE_LAYOUT
 
 # -------------------------------
 # Reusable helper functions
 # -------------------------------
+
+def barcode_generator(data: str, width=200, height=50):
+    """Generate a barcode image reader."""
+    CODE128 = barcode.get_barcode_class('code128')
+    code128 = CODE128(data, writer=ImageWriter(), add_checksum=False)
+    barcode_bytes = BytesIO()
+    code128.write(barcode_bytes, {'module_width': 0.2, 'module_height': height / 10.0, 'font_size': 10, 'text_distance': 1})
+    barcode_bytes.seek(0)
+    return ImageReader(barcode_bytes)
 
 def make_round_image(img_file, size=(100, 100), dpi=300, sharpen=True):
     """
@@ -92,29 +105,27 @@ def generate_qr(data: str, box_size=2):
     qr_bytes.seek(0)
     return ImageReader(qr_bytes)
 
-# -------------------------------
-# Main PDF generator (with config inside)
-# -------------------------------
+def generate_pdf(template_path, data_fields, document_type, layout, image_file=None, qr_text=None):
+    """
+    Generalized PDF builder for various document types (e.g., idcard, niyukti_certificate).
 
-def generate_pdf(template_path, data_fields, image_file=None, qr_text=None):
+    Args:
+        template_path (str/BytesIO): Path or buffer of the base PDF template.
+        data_fields (dict): Dictionary of data to populate the fields.
+        document_type (str): Key to select the correct layout ('idcard' or 'niyukti_certificate').
+        image_file (str/BytesIO, optional): Path or buffer of the photo to embed. Defaults to None.
+        qr_text (str, optional): Data to encode in the QR code. Defaults to None.
+        
+    Returns:
+        BytesIO: A buffer containing the final generated PDF.
     """
-    Generic PDF builder with integrated ID_CARD_LAYOUT for debugging.
-    """
-    # --- Layout configuration for ID Card ---
-    ID_CARD_LAYOUT = {
-        "text_fields": [
-            {"name": "reg_no", "x": 110, "y": 130, "font": "Helvetica-Bold", "size": 11, "align": "center", "max_width": 120},
-            {"name": "name", "x": 50, "y": 110, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
-            {"name": "in", "x": 50, "y": 100, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
-            {"name": "mob", "x": 50, "y": 88, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
-            {"name": "date", "x": 50, "y": 77, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
-            {"name": "block", "x": 50, "y": 65, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
-            {"name": "district", "x": 50, "y": 55, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
-            {"name": "state", "x": 50, "y": 44, "font": "Helvetica", "size": 8, "align": "left", "max_width": 200},
-        ],
-        "image": {"x": 8, "y": 123, "width": 63, "height": 69, "shape": "soft_round", "radius": 10},
-        "qr": {"x": 93, "y": 155, "width": 37, "height": 37, "data": qr_text},
-    }
+
+    LAYOUT = layout
+    # 2. Update QR data within the selected layout configuration
+    # Note: This modifies the layout dictionary which might not be desirable
+    # for production use if the layouts object is shared. A deep copy would be better.
+    if LAYOUT.get("qr"):
+        LAYOUT["qr"]["data"] = qr_text
 
     # --- Read template & get size ---
     template_pdf = PdfReader(template_path)
@@ -123,11 +134,25 @@ def generate_pdf(template_path, data_fields, image_file=None, qr_text=None):
     height = float(first_page.mediabox.height)
     # print(f"[DEBUG] Template size: {width}x{height}")
 
+    # --- Apply Scaling if defined in Layout ---
+    scaling_conf = LAYOUT.get("scaling")
+    if scaling_conf:
+        new_width = scaling_conf["width"]
+        new_height = scaling_conf["height"]
+        
+        # In the original code, all pages were scaled, but only the first page's size was checked.
+        for page in template_pdf.pages:
+            page.scale_to(new_width, new_height)
+        
+        width = new_width
+        height = new_height
+        # print(f"[DEBUG] New Template size: {width}x{height}")
+
     packet = BytesIO()
     c = canvas.Canvas(packet, pagesize=(width, height))
 
-    # --- Draw text fields ---
-    for item in ID_CARD_LAYOUT.get("text_fields", []):
+    # --- 3. Draw text fields ---
+    for item in LAYOUT.get("text_fields", []):
         field = item["name"]
         if field in data_fields:
             value = str(data_fields[field])
@@ -140,16 +165,20 @@ def generate_pdf(template_path, data_fields, image_file=None, qr_text=None):
             # Set color
             if color == "white":
                 c.setFillColorRGB(1, 1, 1)
-            if color == "black":
+            elif color == "black":
                 c.setFillColorRGB(0, 0, 0)
-            c.setFont(font, size)
-            text_width = c.stringWidth(value, font, size)
+            else:
+                c.setFillColorRGB(0, 0, 0) # Default to black
+                
+            current_size = size
+            c.setFont(font, current_size)
+            text_width = c.stringWidth(value, font, current_size)
 
             # Auto shrink if max_width is given
             if max_width and text_width > max_width:
-                size = size * max_width / text_width
-                c.setFont(font, size)
-                text_width = c.stringWidth(value, font, size)
+                current_size = current_size * max_width / text_width
+                c.setFont(font, current_size)
+                text_width = c.stringWidth(value, font, current_size)
 
             x, y = item["x"], item["y"]
 
@@ -161,19 +190,19 @@ def generate_pdf(template_path, data_fields, image_file=None, qr_text=None):
                 c.drawString(x, y, value)
             # print(f"[DRAW TEXT] {field}='{value}' at ({x},{y})")
 
-    # --- Draw image if provided ---
-    if image_file and ID_CARD_LAYOUT.get("image"):
-        img_conf = ID_CARD_LAYOUT["image"]
+    # --- 4. Draw image if provided ---
+    if image_file and LAYOUT.get("image"):
+        img_conf = LAYOUT["image"]
         size = (img_conf["width"], img_conf["height"])
+        
+        # Select the appropriate utility function
         if img_conf.get("shape") == "round":
             img_reader = make_round_image(image_file, size)
         elif img_conf.get("shape") == "soft_round":
             img_reader = make_soft_round_image(image_file, size, radius=img_conf.get("radius", 20))
         else:
             img_reader = ImageReader(image_file)
-        img_reader = (
-            img_reader
-        )
+            
         c.drawImage(
             img_reader,
             img_conf["x"],
@@ -184,11 +213,12 @@ def generate_pdf(template_path, data_fields, image_file=None, qr_text=None):
         )
         # print(f"[DRAW IMAGE] at ({img_conf['x']},{img_conf['y']}) size={size}")
 
-    # --- Draw QR code if provided ---
-    if ID_CARD_LAYOUT.get("qr"):
-        qr_conf = ID_CARD_LAYOUT["qr"]
-        qr_text = qr_conf.get("data", "")
-        qr_reader = generate_qr(qr_text)
+    # --- 5. Draw QR code if provided ---
+    if LAYOUT.get("qr") and LAYOUT["qr"].get("data"):
+        qr_conf = LAYOUT["qr"]
+        qr_text_data = LAYOUT["qr"]["data"]
+        
+        qr_reader = generate_qr(qr_text_data)
         c.drawImage(
             qr_reader,
             qr_conf["x"],
@@ -196,26 +226,27 @@ def generate_pdf(template_path, data_fields, image_file=None, qr_text=None):
             width=qr_conf["width"],
             height=qr_conf["height"],
         )
-        # print(f"[DRAW QR] '{qr_text}' at ({qr_conf['x']},{qr_conf['y']})")
+        # print(f"[DRAW QR] '{qr_text_data}' at ({qr_conf['x']},{qr_conf['y']})")
 
     c.save()
     packet.seek(0)
 
-    # --- Merge overlay ---
+    # --- 6. Merge overlay ---
     overlay_pdf = PdfReader(packet)
     output_pdf = PdfWriter()
 
+    # Merge the overlay (canvas content) onto the first page of the template
     first_page.merge_page(overlay_pdf.pages[0])
     output_pdf.add_page(first_page)
 
-    # Duplicate second page if exists
-    if len(template_pdf.pages) > 1:
-        output_pdf.add_page(template_pdf.pages[1])
-    else:
-        output_pdf.add_page(first_page)
-
+    # Duplicate remaining pages
+    for i in range(1, len(template_pdf.pages)):
+        output_pdf.add_page(template_pdf.pages[i])
+         
     final_pdf = BytesIO()
     output_pdf.write(final_pdf)
     final_pdf.seek(0)
     # print("[SUCCESS] PDF generation complete.")
     return final_pdf
+
+

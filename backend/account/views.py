@@ -31,7 +31,7 @@ class UserJoinView(APIView):
             return Response({"error": "Name is required."}, status=status.HTTP_400_BAD_REQUEST)
         if "phone" not in data:
             return Response({"error": "Phone number is required."}, status=status.HTTP_400_BAD_REQUEST)
-        password = data["dob"].strftime("%d%m%Y")
+        password = data["dob"]
         data["password"] = make_password(password)
         data["username"] = data["email"]
         user_id = generate_user_id()
