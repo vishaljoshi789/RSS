@@ -74,6 +74,28 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }));
   }, []);
 
+  const refreshUserData = useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await apiCall("/dashboard/");
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.user_info) {
+          localStorage.setItem('user_data', JSON.stringify(data));
+          setUserData(data);
+          return true;
+        }
+      }
+      
+      console.error('Failed to refresh user data:', response.status);
+      return false;
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+      return false;
+    }
+  }, [apiCall, setUserData]);
+
   
   const createDefaultUser = useCallback((): User => ({
     id: 1,
@@ -437,6 +459,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     refreshToken,
     updateUser,
     setUserData,
+    refreshUserData,
     clearError,
     checkAuth,
     verifyToken,

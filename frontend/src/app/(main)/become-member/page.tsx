@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef, type ChangeEvent } from "react";
-// Image removed - layout simplified for mobile responsiveness
 import {
   CheckCircle2,
   Loader2,
@@ -31,6 +30,7 @@ import {
 import { useMemberSubmit } from "@/module/dashboard/member/hooks";
 import { useDonationPayment } from "@/module/donation";
 import rawStateDistrictData from "@/lib/state-district.json";
+import { useAuth } from "@/context/AuthContext";
 
 type FormState = {
   name: string;
@@ -85,13 +85,6 @@ const defaultFormState: FormState = {
 };
 
 type StateDistrictData = typeof rawStateDistrictData;
-type StateKey = keyof StateDistrictData["India"];
-
-const isStateKey = (
-  value: string,
-  data: StateDistrictData
-): value is StateKey =>
-  Boolean(value) && Object.prototype.hasOwnProperty.call(data.India, value);
 
 const getIndianStates = (data: StateDistrictData): string[] => {
   if (!data?.India) return [];
@@ -419,6 +412,7 @@ const BecomeMemberPage = () => {
     setErrors({});
   };
 
+  const { refreshUserData } = useAuth();
   const { submitMemberForm, loading: isMemberSubmitting } = useMemberSubmit();
   const {
     processPayment,
@@ -431,7 +425,6 @@ const BecomeMemberPage = () => {
 
   useEffect(() => {
     if (paymentSuccess && !submitted) {
-      // Use the ref instead of formState to get preserved data
       const savedFormData = formDataRef.current;
 
       toast.success("Payment completed successfully!", {
@@ -457,7 +450,6 @@ const BecomeMemberPage = () => {
 
         const receiptUrl = `/receipt?${receiptParams.toString()}`;
 
-        // Create a temporary link and click it (bypasses popup blocker)
         const link = document.createElement("a");
         link.href = receiptUrl;
         link.target = "_blank";
@@ -520,7 +512,10 @@ const BecomeMemberPage = () => {
       toast.dismiss("member-registration");
       setShowPaymentModal(false);
 
-      // Step 2: Process payment
+      // Step 2: Refresh user data to sync address updates
+      await refreshUserData();
+
+      // Step 3: Process payment
       toast.loading("Opening payment gateway...", { id: "payment-processing" });
 
       await processPayment({
