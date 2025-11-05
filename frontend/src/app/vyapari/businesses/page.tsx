@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Building2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -40,7 +40,7 @@ interface Category {
   name: string;
 }
 
-const BusinessesPage = () => {
+const BusinessesPageContent = () => {
   const router = useRouter();
   const axios = useAxios();
   const searchParams = useSearchParams();
@@ -342,4 +342,17 @@ const BusinessesPage = () => {
   );
 };
 
-export default BusinessesPage;
+export default function BusinessesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <BusinessesPageContent />
+    </Suspense>
+  );
+}

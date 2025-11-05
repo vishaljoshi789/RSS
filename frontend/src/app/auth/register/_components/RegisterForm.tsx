@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -47,7 +47,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
-const RegisterForm = () => {
+const RegisterFormContent = () => {
   const searchParams = useSearchParams();
   const referralParam = searchParams.get("ref") || "";
 
@@ -462,6 +462,35 @@ const RegisterForm = () => {
         </CardContent>
       </Card>
     </div>
+  );
+};
+
+const RegisterForm = () => {
+  return (
+    <Suspense fallback={
+      <Card className="w-full shadow-xl border-2">
+        <CardHeader className="space-y-4 text-center bg-gradient-to-br from-orange-50 to-white border-b-2">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <UserPlus className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
+              Loading...
+            </CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="p-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+              <p className="mt-4 text-muted-foreground">Loading form...</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    }>
+      <RegisterFormContent />
+    </Suspense>
   );
 };
 
