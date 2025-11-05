@@ -74,6 +74,28 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }));
   }, []);
 
+  const refreshUserData = useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await apiCall("/dashboard/");
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.user_info) {
+          localStorage.setItem('user_data', JSON.stringify(data));
+          setUserData(data);
+          return true;
+        }
+      }
+      
+      console.error('Failed to refresh user data:', response.status);
+      return false;
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+      return false;
+    }
+  }, [apiCall, setUserData]);
+
   
   const createDefaultUser = useCallback((): User => ({
     id: 1,
@@ -208,9 +230,21 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           document.cookie = `access_token=${data.access}; path=/; secure; samesite=strict`;
           document.cookie = `refresh_token=${data.refresh}; path=/; secure; samesite=strict`;
 
-          await checkAuth();
+          try {
+            const dashboardResponse = await apiCall("/dashboard/");
+            const dashboardData = await dashboardResponse.json();
+            
+            if (dashboardResponse.ok && dashboardData.user_info) {
+              localStorage.setItem('user_data', JSON.stringify(dashboardData));
+              setUserData(dashboardData);
+            } else {
+              await checkAuth();
+            }
+          } catch (dashboardError) {
+            console.error("Error fetching dashboard data:", dashboardError);
+            await checkAuth();
+          }
 
-          // Check if there's a redirect URL stored
           const redirectUrl = typeof window !== "undefined" 
             ? localStorage.getItem("redirectAfterLogin") 
             : null;
@@ -253,7 +287,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         };
       }
     },
-    [apiCall, checkAuth, router]
+    [apiCall, checkAuth, setUserData, router]
   );
 
   const register = useCallback(
@@ -345,6 +379,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     
     localStorage.removeItem('user_data');
+    localStorage.removeItem('redirectAfterLogin');
+    
+    localStorage.clear();
 
     setAuthState({
       user: null,
@@ -422,6 +459,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     refreshToken,
     updateUser,
     setUserData,
+    refreshUserData,
     clearError,
     checkAuth,
     verifyToken,

@@ -115,7 +115,7 @@ export class VolunteerAPI {
   ): Promise<Designation[]> {
     const params: any = {};
     if (levelName !== undefined && levelName !== null) params.level = levelName;
-    if (wingName !== undefined && wingName !== null) params.wings = wingName;
+    if (wingName !== undefined && wingName !== null) params.wing = wingName;
     const response = await this.axios.get("/volunteer/designations/", {
       params,
     });
@@ -128,7 +128,7 @@ export class VolunteerAPI {
 
   async getDesignation(level: string, wing: string): Promise<Designation> {
     const response = await this.axios.get<Designation>(
-      `/volunteer/designations/?level=${level}&wings=${wing}`
+      `/volunteer/designations/?level=${level}&wing=${wing}`
     );
     return response.data;
   }

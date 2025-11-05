@@ -22,7 +22,7 @@ export const useLevels = (wingName?: string) => {
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || "Failed to fetch levels";
       setError(errorMsg);
-      toast.error(errorMsg);
+      console.error("Failed to fetch levels:", err);
     } finally {
       setLoading(false);
     }
@@ -44,8 +44,7 @@ export const useLevels = (wingName?: string) => {
       toast.success("Level created successfully");
       return newLevel;
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to create level";
-      toast.error(errorMsg);
+      console.error("Failed to create level:", err);
       throw err;
     }
   }, []);
@@ -70,9 +69,7 @@ export const useLevels = (wingName?: string) => {
         toast.success("Level updated successfully");
         return updatedLevel;
       } catch (err: any) {
-        const errorMsg =
-          err.response?.data?.message || "Failed to update level";
-        toast.error(errorMsg);
+        console.error("Failed to update level:", err);
         throw err;
       }
     },
@@ -85,8 +82,7 @@ export const useLevels = (wingName?: string) => {
       setLevels((prev) => prev.filter((level) => level.id !== id));
       toast.success("Level deleted successfully");
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to delete level";
-      toast.error(errorMsg);
+      console.error("Failed to delete level:", err);
       throw err;
     }
   }, []);

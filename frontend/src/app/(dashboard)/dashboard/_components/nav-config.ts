@@ -83,13 +83,13 @@ export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
     description: "User management",
     roles: ["admin", "staff"],
   },
-  {
-    title: "Events",
-    url: "/dashboard/events",
-    icon: Calendar,
-    description: "Event planning",
-    roles: ["admin", "staff", "volunteer"],
-  },
+  // {
+  //   title: "Events",
+  //   url: "/dashboard/events",
+  //   icon: Calendar,
+  //   description: "Event planning",
+  //   roles: ["staff", "volunteer"],
+  // },
   {
     title: "Vayapari",
     url: "/dashboard/vyapari",
@@ -109,14 +109,14 @@ export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
     url: "/dashboard/volunteer-management",
     icon: UsersRound,
     description: "Manage volunteers",
-    roles: ["member"],
+    roles: ["staff", "admin"],
   },
   {
-    title: "ID Card Management",
+    title: "ID Card",
     url: "/dashboard/id-card-management",
     icon: IdCard,
-    description: "Manage ID cards",
-    roles: ["member"],
+    description: "Collect your ID cards",
+    roles: ["member", "volunteer"],
   },
   {
     title: "Referral",
@@ -130,7 +130,7 @@ export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
     url: "/dashboard/volunteer-registration",
     icon: CreditCard,
     description: "Volunteer Registration",
-    roles: ["volunteer", "admin"],
+    roles: ["volunteer"],
   },
   {
     title: "Volunteer Details",

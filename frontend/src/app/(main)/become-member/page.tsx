@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef, type ChangeEvent } from "react";
-// Image removed - layout simplified for mobile responsiveness
 import {
   CheckCircle2,
   Loader2,
@@ -31,6 +30,7 @@ import {
 import { useMemberSubmit } from "@/module/dashboard/member/hooks";
 import { useDonationPayment } from "@/module/donation";
 import rawStateDistrictData from "@/lib/state-district.json";
+import { useAuth } from "@/context/AuthContext";
 
 type FormState = {
   name: string;
@@ -85,13 +85,6 @@ const defaultFormState: FormState = {
 };
 
 type StateDistrictData = typeof rawStateDistrictData;
-type StateKey = keyof StateDistrictData["India"];
-
-const isStateKey = (
-  value: string,
-  data: StateDistrictData
-): value is StateKey =>
-  Boolean(value) && Object.prototype.hasOwnProperty.call(data.India, value);
 
 const getIndianStates = (data: StateDistrictData): string[] => {
   if (!data?.India) return [];
@@ -419,6 +412,7 @@ const BecomeMemberPage = () => {
     setErrors({});
   };
 
+  const { refreshUserData } = useAuth();
   const { submitMemberForm, loading: isMemberSubmitting } = useMemberSubmit();
   const {
     processPayment,
@@ -431,7 +425,6 @@ const BecomeMemberPage = () => {
 
   useEffect(() => {
     if (paymentSuccess && !submitted) {
-      // Use the ref instead of formState to get preserved data
       const savedFormData = formDataRef.current;
 
       toast.success("Payment completed successfully!", {
@@ -446,8 +439,8 @@ const BecomeMemberPage = () => {
           phone: savedFormData.phone || "",
           date: new Date().toLocaleDateString("en-IN"),
           mode: "Online payment",
-          amount: "300",
-          amountWords: "Three Hundred Rupees Only",
+          amount: "199",
+          amountWords: "One Hundred Ninety Nine Rupees Only",
           receiptNumber: "MEMBER_" + Date.now(),
           country: savedFormData.country || "India",
           state: savedFormData.state || "",
@@ -457,7 +450,6 @@ const BecomeMemberPage = () => {
 
         const receiptUrl = `/receipt?${receiptParams.toString()}`;
 
-        // Create a temporary link and click it (bypasses popup blocker)
         const link = document.createElement("a");
         link.href = receiptUrl;
         link.target = "_blank";
@@ -520,7 +512,10 @@ const BecomeMemberPage = () => {
       toast.dismiss("member-registration");
       setShowPaymentModal(false);
 
-      // Step 2: Process payment
+      // Step 2: Refresh user data to sync address updates
+      await refreshUserData();
+
+      // Step 3: Process payment
       toast.loading("Opening payment gateway...", { id: "payment-processing" });
 
       await processPayment({
@@ -767,7 +762,7 @@ const BecomeMemberPage = () => {
                 <span className="text-xs sm:text-sm text-muted-foreground">
                   Membership Fee
                 </span>
-                <span className="text-lg sm:text-xl font-bold text-foreground">₹300</span>
+                <span className="text-lg sm:text-xl font-bold text-foreground">₹199</span>
               </div>
               <p className="mt-1 sm:mt-1.5 text-xs text-muted-foreground">
                 One-time registration fee for RSS membership
@@ -828,7 +823,7 @@ const BecomeMemberPage = () => {
               ) : (
                 <>
                   <CreditCard className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="text-xs sm:text-sm">Pay ₹300</span>
+                  <span className="text-xs sm:text-sm">Pay ₹199</span>
                 </>
               )}
             </Button>

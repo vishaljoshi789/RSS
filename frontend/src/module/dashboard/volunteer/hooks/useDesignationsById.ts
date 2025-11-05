@@ -28,8 +28,10 @@ export const useDesignationsById = () => {
           api.getLevel(levelId),
         ]);
 
+        const levelName = Array.isArray(level.name) ? level.name[0] : level.name;
+
         const data = await api.getDesignations(
-          Array.isArray(level.name) ? level.name[0] : level.name,
+          levelName,
           wing.name
         );
         setDesignations(data);

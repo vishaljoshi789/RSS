@@ -273,7 +273,7 @@ const ApplicationForm = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="grid gap-1">
-                <Label className="text-sm font-medium">Affidavit</Label>
+                <Label className="text-sm font-medium">Affidavit *</Label>
                 <Input
                   id="affidavit"
                   type="file"
@@ -294,7 +294,7 @@ const ApplicationForm = ({
               </div>
 
               <div className="grid gap-1">
-                <Label className="text-sm font-medium">Aadhar Front</Label>
+                <Label className="text-sm font-medium">Aadhar Front *</Label>
                 <Input
                   id="aadharFront"
                   type="file"
@@ -314,7 +314,7 @@ const ApplicationForm = ({
               </div>
 
               <div className="grid gap-1">
-                <Label className="text-sm font-medium">Aadhar Back</Label>
+                <Label className="text-sm font-medium">Aadhar Back *</Label>
                 <Input
                   id="aadharBack"
                   type="file"

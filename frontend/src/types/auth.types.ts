@@ -98,6 +98,7 @@ export interface AuthContextType extends AuthState {
   verifyToken: (token?: string) => Promise<boolean>;
   updateUser: (userData: Partial<User>) => void;
   setUserData: (userData: User) => void;
+  refreshUserData: () => Promise<boolean>;
   clearError: () => void;
   checkAuth: () => Promise<void>;
   isAdmin: () => boolean;

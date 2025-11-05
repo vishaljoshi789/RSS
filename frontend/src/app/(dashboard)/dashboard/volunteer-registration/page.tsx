@@ -18,7 +18,7 @@ import {
 
 const CareersPage = () => {
   const axios = useAxios();
-  const { user } = useAuth();
+  const { user, refreshUserData } = useAuth();
   const api = createVolunteerAPI(axios);
 
   const [step, setStep] = useState(1);
@@ -161,6 +161,9 @@ const CareersPage = () => {
       toast.success("Application submitted successfully!", {
         id: "final-submit",
       });
+
+      // Refresh user data to get updated address
+      await refreshUserData();
 
       clearFromLocalStorage("applicationData");
       clearFromLocalStorage("addressData");

@@ -21,7 +21,7 @@ export const useWings = () => {
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || "Failed to fetch wings";
       setError(errorMsg);
-      toast.error(errorMsg);
+      console.error("Failed to fetch wings:", err);
     } finally {
       setLoading(false);
     }
@@ -34,8 +34,7 @@ export const useWings = () => {
       toast.success("Wing created successfully");
       return newWing;
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to create wing";
-      toast.error(errorMsg);
+      console.error("Failed to create wing:", err);
       throw err;
     }
   }, []);
@@ -50,8 +49,7 @@ export const useWings = () => {
         toast.success("Wing updated successfully");
         return updatedWing;
       } catch (err: any) {
-        const errorMsg = err.response?.data?.message || "Failed to update wing";
-        toast.error(errorMsg);
+        console.error("Failed to update wing:", err);
         throw err;
       }
     },
@@ -64,8 +62,7 @@ export const useWings = () => {
       setWings((prev) => prev.filter((wing) => wing.id !== id));
       toast.success("Wing deleted successfully");
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to delete wing";
-      toast.error(errorMsg);
+      console.error("Failed to delete wing:", err);
       throw err;
     }
   }, []);

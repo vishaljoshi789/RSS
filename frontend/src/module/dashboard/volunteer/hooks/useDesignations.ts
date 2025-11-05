@@ -22,7 +22,7 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
       const errorMsg =
         err.response?.data?.message || "Failed to fetch designations";
       setError(errorMsg);
-      toast.error(errorMsg);
+      console.error("Failed to fetch designations:", err);
     } finally {
       setLoading(false);
     }
@@ -35,9 +35,7 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
       toast.success("Designation created successfully");
       return newDesignation;
     } catch (err: any) {
-      const errorMsg =
-        err.response?.data?.message || "Failed to create designation";
-      toast.error(errorMsg);
+      console.error("Failed to create designation:", err);
       throw err;
     }
   }, []);
@@ -54,9 +52,7 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
         toast.success("Designation updated successfully");
         return updatedDesignation;
       } catch (err: any) {
-        const errorMsg =
-          err.response?.data?.message || "Failed to update designation";
-        toast.error(errorMsg);
+        console.error("Failed to update designation:", err);
         throw err;
       }
     },
@@ -71,9 +67,7 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
       );
       toast.success("Designation deleted successfully");
     } catch (err: any) {
-      const errorMsg =
-        err.response?.data?.message || "Failed to delete designation";
-      toast.error(errorMsg);
+      console.error("Failed to delete designation:", err);
       throw err;
     }
   }, []);
