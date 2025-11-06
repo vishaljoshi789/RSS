@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useCallback, useMemo } from "react";
+import { getApiBaseUrl } from "@/lib/env";
 
 interface ApiError {
   message: string;
@@ -20,7 +21,7 @@ const useAxios = (): AxiosInstance => {
   const { refreshToken, logout, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const baseURL = getApiBaseUrl();
 
   const axiosInstance: AxiosInstance = useMemo(() => {
     const instance = axios.create({

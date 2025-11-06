@@ -15,6 +15,7 @@ import {
   RegisterRequest,
   AuthState,
 } from "@/types/auth.types";
+import { getApiBaseUrl } from "@/lib/env";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -22,9 +23,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter();
 
   const isProduction = process.env.NODE_ENV === "production";
-  const baseURL = isProduction
-    ? process.env.NEXT_PUBLIC_API_URL || "https://api.rss.org"
-    : process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+  const baseURL = getApiBaseUrl();
 
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
@@ -33,6 +32,23 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     error: null,
     initialized: false,
   });
+
+  const sameSitePolicy = isProduction ? "Strict" : "Lax";
+  const secureAttribute = isProduction ? "; Secure" : "";
+
+  const setAuthCookie = useCallback(
+    (name: string, value: string) => {
+      document.cookie = `${name}=${value}; Path=/; SameSite=${sameSitePolicy}${secureAttribute}`;
+    },
+    [sameSitePolicy, secureAttribute]
+  );
+
+  const clearAuthCookie = useCallback(
+    (name: string) => {
+      document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=${sameSitePolicy}${secureAttribute}`;
+    },
+    [sameSitePolicy, secureAttribute]
+  );
 
   const apiCall = useCallback(
     async (endpoint: string, options: RequestInit = {}): Promise<Response> => {
@@ -61,9 +77,9 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const setUserData = useCallback((userData: any) => {
     const user = userData.user_info || userData;
-    
-    localStorage.setItem('user_data', JSON.stringify({ user_info: user }));
-    
+
+    localStorage.setItem("user_data", JSON.stringify({ user_info: user }));
+
     setAuthState((prev) => ({
       ...prev,
       user: user,
@@ -77,46 +93,48 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const refreshUserData = useCallback(async (): Promise<boolean> => {
     try {
       const response = await apiCall("/dashboard/");
-      
+
       if (response.ok) {
         const data = await response.json();
-        
+
         if (data && data.user_info) {
-          localStorage.setItem('user_data', JSON.stringify(data));
+          localStorage.setItem("user_data", JSON.stringify(data));
           setUserData(data);
           return true;
         }
       }
-      
-      console.error('Failed to refresh user data:', response.status);
+
+      console.error("Failed to refresh user data:", response.status);
       return false;
     } catch (error) {
-      console.error('Error refreshing user data:', error);
+      console.error("Error refreshing user data:", error);
       return false;
     }
   }, [apiCall, setUserData]);
 
-  
-  const createDefaultUser = useCallback((): User => ({
-    id: 1,
-    user_id: "unknown",
-    username: "user",
-    name: "User",
-    email: "user@example.com",
-    phone: "",
-    is_verified: false,
-    is_blocked: false,
-    is_volunteer: true,
-    is_admin_account: false,
-    is_business_account: false,
-    is_staff_account: false,
-    is_member_account: false,
-    is_field_worker: false,
-    is_staff: false,
-    is_active: true,
-    is_superuser: false,
-    date_joined: new Date().toISOString(),
-  }), []);
+  const createDefaultUser = useCallback(
+    (): User => ({
+      id: 1,
+      user_id: "unknown",
+      username: "user",
+      name: "User",
+      email: "user@example.com",
+      phone: "",
+      is_verified: false,
+      is_blocked: false,
+      is_volunteer: true,
+      is_admin_account: false,
+      is_business_account: false,
+      is_staff_account: false,
+      is_member_account: false,
+      is_field_worker: false,
+      is_staff: false,
+      is_active: true,
+      is_superuser: false,
+      date_joined: new Date().toISOString(),
+    }),
+    []
+  );
 
   const checkAuth = useCallback(async (): Promise<void> => {
     try {
@@ -128,7 +146,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         ?.split("=")[1];
 
       if (!accessToken) {
-        const storedUserData = localStorage.getItem('user_data');
+        const storedUserData = localStorage.getItem("user_data");
         if (storedUserData) {
           try {
             const parsedData = JSON.parse(storedUserData);
@@ -141,8 +159,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
               initialized: true,
             }));
           } catch (error) {
-            console.error('Error parsing stored user data:', error);
-            localStorage.removeItem('user_data');
+            console.error("Error parsing stored user data:", error);
+            localStorage.removeItem("user_data");
           }
         } else {
           setAuthState((prev) => ({
@@ -162,16 +180,16 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       });
 
       if (response.ok) {
-        const storedUserData = localStorage.getItem('user_data');
+        const storedUserData = localStorage.getItem("user_data");
         let userData: User;
-        
+
         if (storedUserData) {
           try {
             const parsedData = JSON.parse(storedUserData);
             userData = parsedData.user_info || parsedData;
           } catch (error) {
-            console.error('Error parsing stored user data:', error);
-            localStorage.removeItem('user_data');
+            console.error("Error parsing stored user data:", error);
+            localStorage.removeItem("user_data");
             userData = createDefaultUser();
           }
         } else {
@@ -188,7 +206,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }));
       } else {
         const refreshSuccessful = await refreshToken();
-        
+
         if (refreshSuccessful) {
           await checkAuth();
         } else {
@@ -227,15 +245,15 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         const data = await response.json();
 
         if (response.ok) {
-          document.cookie = `access_token=${data.access}; path=/; secure; samesite=strict`;
-          document.cookie = `refresh_token=${data.refresh}; path=/; secure; samesite=strict`;
+          setAuthCookie("access_token", data.access);
+          setAuthCookie("refresh_token", data.refresh);
 
           try {
             const dashboardResponse = await apiCall("/dashboard/");
             const dashboardData = await dashboardResponse.json();
-            
+
             if (dashboardResponse.ok && dashboardData.user_info) {
-              localStorage.setItem('user_data', JSON.stringify(dashboardData));
+              localStorage.setItem("user_data", JSON.stringify(dashboardData));
               setUserData(dashboardData);
             } else {
               await checkAuth();
@@ -245,10 +263,11 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             await checkAuth();
           }
 
-          const redirectUrl = typeof window !== "undefined" 
-            ? localStorage.getItem("redirectAfterLogin") 
-            : null;
-          
+          const redirectUrl =
+            typeof window !== "undefined"
+              ? localStorage.getItem("redirectAfterLogin")
+              : null;
+
           if (redirectUrl) {
             localStorage.removeItem("redirectAfterLogin");
             router.push(redirectUrl);
@@ -287,7 +306,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         };
       }
     },
-    [apiCall, checkAuth, setUserData, router]
+    [apiCall, checkAuth, setUserData, router, setAuthCookie]
   );
 
   const register = useCallback(
@@ -341,12 +360,12 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const refreshToken = useCallback(async (): Promise<boolean> => {
     try {
       const refreshTokenValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('refresh_token='))
-        ?.split('=')[1];
+        .split("; ")
+        .find((row) => row.startsWith("refresh_token="))
+        ?.split("=")[1];
 
       if (!refreshTokenValue) {
-        console.log('No refresh token found');
+        console.log("No refresh token found");
         return false;
       }
 
@@ -357,30 +376,30 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        document.cookie = `access_token=${data.access}; path=/; secure; samesite=strict`;
-        
-        console.log('Token refreshed successfully');
+        setAuthCookie("access_token", data.access);
+
+        console.log("Token refreshed successfully");
         return true;
       } else {
-        document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        clearAuthCookie("access_token");
+        clearAuthCookie("refresh_token");
         return false;
       }
     } catch (error) {
-      console.error('Refresh token error:', error);
+      console.error("Refresh token error:", error);
       return false;
     }
-  }, [apiCall]);
+  }, [apiCall, clearAuthCookie, setAuthCookie]);
 
   const logout = useCallback(() => {
     apiCall("/account/logout/", { method: "POST" }).catch(() => {});
 
-    document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    
-    localStorage.removeItem('user_data');
-    localStorage.removeItem('redirectAfterLogin');
-    
+    clearAuthCookie("access_token");
+    clearAuthCookie("refresh_token");
+
+    localStorage.removeItem("user_data");
+    localStorage.removeItem("redirectAfterLogin");
+
     localStorage.clear();
 
     setAuthState({
@@ -392,14 +411,18 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     });
 
     router.push("/auth/login");
-  }, [apiCall, router]);
+  }, [apiCall, router, clearAuthCookie]);
 
   const isAdmin = useCallback((): boolean => {
-    return authState.user?.is_admin_account || authState.user?.is_superuser || false;
+    return (
+      authState.user?.is_admin_account || authState.user?.is_superuser || false
+    );
   }, [authState.user]);
 
   const isStaff = useCallback((): boolean => {
-    return authState.user?.is_staff_account || authState.user?.is_staff || false;
+    return (
+      authState.user?.is_staff_account || authState.user?.is_staff || false
+    );
   }, [authState.user]);
 
   const isVolunteer = useCallback((): boolean => {
@@ -414,42 +437,47 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     if (!authState.isAuthenticated) return;
 
     const refreshInterval = setInterval(async () => {
-      console.log('🔄 Auto-refreshing token...');
+      console.log("🔄 Auto-refreshing token...");
       const refreshSuccessful = await refreshToken();
-      
+
       if (!refreshSuccessful) {
-        console.log('❌ Auto-refresh failed, logging out');
+        console.log("❌ Auto-refresh failed, logging out");
         logout();
       } else {
-        console.log('✅ Token auto-refreshed successfully');
+        console.log("✅ Token auto-refreshed successfully");
       }
     }, 25 * 60 * 1000);
 
     return () => clearInterval(refreshInterval);
   }, [authState.isAuthenticated, refreshToken, logout]);
 
-  const verifyToken = useCallback(async (token?: string): Promise<boolean> => {
-    try {
-      const accessToken = token || document.cookie
-        .split('; ')
-        .find(row => row.startsWith('access_token='))
-        ?.split('=')[1];
+  const verifyToken = useCallback(
+    async (token?: string): Promise<boolean> => {
+      try {
+        const accessToken =
+          token ||
+          document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("access_token="))
+            ?.split("=")[1];
 
-      if (!accessToken) {
+        if (!accessToken) {
+          return false;
+        }
+
+        const response = await apiCall("/account/token/verify/", {
+          method: "POST",
+          body: JSON.stringify({ token: accessToken }),
+        });
+
+        return response.ok;
+      } catch (error) {
+        console.error("Token verification error:", error);
         return false;
       }
-
-      const response = await apiCall("/account/token/verify/", {
-        method: "POST",
-        body: JSON.stringify({ token: accessToken }),
-      });
-
-      return response.ok;
-    } catch (error) {
-      console.error('Token verification error:', error);
-      return false;
-    }
-  }, [apiCall]);
+    },
+    [apiCall]
+  );
 
   const contextValue: AuthContextType = {
     ...authState,

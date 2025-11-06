@@ -29,6 +29,7 @@ import {
   PressItem,
 } from "./PressData";
 import { Button } from "@/components/ui/button";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface PressCardProps {
   item: PressItem;
@@ -109,6 +110,8 @@ const PressCard: React.FC<PressCardProps> = ({
                       setImageError(true);
                       setIsLoading(false);
                     }}
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                   {isLoading && (
                     <div className="absolute inset-0 bg-gray-200 animate-pulse" />
@@ -179,6 +182,8 @@ const PressCard: React.FC<PressCardProps> = ({
               fill
               className="object-contain bg-gray-100"
               sizes="(max-width: 1200px) 100vw, 1200px"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
 
@@ -226,10 +231,7 @@ const Press: React.FC = () => {
   const recentPress = getRecentPress(3);
 
   return (
-    <section
-      className="py-16 px-4 md:px-6 lg:px-8 "
-      id="press-release"
-    >
+    <section className="py-16 px-4 md:px-6 lg:px-8 " id="press-release">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -258,7 +260,9 @@ const Press: React.FC = () => {
             ))}
           </div>
 
-          <Button className="mt-3 flex items-center justify-center mx-auto">View All Highlights</Button>
+          <Button className="mt-3 flex items-center justify-center mx-auto">
+            View All Highlights
+          </Button>
         </div>
       </div>
     </section>

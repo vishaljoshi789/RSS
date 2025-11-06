@@ -8,6 +8,7 @@ import useAxios from "@/hooks/use-axios";
 import { Category } from "../types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const VyapariCategories = () => {
   const axios = useAxios();
@@ -103,6 +104,8 @@ const VyapariCategories = () => {
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-110"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      placeholder="blur"
+                      blurDataURL={IMAGE_BLUR_DATA_URL}
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

@@ -21,6 +21,7 @@ import {
   type TeamMember,
 } from "./teamInfo";
 import { Users, MapPin, Crown, Filter, User } from "lucide-react";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const FoundersTeamPage = () => {
   const [selectedState, setSelectedState] = useState<string>("all");
@@ -46,6 +47,8 @@ const FoundersTeamPage = () => {
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 96px, 112px"
+                placeholder="blur"
+                blurDataURL={IMAGE_BLUR_DATA_URL}
               />
             </div>
           </div>

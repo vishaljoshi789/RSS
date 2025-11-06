@@ -1,6 +1,7 @@
-import React from 'react';
-import Image from 'next/image';
-import { Card } from '@/components/ui/card';
+import React from "react";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface PrimaryImageSectionProps {
   image: {
@@ -21,6 +22,8 @@ const PrimaryImageSection: React.FC<PrimaryImageSectionProps> = ({ image }) => {
             height={1279}
             className="w-full h-[250px] sm:h-[350px] lg:h-[550px] object-contain"
             priority
+            placeholder="blur"
+            blurDataURL={IMAGE_BLUR_DATA_URL}
           />
         </Card>
       </div>

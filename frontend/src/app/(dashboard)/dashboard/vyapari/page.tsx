@@ -7,12 +7,14 @@ import CategoryManagement from "./_components/category-management";
 import SubCategoryManagement from "./_components/subcategory-management";
 import VyapariManagement from "./_components/vyapari-management";
 import AdsManagement from "./_components/ads-management";
+import { RoleGuard } from "@/components/auth/RoleGuard";
 
 export default function VyapariDashboardPage() {
   const [activeTab, setActiveTab] = useState("businesses");
 
   return (
-    <div className="space-y-6">
+    <RoleGuard allowedRoles="auto" showUnauthorized={true}>
+      <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           Vyapari Management
@@ -65,6 +67,7 @@ export default function VyapariDashboardPage() {
           <AdsManagement />
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </RoleGuard>
   );
 }

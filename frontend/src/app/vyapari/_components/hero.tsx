@@ -1,10 +1,11 @@
-'use client'
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Store, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const VyapariHero = () => {
   const router = useRouter();
@@ -35,7 +36,7 @@ const VyapariHero = () => {
                 <div className="relative flex-1">
                   <Store className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                   <input
-                    onClick={() => router.push('/vyapari/s')}
+                    onClick={() => router.push("/vyapari/s")}
                     type="text"
                     placeholder="Search for businesses..."
                     className="h-12 w-full rounded-lg border border-border bg-background pl-10 pr-4 text-base placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
@@ -43,7 +44,7 @@ const VyapariHero = () => {
                   />
                 </div>
                 <button
-                  onClick={() => router.push('/vyapari/s')}
+                  onClick={() => router.push("/vyapari/s")}
                   className="h-12 rounded-lg bg-primary px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   Search
@@ -71,9 +72,7 @@ const VyapariHero = () => {
             <div className="mt-8 grid grid-cols-3 gap-3 max-w-xl">
               <div className="rounded-lg border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-foreground">10,000+</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Businesses
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">Businesses</p>
               </div>
               <div className="rounded-lg border border-border bg-card p-3 text-center">
                 <p className="text-2xl font-bold text-foreground">50,000+</p>
@@ -96,6 +95,8 @@ const VyapariHero = () => {
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
         </div>

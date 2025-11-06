@@ -11,11 +11,13 @@ import PadManagement from "./_components/PadManagement";
 import HierarchyTree from "./_components/HierarchyTree";
 import VolunteerAssignment from "./_components/VolunteerAssignment";
 import VolunteerTable from "./_components/volunterManagement";
+import { RoleGuard } from "@/components/auth/RoleGuard";
 
 
 const VolunteerManagement = () => {
   return (
-    <div className="space-y-6 p-6">
+    <RoleGuard allowedRoles="auto" showUnauthorized={true}>
+      <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -80,7 +82,8 @@ const VolunteerManagement = () => {
         </TabsContent>
       </Tabs>
 
-    </div>
+      </div>
+    </RoleGuard>
   );
 };
 

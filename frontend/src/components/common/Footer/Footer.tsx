@@ -23,6 +23,7 @@ import {
   organizationInfo,
   FooterLink,
 } from "./FooterData";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const Footer: React.FC = () => {
   const getSocialIcon = (platform: string) => {
@@ -78,6 +79,8 @@ const Footer: React.FC = () => {
                   fill
                   className="object-contain rounded-lg"
                   sizes="(max-width: 640px) 48px, 64px"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
               </div>
               <div>

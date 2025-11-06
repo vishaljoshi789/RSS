@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Heart, Globe, Award, Users, MapPin } from "lucide-react";
+import { ArrowRight, Globe, Award, Users, MapPin } from "lucide-react";
 import { heroSlides } from "./HeroData";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,32 +12,42 @@ import { Autoplay, FreeMode } from "swiper/modules";
 import "swiper/css";
 
 const Hero = () => {
+  const mobileModules = [Autoplay];
+  const desktopModules = [Autoplay, FreeMode];
+
   return (
     <>
-      {/* Full width mobile slider */}
+      {/* mobile slider */}
       <div className="lg:hidden w-full bg-gradient-to-b from-background via-primary/5 to-background py-4 mt-18">
         <div className="w-full">
           <Swiper
-            modules={[Autoplay]}
+            modules={mobileModules}
             spaceBetween={0}
             slidesPerView={1}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
             }}
             loop={true}
             speed={1000}
+            watchSlidesProgress={true}
             className="px-2"
           >
-            {heroSlides.map((slide) => (
+            {heroSlides.filter((slide) => slide.id < 8).map((slide, index) => (
               <SwiperSlide key={slide.id}>
                 <Link href={slide.ctaLink} className="block">
-                  <div className="relative w-full h-[200px] rounded-none overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <div className="relative w-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 aspect-[16/9] bg-muted">
                     <Image
                       src={slide.image}
                       alt={slide.title}
                       fill
-                      className="object-cover"
+                      priority={index === 0}
+                      sizes="(max-width: 1023px) 100vw"
+                      className="object-cover w-full h-full"
+                      loading={index === 0 ? "eager" : "lazy"}
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwABmQ/9k="
                     />
                   </div>
                 </Link>
@@ -173,31 +183,49 @@ const Hero = () => {
           <div className="flex flex-col items-center justify-center lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 lg:z-20">
             <div className="w-full px-4 lg:px-8">
               <Swiper
-                modules={[Autoplay, FreeMode]}
+                modules={desktopModules}
                 spaceBetween={24}
-                slidesPerView="auto"
                 freeMode={true}
                 autoplay={{
                   delay: 2000,
                   disableOnInteraction: false,
+                  pauseOnMouseEnter: true,
                 }}
                 loop={true}
                 speed={800}
+                watchSlidesProgress={true}
+                breakpoints={{
+                  1024: {
+                    slidesPerView: 1.5,
+                  },
+                  1280: {
+                    slidesPerView: 2,
+                  },
+                  1440: {
+                    slidesPerView: 2.2,
+                  },
+                  1680: {
+                    slidesPerView: 2.4,
+                  },
+                }}
               >
-                {heroSlides.map((slide) => (
+                {heroSlides.map((slide, index) => (
                   <SwiperSlide key={slide.id} style={{ width: "320px" }}>
                     <div className="relative flex flex-col overflow-hidden transition-all duration-200 transform bg-background border border-border shadow w-80 h-[500px] group rounded-xl hover:shadow-lg hover:-translate-y-1 cursor-pointer">
-                      <Link
-                        href={slide.ctaLink}
-                        className="flex shrink-0 cursor-pointer"
-                      >
-                        <Image
-                          src={slide.image}
-                          alt={slide.title}
-                          width={320}
-                          height={240}
-                          className="object-cover w-full h-48 transition-all duration-200 transform group-hover:scale-110 pointer-events-none"
-                        />
+                      <Link href={slide.ctaLink} className="block">
+                        <div className="relative w-full overflow-hidden aspect-[4/3] bg-muted">
+                          <Image
+                            src={slide.image}
+                            alt={slide.title}
+                            fill
+                            priority={index < 3}
+                            sizes="(min-width: 1024px) 320px, 100vw"
+                            className="object-cover w-full h-full transition-all duration-200 transform group-hover:scale-110"
+                            loading={index < 3 ? "eager" : "lazy"}
+                            placeholder="blur"
+                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwABmQ/9k="
+                          />
+                        </div>
                       </Link>
                       <div className="flex-1 px-4 py-5 sm:p-6 flex flex-col">
                         <Link

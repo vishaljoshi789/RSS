@@ -5,6 +5,7 @@ import Image from "next/image";
 import { pageContent, supporterImages, videoInfo } from "./SupporterInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
 import { Play, Target } from "lucide-react";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const Supporters = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -14,8 +15,6 @@ const Supporters = () => {
   return (
     <section className="py-12 lg:py-20 bg-gradient-to-b from-background via-primary/5 to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        
         <div className="text-center mb-12 lg:mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-4 lg:mb-6">
             <Play className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
@@ -36,7 +35,6 @@ const Supporters = () => {
 
         <div className="mb-16 lg:mb-24">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            
             <div className="space-y-6 lg:space-y-8">
               <div>
                 <h2 className="text-2xl lg:text-4xl font-bold text-foreground mb-4 lg:mb-6">
@@ -47,7 +45,6 @@ const Supporters = () => {
                 </p>
               </div>
 
-              
               <div className="flex flex-col sm:flex-row gap-4">
                 <NormalButton
                   variant="primary"
@@ -70,7 +67,6 @@ const Supporters = () => {
               </div>
             </div>
 
-            
             <div className="relative order-first lg:order-last">
               <div
                 className="relative aspect-video bg-muted rounded-2xl overflow-hidden shadow-2xl cursor-pointer group"
@@ -81,12 +77,12 @@ const Supporters = () => {
                   alt={videoInfo.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
 
-                
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300" />
 
-                
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-white transition-all duration-300 shadow-xl">
                     <Play
@@ -96,7 +92,6 @@ const Supporters = () => {
                   </div>
                 </div>
 
-                
                 <div className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm p-3 lg:p-4 rounded-xl border border-border">
                   <h3 className="font-semibold text-foreground text-sm lg:text-base mb-1">
                     {videoInfo.title}
@@ -110,7 +105,6 @@ const Supporters = () => {
           </div>
         </div>
 
-        
         <div className="text-center mb-8 lg:mb-12">
           <h2 className="text-2xl lg:text-4xl font-bold text-foreground mb-6 lg:mb-8">
             Recognised By
@@ -121,7 +115,6 @@ const Supporters = () => {
           </div>
         </div>
 
-        
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-4 gap-4 sm:gap-6 lg:gap-12 mb-6 lg:mb-12">
             {row1.map((supporter) => (
@@ -135,6 +128,8 @@ const Supporters = () => {
                   width={180}
                   height={120}
                   className="object-contain w-full h-10 sm:h-14 lg:h-20 transition-all duration-300"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
               </div>
             ))}
@@ -153,6 +148,8 @@ const Supporters = () => {
                     width={180}
                     height={120}
                     className="object-contain w-full h-10 sm:h-14 lg:h-20 transition-all duration-300"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
               ))}
@@ -161,7 +158,6 @@ const Supporters = () => {
         </div>
       </div>
 
-      
       {isVideoModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
@@ -171,7 +167,6 @@ const Supporters = () => {
             className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            
             <button
               onClick={() => setIsVideoModalOpen(false)}
               className="absolute top-4 right-4 z-10 w-10 h-10 lg:w-12 lg:h-12 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all hover:scale-110 border border-white/20"
@@ -180,7 +175,6 @@ const Supporters = () => {
               <span className="text-2xl font-light">×</span>
             </button>
 
-            
             <video
               controls
               autoPlay

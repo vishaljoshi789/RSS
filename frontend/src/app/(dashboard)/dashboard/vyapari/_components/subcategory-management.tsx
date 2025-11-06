@@ -41,6 +41,7 @@ import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import type { Category, SubCategory, SubCategoryFormData } from "../types";
 import Image from "next/image";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 export default function SubCategoryManagement() {
   const axios = useAxios();
@@ -304,6 +305,8 @@ export default function SubCategoryManagement() {
                             alt={subcategory.name}
                             fill
                             className="object-cover"
+                            placeholder="blur"
+                            blurDataURL={IMAGE_BLUR_DATA_URL}
                           />
                         </div>
                       ) : (
@@ -432,6 +435,8 @@ export default function SubCategoryManagement() {
                     alt="Preview"
                     fill
                     className="object-cover"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
               )}
@@ -531,6 +536,8 @@ export default function SubCategoryManagement() {
                     alt="Preview"
                     fill
                     className="object-cover"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
               )}
@@ -587,7 +594,6 @@ export default function SubCategoryManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
     </Card>
   );
 }

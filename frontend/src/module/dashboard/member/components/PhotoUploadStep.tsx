@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UploadCloud } from "lucide-react";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 type PhotoUploadStepProps = {
   formData: {
@@ -66,6 +67,8 @@ export const PhotoUploadStep = ({
               alt="Photo preview"
               fill
               className="object-cover"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
         </div>

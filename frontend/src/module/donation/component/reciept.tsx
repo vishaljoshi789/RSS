@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface ReceiptProps {
   donatedBy?: string;
@@ -38,6 +39,8 @@ const Receipt: React.FC<ReceiptProps> = ({
             fill
             className="object-contain"
             priority
+            placeholder="blur"
+            blurDataURL={IMAGE_BLUR_DATA_URL}
           />
         </div>
       </div>
@@ -70,6 +73,8 @@ const Receipt: React.FC<ReceiptProps> = ({
                 fill
                 className="object-contain"
                 priority
+                placeholder="blur"
+                blurDataURL={IMAGE_BLUR_DATA_URL}
               />
             </div>
           </div>
@@ -80,7 +85,6 @@ const Receipt: React.FC<ReceiptProps> = ({
             <span className="font-bold">Receipt #:</span>
             {receiptNumber}
           </p>
-          
         </div>
 
         <div className="space-y-3 mb-8">
@@ -149,12 +153,15 @@ const Receipt: React.FC<ReceiptProps> = ({
           <p className="text-center text-base italic text-blue-700 mb-1">
             For more information or help please visit: Rashtriya Seva Sangh{" "}
             <a
-              href={process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://www.joinrss.org.in'}
+              href={
+                process.env.NEXT_PUBLIC_FRONTEND_URL ||
+                "https://www.joinrss.org.in"
+              }
               className="underline hover:text-blue-900"
               target="_blank"
               rel="noopener noreferrer"
             >
-              {process.env.NEXT_PUBLIC_FRONTEND_URL || 'www.joinrss.org.in'}
+              {process.env.NEXT_PUBLIC_FRONTEND_URL || "www.joinrss.org.in"}
             </a>
           </p>
           <p className="text-center text-sm text-gray-700">

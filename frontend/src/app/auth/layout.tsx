@@ -1,6 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import Image from "next/image";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 export const metadata: Metadata = {
   title: "Authentication - RSS Rashtriya Swayamsevak Sangh",
@@ -29,6 +30,8 @@ export default function AuthLayout({
                     fill
                     className="object-contain"
                     priority
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
               </div>
@@ -81,11 +84,8 @@ export default function AuthLayout({
         </div>
       </div>
 
-      
       <div className="flex-1 lg:w-1/2 flex items-center justify-center p-4 lg:p-6 min-h-screen">
-        <div className="w-full max-w-2xl mx-auto">
-          {children}
-        </div>
+        <div className="w-full max-w-2xl mx-auto">{children}</div>
       </div>
     </div>
   );

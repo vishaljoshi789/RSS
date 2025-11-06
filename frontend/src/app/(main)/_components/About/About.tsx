@@ -5,6 +5,7 @@ import { aboutData } from "./AboutInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const About = () => {
   return (
@@ -20,6 +21,8 @@ const About = () => {
                 width={200}
                 height={20}
                 className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-full max-w-[200px] h-auto animate-pulse"
+                placeholder="blur"
+                blurDataURL={IMAGE_BLUR_DATA_URL}
               />
             </h2>
           </div>
@@ -33,8 +36,11 @@ const About = () => {
                 src={aboutData.image}
                 alt={aboutData.imageAlt}
                 fill
-                className="object-contain"
                 priority
+                sizes="(max-width: 1023px) 100vw, 50vw"
+                className="object-contain w-full h-full hover:scale-105 transition-transform duration-500"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwABmQ/9k="
               />
             </div>
           </div>

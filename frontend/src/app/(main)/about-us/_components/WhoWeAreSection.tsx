@@ -1,6 +1,7 @@
-import React from 'react';
-import Image from 'next/image';
-import { Card } from '@/components/ui/card';
+import React from "react";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface WhoWeAreSectionProps {
   whoWeAre: {
@@ -23,10 +24,13 @@ const WhoWeAreSection: React.FC<WhoWeAreSectionProps> = ({ whoWeAre }) => {
                 {whoWeAre.title}
               </h2>
             </div>
-            
+
             <div className="space-y-4">
               {whoWeAre.content.map((item, index) => (
-                <Card key={index} className="group p-5 sm:p-6 border bg-gradient-to-br from-background to-muted/30">
+                <Card
+                  key={index}
+                  className="group p-5 sm:p-6 border bg-gradient-to-br from-background to-muted/30"
+                >
                   <div className="flex items-start gap-4">
                     <div className="w-2.5 h-2.5 bg-primary rounded-full mt-2 flex-shrink-0"></div>
                     <p className="text-sm sm:text-base text-muted-foreground leading-relaxed font-medium">
@@ -37,7 +41,7 @@ const WhoWeAreSection: React.FC<WhoWeAreSectionProps> = ({ whoWeAre }) => {
               ))}
             </div>
           </div>
-          
+
           <div className="relative order-first lg:order-last">
             <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-muted/20 to-muted/10 p-6">
               <Image
@@ -46,6 +50,8 @@ const WhoWeAreSection: React.FC<WhoWeAreSectionProps> = ({ whoWeAre }) => {
                 width={1600}
                 height={533}
                 className="w-full h-auto object-contain"
+                placeholder="blur"
+                blurDataURL={IMAGE_BLUR_DATA_URL}
               />
             </div>
           </div>

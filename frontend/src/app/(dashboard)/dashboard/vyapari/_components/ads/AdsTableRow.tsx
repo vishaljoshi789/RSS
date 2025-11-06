@@ -3,6 +3,7 @@ import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Advertisement, Vyapari } from "./types";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface AdsTableRowProps {
   ad: Advertisement;
@@ -41,6 +42,8 @@ export const AdsTableRow: React.FC<AdsTableRowProps> = ({
             alt={ad.title}
             fill
             className="object-cover"
+            placeholder="blur"
+            blurDataURL={IMAGE_BLUR_DATA_URL}
           />
         </div>
       </td>
@@ -71,29 +74,17 @@ export const AdsTableRow: React.FC<AdsTableRowProps> = ({
       </td>
       <td className="p-4 text-right">
         <div className="flex justify-end gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onToggleActive(ad)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onToggleActive(ad)}>
             {ad.is_active ? (
               <EyeOff className="h-4 w-4" />
             ) : (
               <Eye className="h-4 w-4" />
             )}
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onEdit(ad)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onEdit(ad)}>
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(ad.id)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onDelete(ad.id)}>
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>

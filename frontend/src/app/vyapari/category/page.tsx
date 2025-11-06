@@ -19,6 +19,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import useAxios from "@/hooks/use-axios";
 import type { Category } from "../types";
+import { buildMediaUrl } from "@/lib/media";
 
 export default function CategoriesPage() {
   const router = useRouter();
@@ -31,12 +32,7 @@ export default function CategoriesPage() {
 
   // Helper function to get full image URL
   const getImageUrl = (imagePath: string | null | undefined) => {
-    if (!imagePath) return null;
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath;
-    }
-    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
-    return `${baseURL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+    return buildMediaUrl(imagePath) ?? null;
   };
 
   useEffect(() => {

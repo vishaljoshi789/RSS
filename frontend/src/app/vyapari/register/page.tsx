@@ -17,6 +17,7 @@ import {
   FormNavigation,
   LoginRequiredModal,
 } from "./_components";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface FormData {
   // Basic Information
@@ -70,9 +71,9 @@ export default function RegisterBusinessPage() {
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>("");
   const [coverImagePreview, setCoverImagePreview] = useState<string>("");
-  
+
   const [emailVerified, setEmailVerified] = useState(false);
-  
+
   const [referralVerified, setReferralVerified] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
@@ -230,7 +231,9 @@ export default function RegisterBusinessPage() {
           return false;
         }
         if (!referralVerified) {
-          toast.info("Please verify the referral ID by clicking the 'Check Referral' button");
+          toast.info(
+            "Please verify the referral ID by clicking the 'Check Referral' button"
+          );
           return false;
         }
         break;
@@ -328,7 +331,6 @@ export default function RegisterBusinessPage() {
       }, 2000);
     } catch (error: any) {
       console.error("Registration error:", error);
-      
     } finally {
       setLoading(false);
     }
@@ -405,6 +407,8 @@ export default function RegisterBusinessPage() {
                   fill
                   className="object-cover"
                   priority
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
               </div>
             </div>

@@ -26,6 +26,7 @@ import { Copy, Users2, UserCheck2, UserPlus2, Check, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { getUserImageUrl as resolveUserImageUrl } from "@/lib/media";
 
 import type { User } from "@/types/auth.types";
 import type { ReferralData } from "@/module/dashboard/referrals/hooks";
@@ -118,16 +119,7 @@ const StatCard: React.FC<StatCardProps> = ({
       .slice(0, 2);
   }, [user?.name]);
 
-  const getUserImageUrl = useMemo(() => {
-    if (!user?.image) return undefined;
-    
-    if (user.image.startsWith('http://') || user.image.startsWith('https://')) {
-      return user.image;
-    }
-    
-    const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    return `${baseURL}${user.image}`;
-  }, [user?.image]);
+  const userImageUrl = useMemo(() => resolveUserImageUrl(user?.image), [user?.image]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
@@ -236,7 +228,7 @@ const StatCard: React.FC<StatCardProps> = ({
           <CardHeader className="space-y-4">
             <div className="flex items-center gap-4">
               <Avatar className="h-14 w-14">
-                {getUserImageUrl && <AvatarImage src={getUserImageUrl} alt={user?.name || "User"} />}
+                {userImageUrl && <AvatarImage src={userImageUrl} alt={user?.name || "User"} />}
                 <AvatarFallback className="text-base font-medium">
                   {displayInitials}
                 </AvatarFallback>

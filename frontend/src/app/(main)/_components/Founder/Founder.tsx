@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const Founder = () => {
   return (
@@ -58,12 +59,15 @@ const Founder = () => {
             {founderInfo.members.map((member) => (
               <SwiperSlide key={member.id}>
                 <div className="flex flex-col items-center px-4">
-                  <div className="relative w-64 h-72 rounded-2xl overflow-hidden shadow-xl mb-4">
+                  <div className="relative w-64 h-72 rounded-2xl overflow-hidden shadow-xl mb-4 bg-muted">
                     <Image
                       src={member.photo}
                       alt={member.name}
                       fill
-                      className="object-cover"
+                      sizes="256px"
+                      className="object-cover w-full h-full"
+                      placeholder="blur"
+                      blurDataURL={IMAGE_BLUR_DATA_URL}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                   </div>
@@ -92,12 +96,15 @@ const Founder = () => {
               key={member.id}
               className="group relative bg-background rounded-2xl border border-border overflow-hidden hover:shadow-xl transition-all duration-300"
             >
-              <div className="relative w-full h-80 overflow-hidden">
+              <div className="relative w-full h-80 overflow-hidden bg-muted">
                 <Image
                   src={member.photo}
                   alt={member.name}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  sizes="(max-width: 1279px) 50vw, 25vw"
+                  className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               </div>

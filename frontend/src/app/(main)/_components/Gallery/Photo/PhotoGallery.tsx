@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -12,7 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Search, ZoomIn, ArrowRight } from "lucide-react";
-import { photoCategories, getPhotosByCategory, PhotoItem } from "./Photo";
+import { getPhotosByCategory, PhotoItem } from "./Photo";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface PhotoCardProps {
   photo: PhotoItem;
@@ -44,6 +44,8 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, index }) => {
                     setImageError(true);
                     setIsLoading(false);
                   }}
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
                 {isLoading && (
                   <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />
@@ -111,6 +113,8 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, index }) => {
                     setImageError(true);
                     setIsLoading(false);
                   }}
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
                 {isLoading && (
                   <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-lg" />
@@ -169,14 +173,33 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, index }) => {
         <div className="relative bg-black rounded-lg overflow-hidden">
           <div className="relative aspect-auto max-h-[80vh] overflow-hidden">
             {!imageError ? (
-              <Image
-                src={photo.imageUrl}
-                alt={photo.alt}
-                width={photo.width}
-                height={photo.height}
-                className="w-full h-full object-contain"
-                priority
-              />
+              <>
+                <Image
+                  src={photo.imageUrl}
+                  alt={photo.alt}
+                  width={photo.width}
+                  height={photo.height}
+                  className={`w-full h-full object-contain transition-opacity duration-300 ${
+                    isLoading ? "opacity-0" : "opacity-100"
+                  }`}
+                  priority
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
+                  onLoad={() => setIsLoading(false)}
+                  onError={() => {
+                    setImageError(true);
+                    setIsLoading(false);
+                  }}
+                />
+                {isLoading && (
+                  <div className="absolute inset-0 bg-black flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+                      <p className="text-white text-sm">Loading image...</p>
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="w-full h-64 bg-gray-900 flex items-center justify-center text-white">
                 <div className="text-center">
@@ -241,63 +264,10 @@ const PhotoGallery: React.FC = () => {
     return filteredPhotos.slice(0, desktopLimit);
   }, [filteredPhotos, showAll]);
 
-  const handleCategoryChange = (category: string) => {
-    if (category !== activeCategory) {
-      setIsLoading(true);
-      setActiveCategory(category);
-      setShowAll(false);
-
-      setTimeout(() => setIsLoading(false), 300);
-    }
-  };
-
   const hasMorePhotos = filteredPhotos.length > 17;
 
   return (
     <div className="w-full">
-      <Tabs
-        value={activeCategory}
-        onValueChange={handleCategoryChange}
-        className="mb-8"
-      >
-        {/* <TabsList className="flex flex-wrap justify-center items-center gap-2 bg-transparent p-0 h-auto mx-auto max-w-4xl">
-          {photoCategories.map((category) => (
-            <TabsTrigger 
-              key={category.key}
-              value={category.key}
-              className={`
-                flex items-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all duration-300 border-0 shadow-sm
-                ${category.key === 'all' ? 
-                  'data-[state=active]:bg-gray-800 data-[state=active]:text-white bg-gray-100 text-gray-700 hover:bg-gray-200' : 
-                  category.key === 'religious' ? 
-                    'data-[state=active]:bg-purple-500 data-[state=active]:text-white bg-purple-50 text-purple-700 hover:bg-purple-100' :
-                  category.key === 'social' ? 
-                    'data-[state=active]:bg-blue-500 data-[state=active]:text-white bg-blue-50 text-blue-700 hover:bg-blue-100' :
-                    'data-[state=active]:bg-gray-600 data-[state=active]:text-white bg-gray-50 text-gray-700 hover:bg-gray-100'
-                }
-              `}
-            >
-              <span className="text-base">{category.icon}</span>
-              <span className="hidden sm:inline text-sm">{category.label}</span>
-              <span className="sm:hidden text-sm">{category.key === 'all' ? 'All' : category.label.slice(0, 3)}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList> */}
-
-        {/* {photoCategories.map((category) => (
-          <TabsContent key={category.key} value={category.key} className="mt-0">
-            
-            <div className="text-center mb-6">
-              <p className="text-gray-600">
-                Showing <span className="font-semibold text-orange-600">{filteredPhotos.length}</span> photos
-                {category.key !== 'all' && (
-                  <span> in <span className="font-semibold">{category.label}</span> category</span>
-                )}
-              </p>
-            </div>
-          </TabsContent>
-        ))} */}
-      </Tabs>
 
       {isLoading && (
         <div className="text-center py-12">

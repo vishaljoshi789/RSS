@@ -13,7 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { User, UserProfileCardProps } from "../referal";
+import { UserProfileCardProps } from "../referal";
+import { getUserImageUrl } from "@/lib/media";
 
 
 export const UserProfileCard: React.FC<UserProfileCardProps> = ({
@@ -29,12 +30,6 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
-
-  const getImageUrl = (imagePath?: string) => {
-    if (!imagePath) return undefined;
-    if (imagePath.startsWith("http")) return imagePath;
-    return `${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}${imagePath}`;
   };
 
   if (loading) {
@@ -75,6 +70,8 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
     );
   }
 
+  const userImageUrl = getUserImageUrl(userData.image);
+
   return (
     <Card>
       <CardHeader>
@@ -86,11 +83,8 @@ export const UserProfileCard: React.FC<UserProfileCardProps> = ({
           {/* Avatar and Name */}
           <div className="flex items-start gap-4">
             <Avatar className="h-20 w-20">
-              {userData.image && (
-                <AvatarImage
-                  src={getImageUrl(userData.image)}
-                  alt={userData.name}
-                />
+              {userImageUrl && (
+                <AvatarImage src={userImageUrl} alt={userData.name} />
               )}
               <AvatarFallback className="text-2xl">
                 {getInitials(userData.name)}

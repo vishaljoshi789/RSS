@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import type { Category, CategoryFormData } from "../types";
 import Image from "next/image";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 export default function CategoryManagement() {
   const axios = useAxios();
@@ -210,11 +211,8 @@ export default function CategoryManagement() {
     }
   };
 
-
-
   return (
     <Card>
-
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -232,7 +230,6 @@ export default function CategoryManagement() {
       </CardHeader>
 
       <CardContent>
-        
         <div className="mb-4 flex items-center gap-2">
           <Search className="h-4 w-4 text-muted-foreground" />
           <Input
@@ -243,7 +240,6 @@ export default function CategoryManagement() {
           />
         </div>
 
-        
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -278,6 +274,8 @@ export default function CategoryManagement() {
                             alt={category.name}
                             fill
                             className="object-cover"
+                            placeholder="blur"
+                            blurDataURL={IMAGE_BLUR_DATA_URL}
                           />
                         </div>
                       ) : (
@@ -322,7 +320,6 @@ export default function CategoryManagement() {
         </div>
       </CardContent>
 
-      
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -344,7 +341,9 @@ export default function CategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="description" className="mb-2 block">Description</Label>
+              <Label htmlFor="description" className="mb-2 block">
+                Description
+              </Label>
               <Textarea
                 id="description"
                 value={formData.description}
@@ -373,6 +372,8 @@ export default function CategoryManagement() {
                     alt="Preview"
                     fill
                     className="object-cover"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
               )}
@@ -401,7 +402,6 @@ export default function CategoryManagement() {
         </DialogContent>
       </Dialog>
 
-      
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -423,7 +423,9 @@ export default function CategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-description" className="mb-2 block">Description</Label>
+              <Label htmlFor="edit-description" className="mb-2 block">
+                Description
+              </Label>
               <Textarea
                 id="edit-description"
                 value={formData.description}
@@ -435,7 +437,9 @@ export default function CategoryManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="edit-image" className="mb-2 block">Image</Label>
+              <Label htmlFor="edit-image" className="mb-2 block">
+                Image
+              </Label>
               <Input
                 id="edit-image"
                 type="file"
@@ -449,6 +453,8 @@ export default function CategoryManagement() {
                     alt="Preview"
                     fill
                     className="object-cover"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
               )}
@@ -472,7 +478,6 @@ export default function CategoryManagement() {
         </DialogContent>
       </Dialog>
 
-      
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>

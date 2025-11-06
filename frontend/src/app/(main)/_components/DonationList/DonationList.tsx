@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,8 +8,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import {
@@ -16,8 +15,6 @@ import {
   Clock,
   MapPin,
   Heart,
-  Users,
-  TrendingUp,
   CreditCard,
   Smartphone,
   Banknote,
@@ -25,10 +22,9 @@ import {
 import {
   DonationTickerRecord,
   tickerDonations,
-  formatTickerAmount,
-  liveStats,
 } from "./DonationListInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
+import styles from "./DonationList.module.css";
 
 const DonationList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -150,65 +146,16 @@ const DonationList = () => {
         </div>
 
         <div className="bg-card rounded-2xl shadow-lg border border-border overflow-hidden relative">
-          <style dangerouslySetInnerHTML={{
-            __html: `
-              @keyframes scrollVerticalUp {
-                0% {
-                  transform: translateY(0);
-                }
-                100% {
-                  transform: translateY(-50%);
-                }
-              }
-              
-              .donation-scroll-container {
-                max-height: 600px;
-                overflow: hidden;
-                position: relative;
-              }
-              
-              .donation-scroll-body {
-                animation: scrollVerticalUp 30s linear infinite;
-              }
-              
-              .donation-scroll-body:hover {
-                animation-play-state: paused;
-              }
-            `
-          }} />
-          
           <Table>
             <TableCaption className="py-4 text-muted-foreground">
               राष्ट्रीय सेवा संघ के दानदाताओं की सूची - कुल{" "}
               {tickerDonations.length} प्रविष्टियां
             </TableCaption>
-            {/* <TableHeader className="sticky top-0 bg-background z-10">
-              <TableRow className="bg-muted/50">
-                <TableHead className="font-semibold text-foreground px-6 py-4">
-                  दानदाता
-                </TableHead>
-                <TableHead className="font-semibold text-foreground px-6 py-4">
-                  राशि
-                </TableHead>
-                <TableHead className="font-semibold text-foreground px-6 py-4">
-                  स्थान
-                </TableHead>
-                <TableHead className="font-semibold text-foreground px-6 py-4">
-                  भुगतान माध्यम
-                </TableHead>
-                <TableHead className="font-semibold text-foreground px-6 py-4">
-                  समय
-                </TableHead>
-                <TableHead className="font-semibold text-foreground px-6 py-4">
-                  संदेश
-                </TableHead>
-              </TableRow>
-            </TableHeader> */}
           </Table>
           
-          <div className="donation-scroll-container">
+          <div className={styles.donationScrollContainer}>
             <Table>
-              <TableBody className="donation-scroll-body">
+              <TableBody className={styles.donationScrollBody}>
                 {filteredDonations.map((donation) => (
                 <TableRow
                   key={donation.id}

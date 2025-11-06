@@ -54,7 +54,7 @@ export default function Page() {
           </p>
         </div>
 
-        {user?.is_member_account && (
+        {!user?.is_member_account && (
           <div className="flex gap-2">
             <Link
               href="/become-member"

@@ -1,18 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NormalButton from "@/components/common/RssButton/RssButton";
+
 import { 
-  Play, 
   CheckCircle, 
   Flag, 
   Eye,
-  Users,
-  Target,
   Sparkles
 } from "lucide-react";
 import { 
@@ -20,8 +16,6 @@ import {
 } from "./RssInfo";
 
 const RssOverview = () => {
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-
   const getTabIcon = (iconName: string) => {
     switch (iconName) {
       case 'lotus':
@@ -53,8 +47,6 @@ const RssOverview = () => {
             {pageContent.mainSubtitle}
           </p>
         </div> */}
-
-        
        
 
         
@@ -117,13 +109,16 @@ const RssOverview = () => {
                     </div>
 
                     
-                    <div className="order-first lg:order-last">
-                      <div className="relative aspect-video rounded-2xl overflow-hidden shadow-xl">
+                    <div className="order-first lg:order-last w-full">
+                      <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-xl bg-muted">
                         <Image
                           src={tab.image}
                           alt={tab.title}
                           fill
-                          className="object-cover hover:scale-105 transition-transform duration-500"
+                          sizes="(max-width: 1023px) 100vw, 50vw"
+                          className="object-cover w-full h-full hover:scale-105 transition-transform duration-500"
+                          placeholder="blur"
+                          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwABmQ/9k="
                         />
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />

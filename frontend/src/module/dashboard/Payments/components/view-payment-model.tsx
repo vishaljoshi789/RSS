@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Payment } from "@/module/dashboard/Payments/hooks";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface ViewPaymentModalProps {
   isOpen: boolean;
@@ -44,7 +45,8 @@ export function ViewPaymentModal({
 }: ViewPaymentModalProps) {
   if (!payment) return null;
 
-  const paymentMethod = payment.payment_details?.method || payment.method || "Unknown";
+  const paymentMethod =
+    payment.payment_details?.method || payment.method || "Unknown";
   const methodDetails = payment.payment_details?.method_details;
   const acquirerData = payment.payment_details?.acquirer_data;
   const currency = payment.payment_details?.currency || "INR";
@@ -75,18 +77,20 @@ export function ViewPaymentModal({
 
   const getPaymentMethodDisplay = () => {
     const method = paymentMethod.toLowerCase();
-    
+
     if (method === "card" && methodDetails?.card) {
       const card = methodDetails.card;
       return (
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 relative flex items-center justify-center">
-            <Image 
-              src="/Svg/credit.svg" 
-              alt="Card" 
-              width={24} 
+            <Image
+              src="/Svg/credit.svg"
+              alt="Card"
+              width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
           <span>
@@ -99,41 +103,57 @@ export function ViewPaymentModal({
       return (
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 relative flex items-center justify-center">
-            <Image 
-              src="/Svg/upi.svg" 
-              alt="UPI" 
-              width={24} 
+            <Image
+              src="/Svg/upi.svg"
+              alt="UPI"
+              width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
-          <span>UPI {methodDetails.upi.vpa ? `(${methodDetails.upi.vpa})` : ""}</span>
+          <span>
+            UPI {methodDetails.upi.vpa ? `(${methodDetails.upi.vpa})` : ""}
+          </span>
         </div>
       );
     } else if (method === "netbanking" && methodDetails?.netbanking) {
       return (
         <div className="flex items-center gap-3">
           <div className="h-6 w-6 relative flex items-center justify-center">
-            <Image 
-              src="/Svg/building.svg" 
-              alt="Net Banking" 
-              width={24} 
+            <Image
+              src="/Svg/building.svg"
+              alt="Net Banking"
+              width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
-          <span>Net Banking {methodDetails.netbanking.bank ? `- ${methodDetails.netbanking.bank}` : ""}</span>
+          <span>
+            Net Banking{" "}
+            {methodDetails.netbanking.bank
+              ? `- ${methodDetails.netbanking.bank}`
+              : ""}
+          </span>
         </div>
       );
     } else if (method === "wallet" && methodDetails?.wallet) {
       return (
         <div className="flex items-center gap-3">
           <Wallet className="h-6 w-6 text-orange-600" />
-          <span>Wallet {methodDetails.wallet.wallet ? `(${methodDetails.wallet.wallet})` : ""}</span>
+          <span>
+            Wallet{" "}
+            {methodDetails.wallet.wallet
+              ? `(${methodDetails.wallet.wallet})`
+              : ""}
+          </span>
         </div>
       );
     }
-    
+
     return paymentMethod.toUpperCase();
   };
 
@@ -190,7 +210,6 @@ export function ViewPaymentModal({
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
-          
           <div>
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <User className="h-5 w-5 text-blue-600" />
@@ -204,7 +223,9 @@ export function ViewPaymentModal({
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-medium text-lg">{payment.name || "N/A"}</div>
+                  <div className="font-medium text-lg">
+                    {payment.name || "N/A"}
+                  </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                     <div className="flex items-center gap-1">
                       <Mail className="h-3 w-3" />
@@ -234,7 +255,9 @@ export function ViewPaymentModal({
                 </div>
               </div>
               <div className="bg-muted/50 rounded-lg p-4">
-                <div className="text-sm text-muted-foreground mb-1">Payment For</div>
+                <div className="text-sm text-muted-foreground mb-1">
+                  Payment For
+                </div>
                 <div className="text-lg font-semibold capitalize">
                   {payment.payment_for}
                 </div>
@@ -253,26 +276,33 @@ export function ViewPaymentModal({
                 <span className="text-sm text-muted-foreground">Method</span>
                 <span className="font-medium">{getPaymentMethodDisplay()}</span>
               </div>
-              
+
               {/* Card specific details */}
               {paymentMethod === "card" && methodDetails?.card && (
                 <>
                   {methodDetails.card.issuer && (
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Issuing Bank</span>
-                      <span className="font-medium capitalize">{methodDetails.card.issuer}</span>
+                      <span className="text-sm text-muted-foreground">
+                        Issuing Bank
+                      </span>
+                      <span className="font-medium capitalize">
+                        {methodDetails.card.issuer}
+                      </span>
                     </div>
                   )}
                 </>
               )}
-              
+
               {/* Bank details for netbanking */}
-              {paymentMethod === "netbanking" && methodDetails?.netbanking?.bank && (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Bank</span>
-                  <span className="font-medium capitalize">{methodDetails.netbanking.bank}</span>
-                </div>
-              )}
+              {paymentMethod === "netbanking" &&
+                methodDetails?.netbanking?.bank && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Bank</span>
+                    <span className="font-medium capitalize">
+                      {methodDetails.netbanking.bank}
+                    </span>
+                  </div>
+                )}
             </div>
           </div>
 
@@ -289,50 +319,66 @@ export function ViewPaymentModal({
               </div>
               <Separator />
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Payment ID</span>
+                <span className="text-sm text-muted-foreground">
+                  Payment ID
+                </span>
                 <span className="font-mono text-sm">{payment.payment_id}</span>
               </div>
-              
+
               {acquirerData?.bank_transaction_id && (
                 <>
                   <Separator />
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Bank Transaction ID</span>
-                    <span className="font-mono text-sm">{acquirerData.bank_transaction_id}</span>
+                    <span className="text-sm text-muted-foreground">
+                      Bank Transaction ID
+                    </span>
+                    <span className="font-mono text-sm">
+                      {acquirerData.bank_transaction_id}
+                    </span>
                   </div>
                 </>
               )}
-              
+
               {acquirerData?.rrn && (
                 <>
                   <Separator />
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">RRN</span>
-                    <span className="font-mono text-sm">{acquirerData.rrn}</span>
+                    <span className="font-mono text-sm">
+                      {acquirerData.rrn}
+                    </span>
                   </div>
                 </>
               )}
-              
+
               {acquirerData?.auth_code && (
                 <>
                   <Separator />
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Auth Code</span>
-                    <span className="font-mono text-sm">{acquirerData.auth_code}</span>
+                    <span className="text-sm text-muted-foreground">
+                      Auth Code
+                    </span>
+                    <span className="font-mono text-sm">
+                      {acquirerData.auth_code}
+                    </span>
                   </div>
                 </>
               )}
-              
+
               {acquirerData?.upi_transaction_id && (
                 <>
                   <Separator />
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">UPI Transaction ID</span>
-                    <span className="font-mono text-sm">{acquirerData.upi_transaction_id}</span>
+                    <span className="text-sm text-muted-foreground">
+                      UPI Transaction ID
+                    </span>
+                    <span className="font-mono text-sm">
+                      {acquirerData.upi_transaction_id}
+                    </span>
                   </div>
                 </>
               )}
-              
+
               <Separator />
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground flex items-center gap-1">

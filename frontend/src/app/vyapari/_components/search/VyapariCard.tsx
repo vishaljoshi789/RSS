@@ -4,6 +4,7 @@ import Image from "next/image";
 import { MapPin, Building2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Vyapari } from "./types";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface VyapariCardProps {
   vyapari: Vyapari;
@@ -20,6 +21,8 @@ export const VyapariCard: React.FC<VyapariCardProps> = ({ vyapari }) => {
               alt={vyapari.name}
               fill
               className="object-cover p-2 rounded-md transition-transform group-hover:scale-105"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           ) : (
             <div className="flex h-full items-center justify-center">

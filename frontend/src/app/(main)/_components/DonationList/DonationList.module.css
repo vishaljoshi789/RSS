@@ -1,0 +1,60 @@
+@keyframes scrollVerticalUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.donationScrollContainer {
+  max-height: 500px;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to bottom, 
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(to bottom, 
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+}
+
+.donationScrollBody {
+  animation: scrollVerticalUp 40s linear infinite;
+  will-change: transform;
+}
+
+.donationScrollBody:hover {
+  animation-play-state: paused;
+}
+
+/* Fade overlay for smooth edges */
+.donationScrollContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--background) 0%, transparent 100%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.donationScrollContainer::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to top, var(--background) 0%, transparent 100%);
+  z-index: 10;
+  pointer-events: none;
+}

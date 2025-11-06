@@ -26,6 +26,7 @@ import {
   Calendar,
   Sparkles,
 } from "lucide-react";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const benefits = [
   { icon: CheckCircle, text: "आभार प्रमाणपत्र" },
@@ -90,6 +91,8 @@ const Donation = () => {
                   alt={donationData.qrCode.alt}
                   fill
                   className="object-contain p-2 hover:scale-105 transition-transform duration-300"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
               </div>
 
@@ -251,11 +254,15 @@ const Donation = () => {
             <CardContent className="space-y-4 text-center">
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
                 क्योंकि हम जानते हैं — आप केवल दर्शक नहीं, बल्कि{" "}
-                <strong className="text-foreground">धर्म और देश के रक्षक</strong> भी हैं।
+                <strong className="text-foreground">
+                  धर्म और देश के रक्षक
+                </strong>{" "}
+                भी हैं।
               </p>
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
                 आपका एक छोटा सहयोग हमारे लिए एक नई आशा, और किसी पीड़ित के लिए{" "}
-                <strong className="text-foreground">संपूर्ण जीवन</strong> बन सकता है।
+                <strong className="text-foreground">संपूर्ण जीवन</strong> बन
+                सकता है।
               </p>
             </CardContent>
           </Card>
@@ -270,8 +277,10 @@ const Donation = () => {
               </p>
               <div className="bg-white dark:bg-background rounded-xl p-6 border-2 border-orange-200 dark:border-orange-800">
                 <p className="text-base md:text-lg text-orange-700 dark:text-orange-300 font-semibold italic leading-relaxed">
-                  "जो दिया वह बचेगा, जो रोका वह मिट जाएगा।<br />
-                  धर्म में लगाया गया धन ही पुण्य बनकर पीढ़ियों को रक्षा देता है।"
+                  "जो दिया वह बचेगा, जो रोका वह मिट जाएगा।
+                  <br />
+                  धर्म में लगाया गया धन ही पुण्य बनकर पीढ़ियों को रक्षा देता
+                  है।"
                 </p>
               </div>
             </CardContent>

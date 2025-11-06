@@ -50,6 +50,7 @@ import { usePayments, type Payment } from "@/module/dashboard/Payments/hooks";
 
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const STATUS_FILTER_MAP: Record<string, string | undefined> = {
   all: undefined,
@@ -392,6 +393,8 @@ export function TransactionTable({
               width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
           <div className="flex flex-col">
@@ -420,6 +423,8 @@ export function TransactionTable({
               width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
           <div className="flex flex-col">
@@ -445,6 +450,8 @@ export function TransactionTable({
               width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
           <div className="flex flex-col">
@@ -471,6 +478,8 @@ export function TransactionTable({
               width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
           <div className="flex flex-col">
@@ -495,6 +504,8 @@ export function TransactionTable({
               width={24}
               height={24}
               className="object-contain"
+              placeholder="blur"
+              blurDataURL={IMAGE_BLUR_DATA_URL}
             />
           </div>
           <span className="text-sm font-medium">CASH</span>
@@ -628,7 +639,7 @@ export function TransactionTable({
                     </div>
                   </TableCell>
                   <TableCell className="font-semibold">
-                    {formatCurrency(payment.amount/100, "INR")}
+                    {formatCurrency(payment.amount / 100, "INR")}
                   </TableCell>
                   <TableCell>{getTypeBadge(payment.payment_for)}</TableCell>
                   <TableCell>{getPaymentMethodIcon(payment)}</TableCell>

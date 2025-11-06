@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface VyapariDetail {
   id: number;
@@ -222,6 +223,8 @@ const VyapariDetailPage = () => {
             fill
             className="object-cover"
             priority
+            placeholder="blur"
+            blurDataURL={IMAGE_BLUR_DATA_URL}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -265,6 +268,8 @@ const VyapariDetailPage = () => {
                           alt={vyapari.name}
                           fill
                           className="object-cover"
+                          placeholder="blur"
+                          blurDataURL={IMAGE_BLUR_DATA_URL}
                         />
                       ) : (
                         <div className="h-full w-full bg-primary/10 flex items-center justify-center">

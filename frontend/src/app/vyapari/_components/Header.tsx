@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getUserImageUrl } from "@/lib/media";
 
 const VyapariHeader = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -22,15 +23,6 @@ const VyapariHeader = () => {
   useEffect(() => {
     setHasMounted(true);
   }, []);
-
-  const getImageUrl = (imagePath: string | undefined) => {
-    if (!imagePath) return "";
-    const baseURL =
-      process.env.NODE_ENV === "production"
-        ? process.env.NEXT_PUBLIC_API_URL || "https://api.rss.org"
-        : process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    return `${baseURL}${imagePath}`;
-  };
 
   const getUserInitials = (name: string) => {
     return name
@@ -57,6 +49,8 @@ const VyapariHeader = () => {
   if (!hasMounted) {
     return <div className="h-16" />;
   }
+
+  const userImageUrl = getUserImageUrl(user?.image);
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
@@ -100,10 +94,9 @@ const VyapariHeader = () => {
                 <DropdownMenuTrigger className="outline-hidden">
                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
                     <Avatar className="w-8 h-8">
-                      <AvatarImage
-                        src={getImageUrl(user.image)}
-                        alt={user.name}
-                      />
+                      {userImageUrl && (
+                        <AvatarImage src={userImageUrl} alt={user.name} />
+                      )}
                       <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                         {getUserInitials(user.name)}
                       </AvatarFallback>
@@ -194,10 +187,9 @@ const VyapariHeader = () => {
                   <>
                     <div className="flex items-center gap-3 px-4 py-2">
                       <Avatar className="w-10 h-10">
-                        <AvatarImage
-                          src={getImageUrl(user.image)}
-                          alt={user.name}
-                        />
+                        {userImageUrl && (
+                          <AvatarImage src={userImageUrl} alt={user.name} />
+                        )}
                         <AvatarFallback className="bg-primary text-primary-foreground">
                           {getUserInitials(user.name)}
                         </AvatarFallback>

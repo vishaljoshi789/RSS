@@ -31,9 +31,9 @@ const ContactUsPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
+    
     console.log('Form submitted:', formData);
-    // You can add API call or email service here
+    
   };
 
   return (
@@ -78,7 +78,7 @@ const ContactUsPage = () => {
               <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent z-10"></div>
                 <Image
-                  src="https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.25-PM-e1756385010760.webp"
+                  src="/hero/contact.webp"
                   alt="Temple Service - Devotees at Temple"
                   width={800}
                   height={600}

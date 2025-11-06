@@ -11,8 +11,9 @@ import {
   ShowReferralModal,
 } from "./_components";
 import { User, ReferralItem } from "./referal";
+import { RoleGuard } from "@/components/auth/RoleGuard";
 
-export default function ReferralsPage() {
+function ReferralsPageContent() {
   const axios = useAxios();
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -92,7 +93,10 @@ export default function ReferralsPage() {
     }
   };
 
-  const handleReferralClick = (referralUserId: string, referralName: string) => {
+  const handleReferralClick = (
+    referralUserId: string,
+    referralName: string
+  ) => {
     setSelectedUserId(referralUserId);
     setSelectedUserName(referralName);
     setModalOpen(true);
@@ -114,18 +118,17 @@ export default function ReferralsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
           <UserSearch className="h-8 w-8" />
           Referral Lookup
         </h1>
         <p className="text-muted-foreground">
-          किसी भी उपयोगकर्ता की रेफरल जानकारी देखने के लिए उनकी User ID दर्ज करें
+          किसी भी उपयोगकर्ता की रेफरल जानकारी देखने के लिए उनकी User ID दर्ज
+          करें
         </p>
       </div>
 
-      {/* Search Bar Component */}
       <SearchBar
         userId={userId}
         loading={loading}
@@ -134,10 +137,8 @@ export default function ReferralsPage() {
         onKeyPress={handleKeyPress}
       />
 
-      {/* Main Content Grid */}
       {(loading || userData) && (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          {/* Left side - Referrals Table Component */}
           <ReferralsTable
             referrals={referrals}
             loading={loading}
@@ -145,7 +146,6 @@ export default function ReferralsPage() {
             onReferralClick={handleReferralClick}
           />
 
-          {/* Right side - User Profile Card Component */}
           <UserProfileCard
             userData={userData}
             loading={loading}
@@ -154,7 +154,6 @@ export default function ReferralsPage() {
         </div>
       )}
 
-      {/* Referral Modal Component */}
       <ShowReferralModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -163,5 +162,13 @@ export default function ReferralsPage() {
         onUserClick={handleModalUserClick}
       />
     </div>
+  );
+}
+
+export default function ReferralsPage() {
+  return (
+    <RoleGuard allowedRoles="auto" showUnauthorized={true}>
+      <ReferralsPageContent />
+    </RoleGuard>
   );
 }

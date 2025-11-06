@@ -24,6 +24,7 @@ import {
   type VideoItem,
 } from "./gallery";
 import { Play, Calendar, MapPin, Filter } from "lucide-react";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const PDFPageFlip = dynamic(() => import("@/components/PDFPageFlip"), {
   ssr: false,
@@ -57,6 +58,8 @@ const GalleryPage = () => {
             priority
             className="object-cover"
             sizes="100vw"
+            placeholder="blur"
+            blurDataURL={IMAGE_BLUR_DATA_URL}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background/95" />
         </div>
@@ -99,7 +102,8 @@ const GalleryPage = () => {
                   value="books"
                   className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 sm:px-6 py-2 text-xs sm:text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground"
                 >
-                  📖 <span className="hidden sm:inline ml-1">पवित्र पुस्तकें</span>
+                  📖{" "}
+                  <span className="hidden sm:inline ml-1">पवित्र पुस्तकें</span>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -157,6 +161,8 @@ const GalleryPage = () => {
                           fill
                           className="object-cover rounded-md"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          placeholder="blur"
+                          blurDataURL={IMAGE_BLUR_DATA_URL}
                         />
                       </div>
                     </div>
@@ -194,7 +200,9 @@ const GalleryPage = () => {
 
               {filteredPhotos.length === 0 && (
                 <div className="text-center py-12 sm:py-16 px-4">
-                  <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 opacity-60">📸</div>
+                  <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 opacity-60">
+                    📸
+                  </div>
                   <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
                     इस श्रेणी में कोई फोटो नहीं मिली
                   </h3>
@@ -258,6 +266,8 @@ const GalleryPage = () => {
                           fill
                           className="object-cover"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          placeholder="blur"
+                          blurDataURL={IMAGE_BLUR_DATA_URL}
                         />
                         <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 bg-black/70 text-white text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded">
                           {video.duration}
@@ -296,7 +306,9 @@ const GalleryPage = () => {
 
               {filteredVideos.length === 0 && (
                 <div className="text-center py-12 sm:py-16 px-4">
-                  <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 opacity-60">🎬</div>
+                  <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 opacity-60">
+                    🎬
+                  </div>
                   <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
                     इस श्रेणी में कोई वीडियो नहीं मिला
                   </h3>
@@ -315,13 +327,14 @@ const GalleryPage = () => {
                       📖 श्रीमद्भगवद्गीता
                     </h2>
                     <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
-                      पवित्र भगवद्गीता को पढ़ें और जीवन का सच्चा ज्ञान प्राप्त करें। पृष्ठों को पलटने के लिए क्लिक करें या स्वाइप करें।
+                      पवित्र भगवद्गीता को पढ़ें और जीवन का सच्चा ज्ञान प्राप्त
+                      करें। पृष्ठों को पलटने के लिए क्लिक करें या स्वाइप करें।
                     </p>
                   </div>
-                  
+
                   <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-b from-background to-muted/20">
-                    <PDFPageFlip 
-                      pdfUrl="/docs/bhagwat geeta.pdf" 
+                    <PDFPageFlip
+                      pdfUrl="/docs/bhagwat geeta.pdf"
                       width={600}
                       height={800}
                     />
@@ -353,6 +366,8 @@ const GalleryPage = () => {
                     fill
                     className="object-cover"
                     sizes="(max-width: 1152px) 100vw, 1152px"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
                 <figure className="mb-6 sm:mb-8">

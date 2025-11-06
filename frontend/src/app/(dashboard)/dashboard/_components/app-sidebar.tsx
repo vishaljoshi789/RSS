@@ -35,6 +35,8 @@ import {
   deriveDashboardRoles,
   filterNavItemsForRoles,
 } from "./nav-config";
+import { getUserImageUrl as resolveUserImageUrl } from "@/lib/media";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user, logout } = useAuth();
@@ -61,16 +63,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       .slice(0, 2);
   };
 
-  const getUserImageUrl = React.useMemo(() => {
-    if (!user?.image) return undefined;
-
-    if (user.image.startsWith("http://") || user.image.startsWith("https://")) {
-      return user.image;
-    }
-
-    const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-    return `${baseURL}${user.image}`;
-  }, [user?.image]);
+  const userImageUrl = React.useMemo(
+    () => resolveUserImageUrl(user?.image),
+    [user?.image]
+  );
 
   const isActive = (url: string) => {
     if (url === "/dashboard") {
@@ -93,6 +89,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     width={100}
                     height={100}
                     className="object-contain"
+                    placeholder="blur"
+                    blurDataURL={IMAGE_BLUR_DATA_URL}
                   />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
@@ -200,9 +198,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   >
                     <Avatar className="h-8 w-8 rounded-lg">
-                      {getUserImageUrl && (
+                      {userImageUrl && (
                         <AvatarImage
-                          src={getUserImageUrl}
+                          src={userImageUrl}
                           alt={user?.name || "User"}
                         />
                       )}
@@ -246,9 +244,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             ) : (
               <SidebarMenuButton size="lg" className="cursor-default">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  {getUserImageUrl && (
+                  {userImageUrl && (
                     <AvatarImage
-                      src={getUserImageUrl}
+                      src={userImageUrl}
                       alt={user?.name || "User"}
                     />
                   )}

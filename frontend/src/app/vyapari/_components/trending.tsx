@@ -2,9 +2,9 @@ import React from "react";
 import { TrendingUp, Search, ArrowRight, Store } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const VyapariTrending = () => {
-  
   const trendingCompanies = [
     {
       id: 1,
@@ -106,6 +106,8 @@ const VyapariTrending = () => {
                   width={64}
                   height={64}
                   className="h-full w-full object-contain"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
               </div>
 

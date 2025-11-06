@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 interface WhyDifferentSectionProps {
   whyDifferent: {
@@ -59,6 +60,8 @@ const WhyDifferentSection: React.FC<WhyDifferentSectionProps> = ({
                   width={1200}
                   height={800}
                   className="w-full h-auto object-contain"
+                  placeholder="blur"
+                  blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
               </div>
 

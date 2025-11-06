@@ -1,12 +1,13 @@
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const Logo = () => {
   return (
     <div className="flex items-center space-x-4">
-      <Link 
-        href="/" 
+      <Link
+        href="/"
         className="flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm"
         aria-label="राष्ट्रीय स्वयंसेवक संघ - Home"
       >
@@ -17,6 +18,8 @@ const Logo = () => {
             fill
             className="object-contain"
             priority
+            placeholder="blur"
+            blurDataURL={IMAGE_BLUR_DATA_URL}
           />
         </div>
         <div className="block">
