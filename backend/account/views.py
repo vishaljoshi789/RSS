@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from datetime import datetime
 
 from django.contrib.auth.hashers import make_password
 import uuid
@@ -31,7 +32,9 @@ class UserJoinView(APIView):
             return Response({"error": "Name is required."}, status=status.HTTP_400_BAD_REQUEST)
         if "phone" not in data:
             return Response({"error": "Phone number is required."}, status=status.HTTP_400_BAD_REQUEST)
-        password = data["dob"]
+        dob_str = data["dob"]
+        dob = datetime.strptime(dob_str, "%Y-%m-%d")  # convert string → datetime
+        password = dob.strftime("%d%m%Y")
         data["password"] = make_password(password)
         data["username"] = data["email"]
         user_id = generate_user_id()
@@ -47,7 +50,9 @@ class UserJoinView(APIView):
 class UserMemberView(APIView):
     def post(self, request):
         data = request.data.copy()
-        password = data["dob"].strftime("%d%m%Y")
+        dob_str = data["dob"]  # e.g., "1999-12-05"
+        dob = datetime.strptime(dob_str, "%Y-%m-%d")  # convert string → datetime
+        password = dob.strftime("%d%m%Y")
         data["password"] = make_password(password)
         data["username"] = data["email"]
         user = User.objects.filter(email=data["email"]).first()
