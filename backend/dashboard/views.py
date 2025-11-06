@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import FileResponse
 from .pdf_builder.utils.builder import generate_pdf
-from .pdf_builder.utils.templates import ID_CARD_LAYOUT, CERTIFICATE_LAYOUT
+from .pdf_builder.utils.templates import ID_CARD_LAYOUT, CERTIFICATE_LAYOUT, JOINING_LETTER_LAYOUT
 
 import os
 from django.conf import settings
@@ -118,6 +118,18 @@ class GetDocumentView(APIView):
             print(f"[DEBUG] Generating certificate for {data['name']} with reg_no {data['reg_no']}, image: {data['image']}")
             pdf_buffer = generate_pdf(template_path, data, document_type=doc_type, layout=layout, image_file=photo, qr_text=qr_text)
             
+        # elif doc_type == "membership_certificate":
+        #     if not user.is_member_account:
+        #         return Response({"error": "User is not a member"}, status=400)
+        #     template_path = os.path.join(settings.BASE_DIR, "dashboard", "pdf_builder", "templates", "documents", "member_welcome_letter.pdf")
+        #     layout = JOINING_LETTER_LAYOUT
+        #     data = {
+        #         "name": user.name,
+        #         "address": f'{user.city}, {user.district}, {user.state}',
+        #         "joining_date": user.date_joined.strftime("%d-%m-%Y"),
+        #         "reg_no": f'R{user.user_id}',
+        #     }
+        #     pdf_buffer = generate_pdf(template_path, data, document_type=doc_type, layout=layout, image_file=photo, qr_text=qr_text)
         else:
             return Response({"error": "Unknown document type"}, status=400)
         

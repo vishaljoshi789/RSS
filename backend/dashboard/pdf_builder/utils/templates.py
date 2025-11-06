@@ -35,10 +35,10 @@ CERTIFICATE_LAYOUT = {
 JOINING_LETTER_LAYOUT = {
     "scaling": None,
     "text_fields": [
-        {"name": "name", "x": 100, "y": 700, "font": "NotoSansDevanagari", "size": 16, "align": "left", "max_width": 300, "color": (0, 0, 0)},
-        {"name": "address", "x": 100, "y": 680, "size": 10},
-        {"name": "reg_no", "x": 100, "y": 660, "size": 10},
-        {"name": "joining_date", "x": 100, "y": 640, "size": 10},
+        {"name": "name", "x": 55, "y": 690, "font": "Helvetica-Bold", "size": 16, "align": "left", "max_width": 300, "color": (0, 0, 0)},
+        {"name": "address", "x": 55, "y": 670, "size": 13},
+        {"name": "reg_no", "x": 60, "y": 650, "size": 13},
+        {"name": "joining_date", "x": 195, "y": 650, "size": 13},
     ],
     "image": None,
     "qr": None,
