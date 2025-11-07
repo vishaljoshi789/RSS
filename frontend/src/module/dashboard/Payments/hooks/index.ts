@@ -221,7 +221,7 @@ export function usePayments(page: number = 1, page_size: number = 20) {
         setLoading(false);
       }
     },
-    [filters, page, page_size]
+    [axios, filters, page, page_size]
   );
 
   useEffect(() => {
@@ -323,9 +323,10 @@ export function usePaymentStats() {
   const fetchStats = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/payment/stats/");
-      setStats(normalizeStats(response.data));
       setError(null);
+      const response = await axios.get("/payment/stats/");
+      console.log(response)
+      setStats(normalizeStats(response.data));
     } catch (err: any) {
       console.error("Error fetching payment stats:", err);
       
@@ -346,37 +347,10 @@ export function usePaymentStats() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  const fetchPaymentInfo = useCallback(async () => {
-    try{
-      setLoading(true);
-      const response = await axios.get(`/payment/stats/`);
-      return normalizePayment(response.data);
-    } catch (err: any) {
-      console.error("Error fetching payment info:", err);
-      
-      let errorMessage = "Failed to fetch payment info";
-      if (err.response?.status === 403) {
-        errorMessage = err.response?.data?.detail || 
-                      err.response?.data?.message || 
-                      "You need admin or staff privileges to view payment information.";
-      } else {
-        errorMessage = err.response?.data?.detail || 
-                      err.response?.data?.message || 
-                      err.message || 
-                      "Failed to fetch payment info";
-      }
-      
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  }, [axios]);
 
   useEffect(() => {
     fetchStats();
-    fetchPaymentInfo();
   }, [fetchStats]);
 
   return { stats, loading, error, refetch: fetchStats };
@@ -417,7 +391,7 @@ export function useUserPayments(limit: number = 5) {
     } finally {
       setLoading(false);
     }
-  }, [limit]);
+  }, [axios, limit]);
 
   useEffect(() => {
     fetchUserPayments();

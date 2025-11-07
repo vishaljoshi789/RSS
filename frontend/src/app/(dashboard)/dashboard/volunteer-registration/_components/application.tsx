@@ -53,7 +53,6 @@ const ApplicationForm = ({
 
   const { designations, loading: designationsLoading, fetchDesignationsByIds } = useDesignationsById();
 
-  const [affidavit, setAffidavit] = useState<File | null>(null);
   const [aadharCardFront, setAadharCardFront] = useState<File | null>(null);
   const [aadharCardBack, setAadharCardBack] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
@@ -137,10 +136,6 @@ const ApplicationForm = ({
       }
 
       switch (fileType) {
-        case "affidavit":
-          setAffidavit(file);
-          setData((prev) => ({ ...prev, affidavit: file }));
-          break;
         case "aadhar_card_front":
           setAadharCardFront(file);
           setData((prev) => ({ ...prev, aadhar_card_front: file }));
@@ -177,122 +172,106 @@ const ApplicationForm = ({
     <form onSubmit={handleSubmit} className="space-y-6">
       <Card className="shadow-sm border border-gray-200">
         <CardContent className="grid gap-4 py-6">
-          <div className="grid gap-2">
-            <Label htmlFor="wing">Wing</Label>
-            <Select
-              value={selectedWingName || ""}
-              onValueChange={(value) => {
-                setSelectedWingName(value);
-                const found = (wings || []).find((w: Wing) => w.name === value);
-                setSelectedWing(found?.id ?? null);
-              }}
-              disabled={wingsLoading}
-            >
-              <SelectTrigger id="wing">
-                <SelectValue placeholder="Select a wing" />
-              </SelectTrigger>
-              <SelectContent>
-                {(wings || []).map((wing: Wing) => (
-                  <SelectItem key={wing.id} value={wing.name}>
-                    {wing.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="wing">Wing</Label>
+              <Select
+                value={selectedWingName || ""}
+                onValueChange={(value) => {
+                  setSelectedWingName(value);
+                  const found = (wings || []).find((w: Wing) => w.name === value);
+                  setSelectedWing(found?.id ?? null);
+                }}
+                disabled={wingsLoading}
+              >
+                <SelectTrigger id="wing">
+                  <SelectValue placeholder="Select a wing" />
+                </SelectTrigger>
+                <SelectContent> 
+                  {(wings || []).map((wing: Wing) => (
+                    <SelectItem key={wing.id} value={wing.name}>
+                      {wing.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="level">Level</Label>
+              <Select
+                value={
+                  selectedLevelName && selectedLevel
+                    ? `${selectedLevelName}__${selectedLevel}`
+                    : ""
+                }
+                onValueChange={(value) => {
+                  const [name, id] = String(value).split("__");
+                  setSelectedLevelName(name || null);
+                  setSelectedLevel(id ? Number(id) : null);
+                }}
+                disabled={!selectedWingName || levelsLoading}
+              >
+                <SelectTrigger id="level">
+                  <SelectValue placeholder="Select a level" />
+                </SelectTrigger>
+                <SelectContent>
+                  {filteredLevels.map((level: Level) => (
+                    <SelectItem
+                      key={`${level.id}-${level.name}`}
+                      value={`${level.name}__${level.id}`}
+                    >
+                      {level.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="level">Level</Label>
-            <Select
-              value={
-                selectedLevelName && selectedLevel
-                  ? `${selectedLevelName}__${selectedLevel}`
-                  : ""
-              }
-              onValueChange={(value) => {
-                const [name, id] = String(value).split("__");
-                setSelectedLevelName(name || null);
-                setSelectedLevel(id ? Number(id) : null);
-              }}
-              disabled={!selectedWingName || levelsLoading}
-            >
-              <SelectTrigger id="level">
-                <SelectValue placeholder="Select a level" />
-              </SelectTrigger>
-              <SelectContent>
-                {filteredLevels.map((level: Level) => (
-                  <SelectItem
-                    key={`${level.id}-${level.name}`}
-                    value={`${level.name}__${level.id}`}
-                  >
-                    {level.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Designation and Phone Number in same row - 2 columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="designation">Designation</Label>
+              <Select
+                value={selectedDesignation?.toString() || ""}
+                onValueChange={(value) => setSelectedDesignation(Number(value))}
+                disabled={!selectedLevelName || designationsLoading}
+              >
+                <SelectTrigger id="designation">
+                  <SelectValue placeholder="Select a designation" />
+                </SelectTrigger>
+                <SelectContent>
+                  {filteredDesignations.map((designation: Designation) => (
+                    <SelectItem
+                      key={designation.id}
+                      value={designation.id.toString()}
+                    >
+                      {designation.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="grid gap-2">
-            <Label htmlFor="designation">Designation</Label>
-            <Select
-              value={selectedDesignation?.toString() || ""}
-              onValueChange={(value) => setSelectedDesignation(Number(value))}
-              disabled={!selectedLevelName || designationsLoading}
-            >
-              <SelectTrigger id="designation">
-                <SelectValue placeholder="Select a designation" />
-              </SelectTrigger>
-              <SelectContent>
-                {filteredDesignations.map((designation: Designation) => (
-                  <SelectItem
-                    key={designation.id}
-                    value={designation.id.toString()}
-                  >
-                    {designation.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="phone_number">Phone Number</Label>
-            <Input
-              id="phone_number"
-              type="tel"
-              placeholder="Enter phone number"
-              value={data.phone_number || ""}
-              maxLength={10}
-              onChange={(e) => handleChange("phone_number", e.target.value)}
-              required
-            />
+            <div className="grid gap-2">
+              <Label htmlFor="phone_number">Phone Number</Label>
+              <Input
+                id="phone_number"
+                type="tel"
+                placeholder="Enter phone number"
+                value={data.phone_number || ""}
+                maxLength={10}
+                onChange={(e) => handleChange("phone_number", e.target.value)}
+                required
+              />
+            </div>
           </div>
 
           <div className="grid gap-3">
             <Label>Uploads</Label>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="grid gap-1">
-                <Label className="text-sm font-medium">Affidavit *</Label>
-                <Input
-                  id="affidavit"
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileChange(e, "affidavit")}
-                  className="cursor-pointer"
-                  required
-                />
-
-                {affidavit && (
-                  <Badge variant="outline" className="gap-1">
-                    <FileText className="h-3 w-3" /> {affidavit.name}
-                  </Badge>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  Upload your affidavit document (Image only) - Required
-                </p>
-              </div>
-
               <div className="grid gap-1">
                 <Label className="text-sm font-medium">Aadhar Front *</Label>
                 <Input

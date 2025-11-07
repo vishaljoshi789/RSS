@@ -48,25 +48,7 @@ type FormState = {
   referred_by?: string;
 };
 
-type PersistedKey = Exclude<keyof FormState, "image">;
-type PersistedFormData = Pick<FormState, PersistedKey>;
 
-const PERSISTED_FIELDS: PersistedKey[] = [
-  "name",
-  "email",
-  "phone",
-  "dob",
-  "gender",
-  "profession",
-  "city",
-  "sub_district",
-  "district",
-  "state",
-  "postal_code",
-  "referred_by",
-];
-
-const FORM_STORAGE_KEY = "rss-membership-form";
 
 const defaultFormState: FormState = {
   name: "",
@@ -120,10 +102,7 @@ const BecomeMemberPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isAlreadyMember, setIsAlreadyMember] = useState(false);
-  const [storageHydrated, setStorageHydrated] = useState(false);
-  const [prefilledFromStorage, setPrefilledFromStorage] = useState<
-    Partial<Record<PersistedKey, boolean>>
-  >({});
+  const [userDataLoaded, setUserDataLoaded] = useState(false);
   const [formState, setFormState] = useState<FormState>(defaultFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -141,163 +120,95 @@ const BecomeMemberPage = () => {
     email: "",
   });
 
+  const { user } = useAuth();
   const stateOptions = useMemo(() => getIndianStates(rawStateDistrictData), []);
 
+  // Pre-fill form from authenticated user data (from AuthContext only, no localStorage)
   useEffect(() => {
-    if (typeof window === "undefined" || storageHydrated) {
+    if (userDataLoaded || !user) {
       return;
     }
 
-    try {
-      const storedFormValue = window.localStorage.getItem(FORM_STORAGE_KEY);
+    setFormState((prev) => {
+      const updated = { ...prev };
 
-      const storedUserData = window.localStorage.getItem("user_data");
+      const safeGet = (key: string) => {
+        const value = user?.[key as keyof typeof user];
+        if (value === undefined || value === null || value === "")
+          return undefined;
+        return String(value);
+      };
 
-      let userData: Record<string, any> | null = null;
-      if (storedUserData) {
-        try {
-          const parsed = JSON.parse(storedUserData);
-          if (parsed && typeof parsed === "object") {
-            userData =
-              (parsed as { user_info?: Record<string, any> }).user_info ||
-              parsed;
-          }
-        } catch (e) {
-          console.warn("Unable to parse user_data from localStorage", e);
-        }
+      const maybeName = safeGet("name");
+      if (!updated.name && maybeName) {
+        updated.name = maybeName;
       }
 
-      setFormState((prev) => {
-        const updated = { ...prev };
-
-        if (storedFormValue) {
-          const parsed = JSON.parse(
-            storedFormValue
-          ) as Partial<PersistedFormData>;
-          const readOnlyMap: Partial<Record<PersistedKey, boolean>> = {};
-          PERSISTED_FIELDS.forEach((key) => {
-            const value = parsed[key];
-            if (typeof value === "string" && value.trim() !== "") {
-              updated[key] = value;
-              readOnlyMap[key] = true;
-            }
-          });
-          if (Object.keys(readOnlyMap).length > 0) {
-            setPrefilledFromStorage(readOnlyMap);
-          }
-        }
-        if (userData) {
-          const safeGet = (key: string) => {
-            const value = userData?.[key];
-            if (value === undefined || value === null || value === "")
-              return undefined;
-            return String(value);
-          };
-
-          const maybeName = safeGet("name");
-          if (!updated.name && maybeName) {
-            updated.name = maybeName;
-          }
-
-          const maybeEmail = safeGet("email");
-          if (!updated.email && maybeEmail) {
-            updated.email = maybeEmail;
-          }
-
-          const maybeDob = safeGet("dob");
-          if (!updated.dob && maybeDob) {
-            updated.dob = maybeDob;
-          }
-
-          const maybeGender = safeGet("gender");
-          if (!updated.gender && maybeGender) {
-            updated.gender = maybeGender.toLowerCase();
-          }
-
-          const maybePhone = safeGet("phone");
-          if (!updated.phone && maybePhone) {
-            updated.phone = maybePhone;
-          }
-
-          const maybeProfession = safeGet("profession");
-          if (!updated.profession && maybeProfession) {
-            updated.profession = maybeProfession
-              .toLowerCase()
-              .replace(/\s+/g, "-");
-          }
-
-          const maybeCity = safeGet("city");
-          if (!updated.city && maybeCity) {
-            updated.city = maybeCity;
-          }
-
-          const maybeSubDistrict = safeGet("sub_district");
-          if (!updated.sub_district && maybeSubDistrict) {
-            updated.sub_district = maybeSubDistrict;
-          }
-
-          const maybeDistrict = safeGet("district");
-          if (!updated.district && maybeDistrict) {
-            updated.district = maybeDistrict;
-          }
-
-          const maybeState = safeGet("state");
-          if (!updated.state && maybeState) {
-            const matchedState = stateOptions.find(
-              (option) => option.toLowerCase() === maybeState.toLowerCase()
-            );
-            updated.state = matchedState || maybeState;
-          }
-
-          const maybePostal = safeGet("postal_code");
-          if (!updated.postal_code && maybePostal) {
-            updated.postal_code = maybePostal;
-          }
-
-          const maybeReferral = safeGet("referred_by");
-          if (!updated.referred_by && maybeReferral) {
-            updated.referred_by = maybeReferral;
-          }
-        }
-
-        return updated;
-      });
-    } catch (error) {
-      console.warn("Unable to read stored membership form data", error);
-    } finally {
-      setStorageHydrated(true);
-    }
-  }, [storageHydrated, stateOptions]);
-
-  useEffect(() => {
-    if (!storageHydrated || typeof window === "undefined") {
-      return;
-    }
-
-    const payload = PERSISTED_FIELDS.reduce((acc, key) => {
-      const value = formState[key];
-      if (typeof value === "string" && value.trim() !== "") {
-        acc[key] = value;
+      const maybeEmail = safeGet("email");
+      if (!updated.email && maybeEmail) {
+        updated.email = maybeEmail;
       }
-      return acc;
-    }, {} as Partial<PersistedFormData>);
 
-    if (Object.keys(payload).length > 0) {
-      try {
-        window.localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(payload));
-      } catch (error) {
-        console.warn("Unable to persist form data", error);
+      const maybeDob = safeGet("dob");
+      if (!updated.dob && maybeDob) {
+        updated.dob = maybeDob;
       }
-    } else {
-      window.localStorage.removeItem(FORM_STORAGE_KEY);
-    }
-  }, [formState, storageHydrated]);
 
-  const clearStoredForm = () => {
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(FORM_STORAGE_KEY);
-    }
-  };
+      const maybeGender = safeGet("gender");
+      if (!updated.gender && maybeGender) {
+        updated.gender = maybeGender.toLowerCase();
+      }
+
+      const maybePhone = safeGet("phone");
+      if (!updated.phone && maybePhone) {
+        updated.phone = maybePhone;
+      }
+
+      const maybeProfession = safeGet("profession");
+      if (!updated.profession && maybeProfession) {
+        updated.profession = maybeProfession
+          .toLowerCase()
+          .replace(/\s+/g, "-");
+      }
+
+      const maybeCity = safeGet("city");
+      if (!updated.city && maybeCity) {
+        updated.city = maybeCity;
+      }
+
+      const maybeSubDistrict = safeGet("sub_district");
+      if (!updated.sub_district && maybeSubDistrict) {
+        updated.sub_district = maybeSubDistrict;
+      }
+
+      const maybeDistrict = safeGet("district");
+      if (!updated.district && maybeDistrict) {
+        updated.district = maybeDistrict;
+      }
+
+      const maybeState = safeGet("state");
+      if (!updated.state && maybeState) {
+        const matchedState = stateOptions.find(
+          (option) => option.toLowerCase() === maybeState.toLowerCase()
+        );
+        updated.state = matchedState || maybeState;
+      }
+
+      const maybePostal = safeGet("postal_code");
+      if (!updated.postal_code && maybePostal) {
+        updated.postal_code = maybePostal;
+      }
+
+      const maybeReferral = safeGet("referred_by");
+      if (!updated.referred_by && maybeReferral) {
+        updated.referred_by = maybeReferral;
+      }
+
+      return updated;
+    });
+
+    setUserDataLoaded(true);
+  }, [user, userDataLoaded, stateOptions]);
 
   const handleChange = (field: string, value: string) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
@@ -406,7 +317,6 @@ const BecomeMemberPage = () => {
 
   const handleReset = () => {
     setFormState(defaultFormState);
-    clearStoredForm();
     setActiveStep(0);
     setSubmitted(false);
     setErrors({});
@@ -457,8 +367,6 @@ const BecomeMemberPage = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-
-        clearStoredForm();
     }
   }, [paymentSuccess, submitted]);
 
@@ -571,7 +479,6 @@ const BecomeMemberPage = () => {
           formData={formState}
           errors={errors}
           onChange={handleChange}
-          readOnlyFields={prefilledFromStorage}
         />
       );
     }
@@ -583,7 +490,6 @@ const BecomeMemberPage = () => {
           errors={errors}
           onChange={handleChange}
           stateOptions={stateOptions}
-          readOnlyFields={prefilledFromStorage}
         />
       );
     }

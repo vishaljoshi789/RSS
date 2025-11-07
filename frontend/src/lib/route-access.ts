@@ -49,11 +49,6 @@ export const ROUTE_ACCESS_MAP: RouteAccess[] = [
     description: "Complaint portal - members only",
   },
   {
-    path: "/dashboard/id-card-management",
-    allowedRoles: ["member", "volunteer"],
-    description: "ID card collection - members and volunteers",
-  },
-  {
     path: "/dashboard/volunteer-registration",
     allowedRoles: ["volunteer", "member"],
     description: "Volunteer registration - volunteers and members",

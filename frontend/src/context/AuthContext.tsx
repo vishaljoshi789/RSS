@@ -104,7 +104,11 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }
       }
 
-      console.error("Failed to refresh user data:", response.status);
+      if (response.status !== 401) {
+        console.error("Failed to refresh user data:", response.status);
+      } else {
+        console.warn("Token expired while refreshing user data (401)");
+      }
       return false;
     } catch (error) {
       console.error("Error refreshing user data:", error);
@@ -145,24 +149,34 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         .find((row) => row.startsWith("access_token="))
         ?.split("=")[1];
 
-      if (!accessToken) {
+      const refreshTokenValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("refresh_token="))
+        ?.split("=")[1];
+
+      if (!accessToken && !refreshTokenValue) {
         const storedUserData = localStorage.getItem("user_data");
         if (storedUserData) {
-          try {
-            const parsedData = JSON.parse(storedUserData);
-            const userData = parsedData.user_info || parsedData;
-            setAuthState((prev) => ({
-              ...prev,
-              user: userData,
-              isAuthenticated: false,
-              loading: false,
-              initialized: true,
-            }));
-          } catch (error) {
-            console.error("Error parsing stored user data:", error);
-            localStorage.removeItem("user_data");
-          }
+          console.log("No auth cookies found, removing stale user_data from localStorage");
+          localStorage.removeItem("user_data");
+        }
+        
+        setAuthState((prev) => ({
+          ...prev,
+          user: null,
+          isAuthenticated: false,
+          loading: false,
+          initialized: true,
+        }));
+        return;
+      }
+
+      if (!accessToken && refreshTokenValue) {
+        const refreshSuccessful = await refreshToken();
+        if (refreshSuccessful) {
+          await checkAuth();
         } else {
+          localStorage.removeItem("user_data");
           setAuthState((prev) => ({
             ...prev,
             user: null,
@@ -392,7 +406,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [apiCall, clearAuthCookie, setAuthCookie]);
 
   const logout = useCallback(() => {
-    apiCall("/account/logout/", { method: "POST" }).catch(() => {});
+    // apiCall("/account/logout/", { method: "POST" }).catch(() => {});
 
     clearAuthCookie("access_token");
     clearAuthCookie("refresh_token");

@@ -8,6 +8,7 @@ import useAuth from "@/hooks/use-auth";
 import { AddressFormData, ApplicationFormData, createVolunteerAPI } from "@/module/dashboard/volunteer";
 import ApplicationForm from "./_components/application";
 import AddressForm from "./_components/address";
+import DeclarationForm from "./_components/declaration";
 import PaymentForm from "./_components/payment";
 import { useDonationPayment } from "@/module/donation";
 import {
@@ -31,7 +32,6 @@ const CareersPage = () => {
       level_name: null,
       designation: null,
       phone_number: null,
-      affidavit: null,
       aadhar_card_front: null,
       aadhar_card_back: null,
       image: null,
@@ -101,6 +101,40 @@ const CareersPage = () => {
     saveToLocalStorage("addressData", addressData);
   }, [addressData]);
 
+  
+  useEffect(() => {
+    const savedData = sessionStorage.getItem("volunteer_registration_data");
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        const timestamp = parsed.timestamp || 0;
+        const now = Date.now();
+        const thirtyMinutes = 30 * 60 * 1000;
+
+        
+        if (now - timestamp < thirtyMinutes) {
+          setApplicationData(parsed.applicationData || applicationData);
+          setAddressData(parsed.addressData || addressData);
+          setStep(parsed.step || 1);
+
+          toast.success("Your form data has been restored. Please continue.", {
+            duration: 5000,
+          });
+
+          
+          sessionStorage.removeItem("volunteer_registration_data");
+        } else {
+          
+          sessionStorage.removeItem("volunteer_registration_data");
+          toast.info("Previous session data was too old and has been cleared.");
+        }
+      } catch (error) {
+        console.error("Error restoring form data:", error);
+        sessionStorage.removeItem("volunteer_registration_data");
+      }
+    }
+  }, []);
+
   const handlePaymentConfirm = async () => {
     try {
       toast.loading("Opening payment gateway...", { id: "payment-processing" });
@@ -137,37 +171,108 @@ const CareersPage = () => {
   const handleBack = () => setStep((prev) => prev - 1);
 
   const updateAddress = async (data: AddressFormData) => {
-    try {
-      const response = await axios.put(`/account/detail/${user?.id}/`, data);
-      if (response) toast.success("Address updated successfully");
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await axios.put(`/account/detail/${user?.id}/`, data);
+    return response;
   };
 
   const handleFinalSubmit = async () => {
     try {
       setLoading(true);
 
+      // Step 1: Create Application
+      toast.loading("Submitting application...", { id: "application-submit" });
       const applicationPayload = { ...applicationData, user: user?.id };
+      
+      let applicationResponse;
+      try {
+        applicationResponse = await api.createApplication(applicationPayload);
+        
+        
+        if (!applicationResponse || !applicationResponse.id) {
+          toast.dismiss("application-submit");
+          toast.error("Failed to create application. Invalid response.");
+          return;
+        }
+        
+        toast.dismiss("application-submit");
+        toast.success("Application created successfully!");
+      } catch (appError: any) {
+        toast.dismiss("application-submit");
+        console.error("Application creation error:", appError);
+        
+        
+        const status = appError?.response?.status;
+        const errorMsg = appError?.response?.data?.detail || 
+                        appError?.response?.data?.error || 
+                        appError?.response?.data?.message ||
+                        appError?.message;
+        
+        if (status === 401) {
+          throw appError;
+        } else if (status === 403) {
+          toast.error(`Permission denied: ${errorMsg || 'You do not have permission to create applications.'}`);
+        } else if (status >= 400 && status < 500) {
+          toast.error(`Application error: ${errorMsg || 'Invalid data submitted.'}`);
+        } else {
+          toast.error(`Failed to create application: ${errorMsg || 'Please try again.'}`);
+        }
+        return; 
+      }
 
-      const applicationResponse = await api.createApplication(applicationPayload);
-      await updateAddress(addressData);
+      // Step 2: Update Address
+      toast.loading("Updating address information...", { id: "address-update" });
+      try {
+        const addressResponse = await updateAddress(addressData);
+        
+        if (addressResponse?.status >= 200 && addressResponse?.status < 300) {
+          toast.dismiss("address-update");
+          toast.success("Address updated successfully!");
+        } else {
+          toast.dismiss("address-update");
+          toast.error("Address update returned unexpected status. Cannot proceed.");
+          return;
+        }
+      } catch (addressError: any) {
+        toast.dismiss("address-update");
+        console.error("Address update error:", addressError);
+        
+        const status = addressError?.response?.status;
+        const errorMsg = addressError?.response?.data?.detail || 
+                        addressError?.response?.data?.error ||
+                        addressError?.message;
+        
+        if (status === 401) {
+          throw addressError; 
+        } else if (status === 403) {
+          toast.error(`Permission denied: ${errorMsg || 'You do not have permission to update address.'}`);
+          return;
+        } else if (status >= 400 && status < 500) {
+          toast.error(`Address update failed: ${errorMsg || 'Invalid data submitted.'}`);
+          return;
+        } else {
+          toast.error(`Failed to update address: ${errorMsg || 'Please try again.'}`);
+          return;
+        }
+      }
+
+      // Step 3: Process Payment (now step 4 since declaration was added)
       await handlePaymentConfirm();
 
-      if(applicationResponse){
-        toast.success("Application submitted successfully!");
-
-      toast.success("Application submitted successfully!", {
+      // Step 4: Success
+      toast.success("Registration completed successfully!", {
         id: "final-submit",
+        duration: 3000,
       });
 
-      // Refresh user data to get updated address
-      await refreshUserData();
-
+      
+      const refreshSuccess = await refreshUserData();
+      if (!refreshSuccess) {
+        console.warn("Could not refresh user data, but submission was successful");
+      }
+      
       clearFromLocalStorage("applicationData");
       clearFromLocalStorage("addressData");
-
+      
       setApplicationData({
         user: user?.id || undefined,
         wing: null,
@@ -175,7 +280,6 @@ const CareersPage = () => {
         level_name: null,
         designation: null,
         phone_number: null,
-        affidavit: null,
         aadhar_card_front: null,
         aadhar_card_back: null,
         image: null,
@@ -190,19 +294,53 @@ const CareersPage = () => {
         country: "",
         postal_code: "",
         mandal: "",
+        hindi_name: "",
       });
 
       setStep(1);
+      
+    } catch (error: any) {
+      console.error("Final submit error:", error);
+      
+      
+      toast.dismiss("application-submit");
+      toast.dismiss("address-update");
+      toast.dismiss("payment-processing");
+      
+      
+      const is401Error = 
+        error?.response?.status === 401 || 
+        error?.status === 401 ||
+        error?.message?.includes("401") ||
+        error?.message?.toLowerCase().includes("unauthorized");
 
-      setTimeout(() => toast.dismiss(), 1000);
+      if (is401Error) {
+        
+        sessionStorage.setItem("volunteer_registration_data", JSON.stringify({
+          applicationData,
+          addressData,
+          step,
+          timestamp: Date.now()
+        }));
 
-      setStep(1);
-      }else {
-        toast.error("Failed to complete submission. Try again.");
+        toast.error("Your session has expired. Please login again.", {
+          duration: 5000,
+        });
+
+        setTimeout(() => {
+          window.location.href = "/auth/login?redirect=/dashboard/volunteer-registration&reason=session_expired";
+        }, 2000);
+      } else {
+        
+        const errorMessage = 
+          error?.response?.data?.detail ||
+          error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          error?.message ||
+          "Failed to complete submission. Please try again.";
+        
+        toast.error(errorMessage, { duration: 5000 });
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to complete submission. Try again.");
     } finally {
       setLoading(false);
     }
@@ -215,7 +353,8 @@ const CareersPage = () => {
           <CardTitle>
             {step === 1 && "Step 1: Application Details"}
             {step === 2 && "Step 2: Address Information"}
-            {step === 3 && "Step 3: Payment & Submit"}
+            {step === 3 && "Step 3: Declaration"}
+            {step === 4 && "Step 4: Payment & Submit"}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -235,6 +374,13 @@ const CareersPage = () => {
             />
           )}
           {step === 3 && (
+            <DeclarationForm 
+              addressData={addressData}
+              onNext={handleNext}
+              onBack={handleBack}
+            />
+          )}
+          {step === 4 && (
             <PaymentForm
               onBack={handleBack}
               onSubmit={handleFinalSubmit}
