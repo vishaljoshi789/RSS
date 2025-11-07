@@ -1,3 +1,4 @@
+import os
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,6 +11,9 @@ from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 
 from account.models import User
+from account.tasks import send_async_email
+from dashboard.pdf_builder.utils.builder import generate_pdf
+from dashboard.pdf_builder.utils.templates import JOINING_LETTER_LAYOUT
 from .models import Payment
 from .serializers import PaymentSerializer
 from dashboard.permissions import IsAdminOrIsStaff
@@ -126,6 +130,19 @@ class OrderVerifyView(APIView):
                 if user:
                     user.is_member_account = True
                     user.save()
+                    template_path = os.path.join(settings.BASE_DIR, "dashboard", "pdf_builder", "templates", "documents", "member_welcome_letter.pdf")
+                    layout = JOINING_LETTER_LAYOUT
+                    data = {
+                        "name": user.name,
+                        "address": f'{user.city}, {user.district}, {user.state}',
+                        "joining_date": user.date_joined.strftime("%d-%m-%Y"),
+                        "reg_no": f'R{user.user_id}',
+                    }
+                    pdf_buffer = generate_pdf(template_path, data, document_type=None, layout=layout)
+                    email_subject = "Welcome to RSS - Membership Confirmation"
+                    email_message = f"Dear {user.name},\n\nWelcome to the RSS family! Please find attached your membership welcome letter.\n\nBest regards,\nRSS Team"
+                    recipient_list = [user.email]
+                    send_async_email.delay(email_subject, email_message, recipient_list, pdf_data=pdf_buffer.getvalue(), pdf_filename="member_welcome_letter.pdf")
             payment.save()
             
             return Response({

@@ -38,6 +38,7 @@ class Volunteer(models.Model):
     can_view_member_data = models.BooleanField(default=False)
     can_view_volunteer_data = models.BooleanField(default=True)
     hindi_name = models.CharField(max_length=150, blank=True, null=True)
+    referred_by_volunteer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='volunteer_referrals')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -57,6 +58,7 @@ class Application(models.Model):
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     # affidavit = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
+    referred_by_volunteer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='referred_volunteers_applications')
     aadhar_card_front = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     aadhar_card_back = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
     image = models.ImageField(upload_to=volunteer_directory_path, blank=True, null=True)
