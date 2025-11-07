@@ -30,6 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    "72.60.223.136"
 ]
 
 
@@ -125,6 +126,7 @@ DEFAULT_CHARSET = 'utf-8'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "72.60.223.136"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
