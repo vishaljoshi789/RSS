@@ -33,8 +33,16 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     initialized: false,
   });
 
-  const sameSitePolicy = isProduction ? "Strict" : "Lax";
-  const secureAttribute = isProduction ? "; Secure" : "";
+  // In production on HTTP (e.g., bare IP without TLS), setting the Secure attribute
+  // prevents the browser from storing cookies at all. Detect protocol at runtime
+  // and only add `Secure` when actually using HTTPS.
+  const isHttps =
+    typeof window !== "undefined" && window.location.protocol === "https:";
+
+  // Prefer Lax to allow normal same-site navigations and most requests.
+  // If you deploy behind HTTPS and need cross-site usage, consider "None" with Secure.
+  const sameSitePolicy = "Lax";
+  const secureAttribute = isHttps ? "; Secure" : "";
 
   const setAuthCookie = useCallback(
     (name: string, value: string) => {
