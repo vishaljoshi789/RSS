@@ -2,10 +2,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from datetime import datetime
-import os
-from django.conf import settings
-from dashboard.pdf_builder.utils.builder import generate_pdf
-from dashboard.pdf_builder.utils.templates import JOINING_LETTER_LAYOUT
 from django.contrib.auth.hashers import make_password
 import uuid
 
@@ -17,7 +13,6 @@ from django.db.models import Count
 from dashboard.permissions import IsAdminOrIsStaff
 from dashboard.serializers import UserInfoSerializer
 from .serializers import UserJoinSerializer, UserMemberSerializer
-from .tasks import send_async_email
 
 def generate_user_id():
     return str(uuid.uuid4())[:8]
@@ -73,27 +68,12 @@ class UserMemberView(APIView):
         serializer = UserMemberSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            template_path = os.path.join(settings.BASE_DIR, "dashboard", "pdf_builder", "templates", "documents", "member_welcome_letter.pdf")
-            layout = JOINING_LETTER_LAYOUT
-            data = {
-                "name": user.name,
-                "address": f'{user.city}, {user.district}, {user.state}',
-                "joining_date": user.date_joined.strftime("%d-%m-%Y"),
-                "reg_no": f'R{user.user_id}',
-            }
-            pdf_buffer = generate_pdf(template_path, data, document_type=None, layout=layout)
-            email_subject = "Welcome to RSS - Membership Confirmation"
-            email_message = f"Dear {user.name},\n\nWelcome to the RSS family! Please find attached your membership welcome letter.\n\nBest regards,\nRSS Team"
-            recipient_list = [user.email]
-            if send_async_email.delay(email_subject, email_message, recipient_list, pdf_data=pdf_buffer.getvalue(), pdf_filename="member_welcome_letter.pdf"):
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response({"error": "Failed to send welcome email."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class UserListView(ListAPIView):
     permission_classes = [IsAdminOrIsStaff]
-    queryset = User.objects.annotate(referral_count=Count('referrals'))
+    queryset = User.objects.annotate(referral_count=Count('user_referrals'))
     serializer_class = UserInfoSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
     filterset_fields = ['is_verified', 'is_blocked', 'is_member_account', 'is_volunteer', 'is_business_account', 'is_staff_account', 'is_admin_account', 'user_id', 'id', 'email']

@@ -10,6 +10,7 @@ from dashboard.permissions import IsAdminOrIsStaff
 from .models import Volunteer, Wing, Level, Designation, Application
 from .serializers import VolunteerSerializer, WingSerializer, LevelSerializer, DesignationSerializer, ApplicationSerializer, ApplicationDetailSerializer
 from .filters import VolunteerFilter, LevelFilter, DesignationFilter
+from account.models import User
 
 class WingListCreateView(ListCreateAPIView):
     queryset = Wing.objects.all()
@@ -129,6 +130,13 @@ class AssignVolunteerFromApplicationView(RetrieveUpdateDestroyAPIView):
 
     def put(self, request, *args, **kwargs):
         application = self.get_object()
+        referred_by = application.referred_by_volunteer
+        user = User.objects.filter(user_id=referred_by).first() if referred_by else None
+        if not user:
+            return Response({'detail': 'Referring user does not exist.'}, status=400)
+        if not user.is_volunteer:
+            return Response({'detail': 'Referring user is not a volunteer.'}, status=400)
+        referred_by = user
         volunteer, created = Volunteer.objects.get_or_create(
             user=application.user,
             defaults={
@@ -141,6 +149,7 @@ class AssignVolunteerFromApplicationView(RetrieveUpdateDestroyAPIView):
                 'aadhar_card_back': application.aadhar_card_back,
                 'image': application.image,
                 'hindi_name': application.hindi_name,
+                'referred_by_volunteer': referred_by,
             }
         )
         if not created:

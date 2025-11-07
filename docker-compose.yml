@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   db:
     image: postgres:15-alpine
@@ -12,6 +14,13 @@ services:
     networks:
       - app_network
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis_broker
+    restart: always
+    networks:
+      - app_network
+
   backend:
     build: ./backend
     container_name: django_app
@@ -20,6 +29,7 @@ services:
       - ./backend/.env
     depends_on:
       - db
+      - redis
     volumes:
       - ./backend:/app
       - static_volume:/app/staticfiles
@@ -30,6 +40,37 @@ services:
       - "8000"
     ports:
       - "8000:8000"
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+
+  celery:
+    build: ./backend
+    container_name: celery_worker
+    restart: always
+    env_file:
+      - ./backend/.env
+    command: celery -A backend worker -l info
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./backend:/app
+    networks:
+      - app_network
+
+  celery-beat:
+    build: ./backend
+    container_name: celery_beat
+    restart: always
+    env_file:
+      - ./backend/.env
+    command: celery -A backend beat -l info
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./backend:/app
+    networks:
+      - app_network
 
   frontend:
     build: ./frontend
