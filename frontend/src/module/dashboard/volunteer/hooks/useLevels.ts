@@ -32,7 +32,8 @@ export const useLevels = (wingName?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [wingName, api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wingName]);
 
   const createLevel = useCallback(async (data: LevelFormData) => {
     try {
@@ -60,7 +61,8 @@ export const useLevels = (wingName?: string) => {
       console.error("Failed to create level:", errorResponse);
       throw err;
     }
-  }, [api, fetchLevels]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchLevels]);
 
   const updateLevel = useCallback(
     async (id: number, data: Partial<LevelFormData>) => {
@@ -93,7 +95,8 @@ export const useLevels = (wingName?: string) => {
         throw err;
       }
     },
-    [api, fetchLevels]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fetchLevels]
   );
 
   const deleteLevel = useCallback(async (id: number) => {
@@ -106,7 +109,8 @@ export const useLevels = (wingName?: string) => {
         console.error("Failed to delete level:", err);
       }
     }
-  }, [api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     fetchLevels();

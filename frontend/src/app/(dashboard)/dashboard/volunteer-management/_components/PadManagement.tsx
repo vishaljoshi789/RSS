@@ -35,6 +35,7 @@ import {
   useLevels,
   useDesignations,
 } from "@/module/dashboard/volunteer";
+import ErrorState from "@/components/status/ErrorState";
 import type {
   Designation,
   DesignationFormData,
@@ -42,14 +43,16 @@ import type {
 import { toast } from "sonner";
 
 const PadManagement = () => {
-  const { wings } = useWings();
-  const { levels } = useLevels();
+  const { wings, error: wingsError, refetch: refetchWings } = useWings();
+  const { levels, error: levelsError, refetch: refetchLevels } = useLevels();
   const {
     designations,
     loading,
+    error: designationsError,
     createDesignation,
     updateDesignation,
     deleteDesignation,
+    refetch: refetchDesignations,
   } = useDesignations();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -169,6 +172,28 @@ const PadManagement = () => {
   const filteredDesignations = (designations || []).filter((designation) =>
     designation.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const combinedError = wingsError || levelsError || designationsError;
+  if (combinedError) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pad (Designation) Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ErrorState
+            title="Error loading designations"
+            message={combinedError}
+            onRetry={() => {
+              refetchWings();
+              refetchLevels();
+              refetchDesignations();
+            }}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>

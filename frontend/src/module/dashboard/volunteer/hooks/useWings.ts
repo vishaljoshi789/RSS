@@ -23,16 +23,20 @@ export const useWings = () => {
         console.error("Failed to fetch wings:", err);
       }
       const errorResponse = err as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; detail?: string } };
         message?: string;
       };
       const errorMsg =
-        errorResponse.response?.data?.message || "Failed to fetch wings";
+        errorResponse.response?.data?.message ||
+        errorResponse.response?.data?.detail ||
+        errorResponse.message ||
+        "Failed to fetch wings";
       setError(errorMsg);
     } finally {
       setLoading(false);
     }
-  }, [api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const createWing = useCallback(async (data: WingFormData) => {
     try {
@@ -51,7 +55,8 @@ export const useWings = () => {
       console.error("Failed to create wing:", errorResponse);
       throw err;
     }
-  }, [api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateWing = useCallback(
     async (id: number, data: Partial<WingFormData>) => {
@@ -74,7 +79,8 @@ export const useWings = () => {
         throw err;
       }
     },
-    [api]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const deleteWing = useCallback(async (id: number) => {
@@ -93,7 +99,8 @@ export const useWings = () => {
       console.error("Failed to delete wing:", errorResponse);
       throw err;
     }
-  }, [api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     fetchWings();

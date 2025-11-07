@@ -31,12 +31,13 @@ import {
 import { Plus, Pencil, Trash2, Search, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useWings, useLevels } from "@/module/dashboard/volunteer";
+import ErrorState from "@/components/status/ErrorState";
 import type { Level, LevelFormData } from "@/module/dashboard/volunteer";
 import { toast } from "sonner";
 
 const LevelManagement = () => {
-  const { wings } = useWings();
-  const { levels, loading, createLevel, updateLevel, deleteLevel } =
+  const { wings, error: wingsError, refetch: refetchWings } = useWings();
+  const { levels, loading, error: levelsError, createLevel, updateLevel, deleteLevel, refetch: refetchLevels } =
     useLevels();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -132,6 +133,27 @@ const LevelManagement = () => {
       : level.name ?? "";
     return nameVal.toLowerCase().includes(searchTerm.toLowerCase());
   });
+
+  const combinedError = wingsError || levelsError;
+  if (combinedError) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Level Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ErrorState
+            title="Error loading levels"
+            message={combinedError}
+            onRetry={() => {
+              refetchWings();
+              refetchLevels();
+            }}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>

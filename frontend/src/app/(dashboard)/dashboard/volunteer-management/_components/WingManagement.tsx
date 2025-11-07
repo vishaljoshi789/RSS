@@ -24,10 +24,11 @@ import {
 } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Search, FolderOpen } from "lucide-react";
 import { useWings } from "@/module/dashboard/volunteer";
+import ErrorState from "@/components/status/ErrorState";
 import type { Wing, WingFormData } from "@/module/dashboard/volunteer";
 
 const WingManagement = () => {
-  const { wings, loading, createWing, updateWing, deleteWing } = useWings();
+  const { wings, loading, error, refetch, createWing, updateWing, deleteWing } = useWings();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -112,6 +113,21 @@ const WingManagement = () => {
   const filteredWings = (wings || []).filter((wing) =>
     wing.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Wing Management</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ErrorState title="Error loading wings" message={error} onRetry={refetch} />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>

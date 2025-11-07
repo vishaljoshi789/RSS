@@ -32,7 +32,8 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [levelName, wingName, api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [levelName, wingName]);
 
   const createDesignation = useCallback(async (data: DesignationFormData) => {
     try {
@@ -51,7 +52,8 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
       console.error("Failed to create designation:", errorResponse);
       throw err;
     }
-  }, [api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateDesignation = useCallback(
     async (id: number, data: Partial<DesignationFormData>) => {
@@ -76,7 +78,8 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
         throw err;
       }
     },
-    [api]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const deleteDesignation = useCallback(async (id: number) => {
@@ -97,7 +100,8 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
       console.error("Failed to delete designation:", errorResponse);
       throw err;
     }
-  }, [api]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     fetchDesignations();

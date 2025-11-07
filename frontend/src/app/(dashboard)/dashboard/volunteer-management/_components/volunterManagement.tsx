@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, X, Trash2, Check } from "lucide-react";
+import ErrorState from "@/components/status/ErrorState";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { EditUserDetailModal } from "@/module/dashboard/users/components/edit-user-detail-model";
@@ -245,9 +246,12 @@ export default function VolunteerTable() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-destructive">{error}</div>
-      </div>
+      <ErrorState
+        title="Error loading volunteers"
+        message={error}
+        onRetry={refetch}
+        className="p-8"
+      />
     );
   }
 
