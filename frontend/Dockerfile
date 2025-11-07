@@ -6,9 +6,16 @@ WORKDIR /app
 # Copy package files and install dependencies
 # Note: Use paths relative to the build context (which is ./frontend in docker-compose.yml)
 COPY package*.json ./
-RUN npm install
+
+# Clean install - no cache
+RUN npm ci
+
 # Copy all source code (assuming source is in the same directory as Dockerfile)
 COPY . .
+
+# Clean .next and node_modules cache before building
+RUN rm -rf .next node_modules/.cache
+
 # Run the Next.js build command - this creates the .next folder
 RUN npm run build
 
