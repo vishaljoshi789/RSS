@@ -40,7 +40,6 @@ const LoginForm = () => {
     setSubmitMessage('');
     
     try {
-      console.log('Login attempt:', { email: data.emailOrPhone });
       
       const result = await login(data.emailOrPhone, data.password);
       

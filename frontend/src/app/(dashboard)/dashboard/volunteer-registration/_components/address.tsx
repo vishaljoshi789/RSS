@@ -35,6 +35,7 @@ const AddressForm = ({ data, setData, onNext, onBack }: AddressFormProps) => {
       'country',
       'postal_code',
       'mandal',
+      'hindi_name',
     ];
 
     fields.forEach((key) => {
@@ -66,11 +67,34 @@ const AddressForm = ({ data, setData, onNext, onBack }: AddressFormProps) => {
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleHindiNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const hindiRegex = /^[\u0900-\u097F\s\u0964\u0965]*$/;
+    
+    if (hindiRegex.test(value) || value === '') {
+      setData((prev) => ({ ...prev, hindi_name: value }));
+    } else {
+      toast.error('कृपया केवल हिंदी में नाम लिखें (Please enter name in Hindi only)');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!data.street || !data.city || !data.postal_code) {
       toast.error('Please fill in all required fields.');
+      return;
+    }
+
+    if (!data.hindi_name || data.hindi_name.trim() === '') {
+      toast.error('कृपया हिंदी में नाम दर्ज करें (Please enter your name in Hindi)');
+      return;
+    }
+
+    // Validate that hindi_name contains only Hindi characters
+    const hindiRegex = /^[\u0900-\u097F\s\u0964\u0965]+$/;
+    if (!hindiRegex.test(data.hindi_name)) {
+      toast.error('कृपया केवल हिंदी में नाम लिखें (Please enter name in Hindi only)');
       return;
     }
 
@@ -121,6 +145,23 @@ const AddressForm = ({ data, setData, onNext, onBack }: AddressFormProps) => {
       onSubmit={handleSubmit}
       className="space-y-5 max-w-lg mx-auto p-6 bg-white dark:bg-neutral-900 rounded-2xl shadow-sm"
     >
+      <div>
+        <Label htmlFor="hindi_name" className="mb-2">
+          नाम (हिंदी में) / Name in Hindi *
+        </Label>
+        <Input
+          id="hindi_name"
+          name="hindi_name"
+          value={data.hindi_name || ''}
+          onChange={handleHindiNameChange}
+          placeholder="अपना नाम हिंदी में लिखें"
+          required
+          className="font-hindi"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          कृपया केवल हिंदी (देवनागरी) में लिखें
+        </p>
+      </div>
       {renderInput('Street', 'street', true, 'House No., Street name')}
       <div className="grid grid-cols-2 gap-4">
         {renderInput('Sub-District', 'sub_district', false, 'Sub-district or Block')}

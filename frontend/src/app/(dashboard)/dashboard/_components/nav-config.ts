@@ -112,13 +112,6 @@ export const DASHBOARD_NAV_ITEMS: NavItemConfig[] = [
     roles: ["staff", "admin"],
   },
   {
-    title: "ID Card",
-    url: "/dashboard/id-card-management",
-    icon: IdCard,
-    description: "Collect your ID cards",
-    roles: ["member", "volunteer"],
-  },
-  {
     title: "Referral",
     url: "/dashboard/referrals",
     icon: UserPlus,

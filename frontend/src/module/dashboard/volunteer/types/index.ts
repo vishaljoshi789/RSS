@@ -123,7 +123,6 @@ export interface ApplicationFormData {
   level_name?: string | null;
   designation: number | null;
   phone_number: string | null;
-  affidavit?: File | null;
   aadhar_card_front?: File | null;
   aadhar_card_back?: File | null;
   image?: File | null;
@@ -138,6 +137,7 @@ export interface AddressFormData {
   country?: string;
   postal_code?: string;
   mandal?: string;
+  hindi_name?: string;
 }
 
 export interface ApplicationFilters {

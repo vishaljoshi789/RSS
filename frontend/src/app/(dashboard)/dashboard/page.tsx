@@ -23,17 +23,12 @@ export default function Page() {
     const data = async () => {
       try {
         const api = await axios.get("/dashboard/referrals");
-        console.log("Referral data:", api);
       } catch (error) {
         console.error("Error fetching referral data:", error);
       }
     };
     data();
   }, []);
-
-  useEffect(() => {
-    console.log("Current user data:", user);
-  }, [user]);
 
   return (
     <div className="space-y-6">
