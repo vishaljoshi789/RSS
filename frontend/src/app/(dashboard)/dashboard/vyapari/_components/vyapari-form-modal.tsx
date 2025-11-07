@@ -7,7 +7,7 @@ import {
   Mail,
   Users,
   FileText,
-  Image,
+  ImageIcon,
   Globe,
   MapPinned,
   Settings,
@@ -48,6 +48,7 @@ import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import { cn } from "@/lib/utils";
 import type { Vyapari, Category, SubCategory } from "../types";
+import Image from "next/image";
 
 interface VyapariFormModalProps {
   isOpen: boolean;
@@ -214,7 +215,10 @@ export default function VyapariFormModal({
         setSubcategories(
           subcategoriesRes.data.results || subcategoriesRes.data || []
         );
-      } catch (error: any) {
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Fetch categories error:", error);
+        }
         toast.error("Failed to fetch categories");
       }
     };
@@ -356,8 +360,10 @@ export default function VyapariFormModal({
           "Email not found. Please ensure you have registered as a user first."
         );
       }
-    } catch (error: any) {
-      console.error("Error checking email:", error);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error checking email:", error);
+      }
       toast.error("Failed to verify email. Please try again.");
       setEmailVerified(false);
     } finally {
@@ -423,8 +429,6 @@ export default function VyapariFormModal({
       const hasFiles =
         values.logo instanceof File || values.cover_image instanceof File;
 
-      let response;
-
       if (hasFiles) {
         const formData = new FormData();
 
@@ -483,11 +487,11 @@ export default function VyapariFormModal({
           );
 
         if (mode === "create") {
-          response = await axios.post("/vyapari/vyapari/", formData, {
+          await axios.post("/vyapari/vyapari/", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
         } else {
-          response = await axios.put(
+          await axios.put(
             `/vyapari/vyapari/${vyapari?.id}/`,
             formData,
             {
@@ -496,7 +500,7 @@ export default function VyapariFormModal({
           );
         }
       } else {
-        const cleanData: any = {
+        const cleanData: Record<string, unknown> = {
           name: values.name,
           phone: values.phone,
           short_description: values.short_description || null,
@@ -519,12 +523,13 @@ export default function VyapariFormModal({
           values.address &&
           Object.values(values.address).some((val) => val && val.trim() !== "")
         ) {
-          cleanData.address = {};
+          const addressData: Record<string, string | null> = {};
           Object.keys(values.address).forEach((key) => {
             const value = values.address![key as keyof typeof values.address];
-            cleanData.address[key] =
+            addressData[key] =
               value && value.trim() !== "" ? value : null;
           });
+          cleanData.address = addressData;
         } else {
           cleanData.address = {};
         }
@@ -542,9 +547,9 @@ export default function VyapariFormModal({
         }
 
         if (mode === "create") {
-          response = await axios.post("/vyapari/vyapari/", cleanData);
+          await axios.post("/vyapari/vyapari/", cleanData);
         } else {
-          response = await axios.put(
+          await axios.put(
             `/vyapari/vyapari/${vyapari?.id}/`,
             cleanData
           );
@@ -559,12 +564,14 @@ export default function VyapariFormModal({
 
       onSuccess();
       onClose();
-    } catch (error: any) {
-      if (error.response?.data) {
-        const errors = error.response.data;
+    } catch (error) {
+      const errorResponse = error as { response?: { data?: Record<string, unknown> } };
+      if (errorResponse.response?.data) {
+        const errors = errorResponse.response.data as Record<string, unknown>;
 
         Object.keys(errors).forEach((field) => {
-          if (Array.isArray(errors[field]) && errors[field][0]) {
+          const fieldErrors = errors[field];
+          if (Array.isArray(fieldErrors) && fieldErrors[0]) {
             let formFieldName = field;
 
             if (field.includes(".")) {
@@ -572,26 +579,30 @@ export default function VyapariFormModal({
             }
 
             try {
-              form.setError(formFieldName as any, {
+              form.setError(formFieldName as Parameters<typeof form.setError>[0], {
                 type: "server",
-                message: errors[field][0],
+                message: String(fieldErrors[0]),
               });
-            } catch (e) {
-              toast.error(`${field}: ${errors[field][0]}`);
+            } catch (err) {
+              if (err instanceof Error) {
+                console.error("Error setting field error:", err);
+              }
+              toast.error(`${field}: ${fieldErrors[0]}`);
             }
           }
         });
 
+        const errorsWithArrays = errors as Record<string, string[] | string | undefined>;
         const primaryError =
-          errors.name?.[0] ||
-          errors.phone?.[0] ||
-          errors.email?.[0] ||
-          errors.logo?.[0] ||
-          errors.non_field_errors?.[0] ||
-          errors.detail ||
+          errorsWithArrays.name?.[0] ||
+          errorsWithArrays.phone?.[0] ||
+          errorsWithArrays.email?.[0] ||
+          errorsWithArrays.logo?.[0] ||
+          errorsWithArrays.non_field_errors?.[0] ||
+          errorsWithArrays.detail ||
           `Failed to ${mode} business`;
 
-        toast.error(primaryError);
+        toast.error(String(primaryError));
       } else {
         toast.error(`Failed to ${mode} business. Please try again.`);
       }
@@ -905,7 +916,7 @@ export default function VyapariFormModal({
             <div className="space-y-4">
               <div className="border-b pb-2">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <Image className="h-5 w-5" />
+                  <ImageIcon className="h-5 w-5" />
                   Media & Branding
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
@@ -917,7 +928,7 @@ export default function VyapariFormModal({
                 <FormField
                   control={form.control}
                   name="logo"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Logo <span className="text-red-500">*</span></FormLabel>
                       <FormControl>
@@ -929,8 +940,10 @@ export default function VyapariFormModal({
                           />
                           {logoPreview && (
                             <div className="mt-2">
-                              <img
+                              <Image
                                 src={logoPreview}
+                                height={100}
+                                width={100}
                                 alt="Logo preview"
                                 className="h-24 w-24 object-cover rounded border"
                               />
@@ -946,7 +959,7 @@ export default function VyapariFormModal({
                 <FormField
                   control={form.control}
                   name="cover_image"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Cover Image <span className="text-red-500">*</span></FormLabel>
                       <FormControl>
@@ -958,10 +971,12 @@ export default function VyapariFormModal({
                           />
                           {coverImagePreview && (
                             <div className="mt-2">
-                              <img
+                              <Image
                                 src={coverImagePreview}
                                 alt="Cover image preview"
                                 className="h-32 w-full object-cover rounded border"
+                                height={100}
+                                width={100}
                               />
                             </div>
                           )}

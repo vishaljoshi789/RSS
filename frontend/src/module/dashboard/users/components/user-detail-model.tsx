@@ -24,6 +24,7 @@ import {
   XCircle,
   CreditCard,
   IdCard,
+  type LucideIcon,
 } from "lucide-react";
 
 interface UserDetailModalProps {
@@ -72,7 +73,7 @@ export function UserDetailModal({
     label,
     value,
   }: {
-    icon: any;
+    icon: LucideIcon;
     label: string;
     value: string | undefined;
   }) => (

@@ -10,10 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   CreditCard,
-  Building2,
   Wallet,
   Calendar,
   DollarSign,
@@ -26,7 +25,6 @@ import {
   XCircle,
   Clock,
   Receipt,
-  Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import { Payment } from "@/module/dashboard/Payments/hooks";

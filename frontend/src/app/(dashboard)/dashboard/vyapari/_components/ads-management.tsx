@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,10 +23,37 @@ const AdsManagement = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAd, setEditingAd] = useState<Advertisement | null>(null);
 
+  const fetchAds = useCallback(async (search?: string) => {
+    setLoading(true);
+    try {
+      const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
+      const response = await axios.get(`/vyapari/advertisement/${searchParam}`);
+      setAds(response.data.results || response.data || []);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error fetching ads:", error);
+      }
+      toast.error("Failed to fetch advertisements");
+    } finally {
+      setLoading(false);
+    }
+  }, [axios]);
+
+  const fetchVyaparis = useCallback(async () => {
+    try {
+      const response = await axios.get("/vyapari/vyapari/");
+      setVyaparis(response.data.results || response.data || []);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error fetching vyaparis:", error);
+      }
+    }
+  }, [axios]);
+
   useEffect(() => {
     fetchAds();
     fetchVyaparis();
-  }, []);
+  }, [fetchAds, fetchVyaparis]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -34,30 +61,7 @@ const AdsManagement = () => {
     }, 400);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
-
-  const fetchAds = async (search?: string) => {
-    setLoading(true);
-    try {
-      const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
-      const response = await axios.get(`/vyapari/advertisement/${searchParam}`);
-      setAds(response.data.results || response.data || []);
-    } catch (error) {
-      console.error("Error fetching ads:", error);
-      toast.error("Failed to fetch advertisements");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchVyaparis = async () => {
-    try {
-      const response = await axios.get("/vyapari/vyapari/");
-      setVyaparis(response.data.results || response.data || []);
-    } catch (error) {
-      console.error("Error fetching vyaparis:", error);
-    }
-  };
+  }, [searchQuery, fetchAds]);
 
   const handleOpenDialog = (ad?: Advertisement) => {
     setEditingAd(ad || null);
@@ -84,9 +88,12 @@ const AdsManagement = () => {
       }
       fetchAds();
       handleCloseDialog();
-    } catch (error: any) {
-      console.error("Error saving ad:", error);
-      toast.error(error.response?.data?.message || "Failed to save advertisement");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error saving ad:", error);
+      }
+      const errorResponse = error as { response?: { data?: { message?: string } } };
+      toast.error(errorResponse.response?.data?.message || "Failed to save advertisement");
     }
   };
 
@@ -98,7 +105,9 @@ const AdsManagement = () => {
       toast.success("Advertisement deleted successfully");
       fetchAds();
     } catch (error) {
-      console.error("Error deleting ad:", error);
+      if (error instanceof Error) {
+        console.error("Error deleting ad:", error);
+      }
       toast.error("Failed to delete advertisement");
     }
   };
@@ -111,7 +120,9 @@ const AdsManagement = () => {
       toast.success(`Advertisement ${!ad.is_active ? "activated" : "deactivated"}`);
       fetchAds();
     } catch (error) {
-      console.error("Error toggling ad status:", error);
+      if (error instanceof Error) {
+        console.error("Error toggling ad status:", error);
+      }
       toast.error("Failed to update advertisement status");
     }
   };

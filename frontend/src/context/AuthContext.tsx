@@ -75,8 +75,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }));
   }, []);
 
-  const setUserData = useCallback((userData: any) => {
-    const user = userData.user_info || userData;
+  const setUserData = useCallback((userData: User | { user_info: User }) => {
+    const user: User = 'user_info' in userData ? userData.user_info : userData;
 
     localStorage.setItem("user_data", JSON.stringify({ user_info: user }));
 
@@ -140,6 +140,42 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     []
   );
 
+  const refreshToken = useCallback(async (): Promise<boolean> => {
+    try {
+      const refreshTokenValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("refresh_token="))
+        ?.split("=")[1];
+
+      if (!refreshTokenValue) {
+        console.log("No refresh token found");
+        return false;
+      }
+
+      const response = await apiCall("/account/token/refresh/", {
+        method: "POST",
+        body: JSON.stringify({ refresh: refreshTokenValue }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAuthCookie("access_token", data.access);
+
+        console.log("Token refreshed successfully");
+        return true;
+      } else {
+        clearAuthCookie("access_token");
+        clearAuthCookie("refresh_token");
+        return false;
+      }
+    } catch (error) {
+      if(error instanceof Error) {
+        console.error("Refresh token error:", error);
+      }
+      return false;
+    }
+  }, [apiCall, clearAuthCookie, setAuthCookie]);
+
   const checkAuth = useCallback(async (): Promise<void> => {
     try {
       setAuthState((prev) => ({ ...prev, loading: true }));
@@ -201,8 +237,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           try {
             const parsedData = JSON.parse(storedUserData);
             userData = parsedData.user_info || parsedData;
-          } catch (error) {
-            console.error("Error parsing stored user data:", error);
+          } catch (parseErr) {
+            if (parseErr instanceof Error) {
+              console.error("Error parsing stored user data:", parseErr);
+            }
             localStorage.removeItem("user_data");
             userData = createDefaultUser();
           }
@@ -234,7 +272,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           }));
         }
       }
-    } catch (error) {
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Auth check error:", err);
+      }
       setAuthState((prev) => ({
         ...prev,
         user: null,
@@ -244,7 +285,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         initialized: true,
       }));
     }
-  }, [apiCall, createDefaultUser]);
+  }, [apiCall, createDefaultUser, refreshToken]);
 
   const login = useCallback(
     async (email: string, password: string): Promise<LoginResponse> => {
@@ -272,8 +313,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             } else {
               await checkAuth();
             }
-          } catch (dashboardError) {
-            console.error("Error fetching dashboard data:", dashboardError);
+          } catch (dashboardErr) {
+            if (dashboardErr instanceof Error) {
+              console.error("Error fetching dashboard data:", dashboardErr);
+            }
             await checkAuth();
           }
 
@@ -306,7 +349,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             message: errorMessage,
           };
         }
-      } catch (error) {
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Login error:", err);
+        }
         const errorMessage = "Network error. Please check your connection.";
         setAuthState((prev) => ({
           ...prev,
@@ -355,7 +401,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             message: errorMessage,
           };
         }
-      } catch (error) {
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Registration error:", err);
+        }
         const errorMessage = "Network error. Please try again.";
         setAuthState((prev) => ({
           ...prev,
@@ -370,40 +419,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     },
     [apiCall]
   );
-
-  const refreshToken = useCallback(async (): Promise<boolean> => {
-    try {
-      const refreshTokenValue = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("refresh_token="))
-        ?.split("=")[1];
-
-      if (!refreshTokenValue) {
-        console.log("No refresh token found");
-        return false;
-      }
-
-      const response = await apiCall("/account/token/refresh/", {
-        method: "POST",
-        body: JSON.stringify({ refresh: refreshTokenValue }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAuthCookie("access_token", data.access);
-
-        console.log("Token refreshed successfully");
-        return true;
-      } else {
-        clearAuthCookie("access_token");
-        clearAuthCookie("refresh_token");
-        return false;
-      }
-    } catch (error) {
-      console.error("Refresh token error:", error);
-      return false;
-    }
-  }, [apiCall, clearAuthCookie, setAuthCookie]);
 
   const logout = useCallback(() => {
     // apiCall("/account/logout/", { method: "POST" }).catch(() => {});
@@ -425,7 +440,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     });
 
     router.push("/auth/login");
-  }, [apiCall, router, clearAuthCookie]);
+  }, [router, clearAuthCookie]);
 
   const isAdmin = useCallback((): boolean => {
     return (
@@ -485,8 +500,10 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         });
 
         return response.ok;
-      } catch (error) {
-        console.error("Token verification error:", error);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Token verification error:", err);
+        }
         return false;
       }
     },

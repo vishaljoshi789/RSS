@@ -1,13 +1,11 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  Calendar,
   CreditCard,
   Home,
   Users,
   Store,
   MessageSquareWarning,
   UsersRound,
-  IdCard,
   UserPlus,
 } from "lucide-react";
 

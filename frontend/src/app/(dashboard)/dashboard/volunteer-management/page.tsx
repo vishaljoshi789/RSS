@@ -8,7 +8,6 @@ import WingManagement from "./_components/WingManagement";
 import LevelManagement from "./_components/LevelManagement";
 import PadManagement from "./_components/PadManagement";
 // import VolunteerAssignment from "./_components/VolunteerAssignment";
-import HierarchyTree from "./_components/HierarchyTree";
 import VolunteerAssignment from "./_components/VolunteerAssignment";
 import VolunteerTable from "./_components/volunterManagement";
 import { RoleGuard } from "@/components/auth/RoleGuard";
@@ -31,10 +30,6 @@ const VolunteerManagement = () => {
 
       <Tabs defaultValue="wings" className="space-y-4">
         <TabsList className="grid w-full grid-cols-6">
-          {/* <TabsTrigger value="hierarchy" className="gap-2">
-            <Users className="h-4 w-4" />
-            Hierarchy View
-          </TabsTrigger> */}
           <TabsTrigger value="wings" className="gap-2">
             <Briefcase className="h-4 w-4" />
             Wings
@@ -57,9 +52,6 @@ const VolunteerManagement = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="hierarchy" className="space-y-4">
-          <HierarchyTree />
-        </TabsContent>
 
         <TabsContent value="wings" className="space-y-4">
           <WingManagement />

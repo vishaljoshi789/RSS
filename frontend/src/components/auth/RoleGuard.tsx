@@ -100,7 +100,7 @@ export function RoleGuard({
               Access Denied
             </h2>
             <p className="mt-2 text-sm text-red-700 dark:text-red-300">
-              You don't have permission to access this page. Please contact your administrator if you believe this is an error.
+              You don&apos;t have permission to access this page. Please contact your administrator if you believe this is an error.
             </p>
             <button
               onClick={() => router.push(fallbackPath)}

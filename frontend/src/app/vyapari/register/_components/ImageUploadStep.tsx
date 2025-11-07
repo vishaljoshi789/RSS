@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import Image from "next/image";
 
 interface ImageUploadStepProps {
   logoFile: File | null;
@@ -62,8 +63,10 @@ export function ImageUploadStep({
               </div>
             ) : (
               <div className="relative">
-                <img
+                <Image
                   src={logoPreview}
+                  height={100}
+                  width={100}
                   alt="Logo preview"
                   className="mx-auto h-32 w-32 rounded-lg object-cover"
                 />
@@ -112,8 +115,10 @@ export function ImageUploadStep({
               </div>
             ) : (
               <div className="relative">
-                <img
+                <Image
                   src={coverImagePreview}
+                  height={100}
+                  width={100}
                   alt="Cover preview"
                   className="mx-auto h-48 w-full max-w-2xl rounded-lg object-cover"
                 />
@@ -139,7 +144,7 @@ export function ImageUploadStep({
         <CheckCircle className="h-4 w-4" />
         <AlertDescription>
           Your business will be reviewed by our team before appearing in the
-          directory. You will be notified once it's approved.
+          directory. You will be notified once it&apos;s approved.
         </AlertDescription>
       </Alert>
     </div>

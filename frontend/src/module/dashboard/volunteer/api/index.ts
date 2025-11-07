@@ -9,7 +9,6 @@ import {
   LevelFormData,
   DesignationFormData,
   VolunteerFormData,
-  VolunteerFilters,
   User,
   UserListResponse,
   Application,
@@ -52,7 +51,7 @@ export class VolunteerAPI {
   }
 
   async getLevels(wingName?: string): Promise<Level[]> {
-    const params: any = {};
+    const params: Record<string, string> = {};
     if (wingName !== undefined && wingName !== null) params.wing = wingName;
     const response = await this.axios.get("/volunteer/levels/", { params });
     const payload = response.data;
@@ -68,13 +67,13 @@ export class VolunteerAPI {
   }
 
   async createLevel(data: LevelFormData): Promise<Level> {
-    const payload: any = {
+    const payload: Record<string, unknown> = {
       wing: data.wing,
       level: Array.isArray(data.name)
-        ? data.name.map((n: any) =>
-            typeof n === "string" ? n : n?.en ?? String(n)
+        ? data.name.map((n: string | Record<string, unknown>) =>
+            typeof n === "string" ? n : (n as Record<string, unknown>)?.en ?? String(n)
           )
-        : [String(data.name as any)],
+        : [String(data.name as string)],
     };
 
     const response = await this.axios.post<Level>(
@@ -85,15 +84,15 @@ export class VolunteerAPI {
   }
 
   async updateLevel(id: number, data: Partial<LevelFormData>): Promise<Level> {
-    let payload: any = { ...data };
+    let payload: Record<string, unknown> = { ...data };
     if (data.name) {
       payload = {
         ...payload,
         level: Array.isArray(data.name)
-          ? data.name.map((n: any) =>
-              typeof n === "string" ? n : n?.en ?? String(n)
+          ? data.name.map((n: string | Record<string, unknown>) =>
+              typeof n === "string" ? n : (n as Record<string, unknown>)?.en ?? String(n)
             )
-          : [String(data.name as any)],
+          : [String(data.name as string)],
       };
       delete payload.name;
     }
@@ -113,7 +112,7 @@ export class VolunteerAPI {
     levelName?: string,
     wingName?: string
   ): Promise<Designation[]> {
-    const params: any = {};
+    const params: Record<string, string> = {};
     if (levelName !== undefined && levelName !== null) params.level = levelName;
     if (wingName !== undefined && wingName !== null) params.wing = wingName;
     const response = await this.axios.get("/volunteer/designations/", {
@@ -251,9 +250,6 @@ export class VolunteerAPI {
     }
     formData.append("status", "pending");
 
-    if (data.affidavit) {
-      formData.append("affidavit", data.affidavit);
-    }
     if (data.aadhar_card_front) {
       formData.append("aadhar_card_front", data.aadhar_card_front);
     }
@@ -288,7 +284,6 @@ export class VolunteerAPI {
       formData.append("designation", data.designation.toString());
     if (data.status) formData.append("status", data.status);
     if (data.remarks) formData.append("remarks", data.remarks);
-    if (data.affidavit) formData.append("affidavit", data.affidavit);
 
     const response = await this.axios.patch<Application>(
       `/volunteer/applications/${id}/`,

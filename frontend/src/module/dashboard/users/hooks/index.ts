@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { User } from "@/types/auth.types";
 import useAxios from "@/hooks/use-axios";
 
@@ -83,15 +83,24 @@ export function useUsers(page: number = 1, page_size: number = 30) {
         console.warn("Unexpected API response format:", userData);
         setUsers([]);
       }
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || "Failed to fetch users";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching users:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message ||
+        errorResponse.message ||
+        "Failed to fetch users";
       setError(errorMessage);
-      console.error("Error fetching users:", err);
       setUsers([]); 
     } finally {
       setLoading(false);
     }
-  }, [page, page_size]);
+  }, [page, page_size, axios]);
 
 
   const updateUser = async (userId: number, data: Partial<User>) => {
@@ -102,9 +111,18 @@ export function useUsers(page: number = 1, page_size: number = 30) {
         prevUsers.map((user) => user.id === userId ? { ...user, ...response.data } : user)
       );
       return { success: true, message: "User updated successfully", data: response.data };
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || "Failed to update user";
-      console.error("Error updating user:", err);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error updating user:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message ||
+        errorResponse.message ||
+        "Failed to update user";
       return { success: false, error: errorMessage };
     }
   };
@@ -157,10 +175,19 @@ export function useUsers(page: number = 1, page_size: number = 30) {
       }
       
       return { success: true, message: "Search completed successfully" };
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || "Failed to search users";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error searching users:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message ||
+        errorResponse.message ||
+        "Failed to search users";
       setError(errorMessage);
-      console.error("Error searching users:", err);
       setUsers([]);
       return { success: false, error: errorMessage };
     } finally {
@@ -200,15 +227,24 @@ export function useUserById(userId: number) {
       setError(null);
       const response = await axios.get(`/account/detail/${userId}/`);
       setUser(response.data);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || "Failed to fetch user";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching user:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message ||
+        errorResponse.message ||
+        "Failed to fetch user";
       setError(errorMessage);
-      console.error("Error fetching user:", err);
       setUser(null);
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, axios]);
 
   useEffect(() => {
     fetchUser();
@@ -233,18 +269,28 @@ export function useUserStats() {
       setLoading(true);
       const response = await axios.get(`/dashboard/user-count/`);
       setStats(response.data);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || "Failed to fetch user stats";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching user stats:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message ||
+        errorResponse.message ||
+        "Failed to fetch user stats";
       console.error("Error fetching user stats:", errorMessage);
       setStats(null);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [axios]);
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
 
   return {
     stats,

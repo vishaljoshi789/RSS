@@ -10,7 +10,7 @@ export interface DonationFormData {
 
 export interface ManualPaymentFormData extends DonationFormData {
   method: 'CASH' | 'CHEQUE' | 'BANK_TRANSFER' | 'UPI';
-  payment_details?: Record<string, any>;
+  payment_details?: Record<string, unknown>;
 }
 
 
@@ -81,7 +81,7 @@ export interface RazorpayOptions {
     email?: string;
     contact?: string;
   };
-  notes?: Record<string, any>;
+  notes?: Record<string, unknown>;
   theme?: {
     color?: string;
   };
@@ -228,7 +228,7 @@ export interface DonationConfig {
 }
 
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;

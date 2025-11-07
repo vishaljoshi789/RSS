@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
-  Building2,
   Layers,
   Search,
   ArrowRight,
@@ -35,23 +34,26 @@ export default function CategoriesPage() {
     return buildMediaUrl(imagePath) ?? null;
   };
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await axios.get("/vyapari/category/");
       setCategories(response.data.results || response.data || []);
-    } catch (err: any) {
-      console.error("Error fetching categories:", err);
-      setError(err.response?.data?.message || "Failed to load categories");
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching categories:", err);
+      }
+      const errorResponse = err as { response?: { data?: { message?: string } } };
+      setError(errorResponse.response?.data?.message || "Failed to load categories");
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   // Filter categories by search term
   const filteredCategories = categories.filter((category) =>

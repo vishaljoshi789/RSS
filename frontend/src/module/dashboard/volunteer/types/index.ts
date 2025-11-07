@@ -123,6 +123,7 @@ export interface ApplicationFormData {
   level_name?: string | null;
   designation: number | null;
   phone_number: string | null;
+  referred_by_volunteer?: string | null;
   aadhar_card_front?: File | null;
   aadhar_card_back?: File | null;
   image?: File | null;

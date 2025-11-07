@@ -4,7 +4,6 @@ import Image from "next/image";
 import { aboutData } from "./AboutInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const About = () => {
@@ -80,10 +79,10 @@ const About = () => {
           <div className="absolute bottom-0 right-0 w-40 h-40 bg-orange-400 rounded-full opacity-10 translate-x-20 translate-y-20"></div>
 
           <div className="absolute top-4 left-6 lg:left-12 text-6xl text-orange-300 opacity-50 font-serif leading-none">
-            "
+            &quot;
           </div>
           <div className="absolute bottom-4 right-6 lg:right-12 text-6xl text-orange-300 opacity-50 font-serif leading-none">
-            "
+            &quot;
           </div>
 
           <blockquote className="relative z-10 text-lg lg:text-2xl font-bold text-primary leading-relaxed text-center max-w-4xl mx-auto px-8 lg:px-16">

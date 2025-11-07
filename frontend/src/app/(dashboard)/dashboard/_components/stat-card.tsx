@@ -13,7 +13,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -107,6 +106,9 @@ const StatCard: React.FC<StatCardProps> = ({
       toast.success("Referral link copied to clipboard");
       setTimeout(() => setCopyState("idle"), 2000);
     } catch (copyError) {
+      if (copyError instanceof Error) {
+        console.error("Copy error:", copyError);
+      }
       setCopyState("error");
       toast.error("Unable to copy referral link");
       setTimeout(() => setCopyState("idle"), 2000);

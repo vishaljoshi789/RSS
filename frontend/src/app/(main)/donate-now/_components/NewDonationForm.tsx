@@ -51,7 +51,6 @@ const impactAmounts = [
 const NewDonationForm = () => {
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [showSecurityInfo, setShowSecurityInfo] = useState(false);
   const [formData, setFormData] = useState<DonationFormData>({
     name: "",
     email: "",
@@ -228,8 +227,10 @@ const NewDonationForm = () => {
         amount: formData.amount * 100
       });
       toast.dismiss(toastId);
-    } catch (error: any) {
-      console.error("Payment submission error:", error);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Payment submission error:", error);
+      }
       toast.error("Failed to initiate payment. Please try again.");
     }
   };
@@ -250,7 +251,7 @@ const NewDonationForm = () => {
     }
   };
 
-  const handleInputChange = (field: keyof DonationFormData, value: any) => {
+  const handleInputChange = (field: keyof DonationFormData, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     if (errors[field]) {
@@ -271,7 +272,6 @@ const NewDonationForm = () => {
     setErrors({});
     setIsCustomAmount(false);
     setSelectedAmount(null);
-    setShowSecurityInfo(false);
   };
 
   if (success) {

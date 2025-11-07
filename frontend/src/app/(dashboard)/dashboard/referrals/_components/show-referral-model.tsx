@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +15,13 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Users, User, AlertCircle } from "lucide-react";
 import useAxios from "@/hooks/use-axios";
 import { ReferralUser, ShowReferralModalProps } from "../referal";
+import { AxiosError } from "axios";
 
-
+interface ApiErrorResponse {
+  message?: string;
+  error?: string;
+  detail?: string;
+}
 
 const ShowReferralModal: React.FC<ShowReferralModalProps> = ({
   isOpen,
@@ -30,13 +35,7 @@ const ShowReferralModal: React.FC<ShowReferralModalProps> = ({
   const [referrals, setReferrals] = useState<ReferralUser[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isOpen && userId) {
-      fetchReferrals();
-    }
-  }, [isOpen, userId]);
-
-  const fetchReferrals = async () => {
+  const fetchReferrals = useCallback(async () => {
     setLoading(true);
     setError(null);
     setReferrals([]);
@@ -54,17 +53,24 @@ const ShowReferralModal: React.FC<ShowReferralModalProps> = ({
         : [];
 
       setReferrals(referralsList);
-    } catch (err: any) {
+    } catch (err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
       console.error("Error fetching referrals:", err);
       setError(
-        err.response?.data?.message ||
-          err.response?.data?.error ||
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
           "रेफरल डेटा लोड करने में त्रुटि"
       );
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios, userId]);
+
+  useEffect(() => {
+    if (isOpen && userId) {
+      fetchReferrals();
+    }
+  }, [isOpen, userId, fetchReferrals]);
 
   const getInitials = (name?: string) => {
     if (!name) return "??";

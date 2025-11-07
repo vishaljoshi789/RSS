@@ -54,18 +54,21 @@ const LoginForm = () => {
         toast.error(result.message || 'लॉगिन असफल');
       }
       
-    } catch (error: any) {
-      console.error('Login error:', error);
-      
-      let errorMessage = 'लॉगिन में त्रुटि हुई। कृपया अपने विवरण जांचें और पुनः प्रयास करें।';
-      
-      if (error?.message) {
-        errorMessage = error.message;
+    } catch (error ) {
+      if(error instanceof Error) {
+
+        console.error('Login error:', error);
+        
+        let errorMessage = 'लॉगिन में त्रुटि हुई। कृपया अपने विवरण जांचें और पुनः प्रयास करें।';
+        
+        if (error?.message) {
+          errorMessage = error.message;
+        }
+        
+        setSubmitStatus('error');
+        setSubmitMessage(errorMessage);
+        toast.error(errorMessage);
       }
-      
-      setSubmitStatus('error');
-      setSubmitMessage(errorMessage);
-      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

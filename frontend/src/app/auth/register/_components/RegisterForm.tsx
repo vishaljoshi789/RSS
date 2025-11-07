@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -166,15 +165,17 @@ const RegisterFormContent = () => {
         );
         toast.error(result.message || "पंजीकरण असफल");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Registration error:", error);
 
       let errorMessage = "पंजीकरण में त्रुटि हुई। कृपया पुनः प्रयास करें।";
 
-      if (error?.response?.data?.error) {
-        errorMessage = error.response.data.error;
-      } else if (error?.message) {
-        errorMessage = error.message;
+      const errorResponse = error as { response?: { data?: { error?: string } }; message?: string };
+      
+      if (errorResponse?.response?.data?.error) {
+        errorMessage = errorResponse.response.data.error;
+      } else if (errorResponse?.message) {
+        errorMessage = errorResponse.message;
       }
 
       setSubmitStatus("error");
@@ -370,14 +371,14 @@ const RegisterFormContent = () => {
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  पंजीकरण के बाद आपका पासवर्ड आपकी जन्म तिथि होगी (YYYYMMDD
+                  पंजीकरण के बाद आपका पासवर्ड आपकी जन्म तिथि होगी (DDMMYYYY
                   format में)।
                 </p>
                 <div className="rounded bg-card px-2 py-1">
                   <p className="text-xs text-muted-foreground">
                     <strong>उदाहरण:</strong> जन्म तिथि 15/01/1990 = पासवर्ड:
                     <code className="ml-1 rounded bg-muted px-1 py-0.5 text-xs font-mono text-foreground/80">
-                      19900115
+                      15011990
                     </code>
                   </p>
                 </div>

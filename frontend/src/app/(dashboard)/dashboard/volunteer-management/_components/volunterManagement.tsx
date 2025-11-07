@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import {
   Table,
   TableHeader,
@@ -19,13 +19,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, X, Trash2, Eye, Check } from "lucide-react";
+import { Pencil, X, Trash2, Check } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { EditUserDetailModal } from "@/module/dashboard/users/components/edit-user-detail-model";
 import {
@@ -39,13 +34,24 @@ import useAxios from "@/hooks/use-axios";
 import stateDistrictData from "@/lib/state-district.json";
 import { VolunteerWithUser } from "@/module/dashboard/volunteer/types";
 
+interface EditingVolunteer extends VolunteerWithUser {
+  selectedStates: string[];
+  can_view_member_data: boolean;
+}
+
+interface UpdateVolunteerData {
+  can_view_member_data: boolean;
+  states: string[];
+}
+
 export default function VolunteerTable() {
   const axios = useAxios();
 
-  const [editing, setEditing] = useState<any | null>(null);
+  const [editing, setEditing] = useState<EditingVolunteer | null>(null);
   const [openEditUser, setOpenEditUser] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [volunteerToDelete, setVolunteerToDelete] = useState<VolunteerWithUser | null>(null);
+  const [volunteerToDelete, setVolunteerToDelete] =
+    useState<VolunteerWithUser | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [selectedState, setSelectedState] = useState<string>("");
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
@@ -59,51 +65,16 @@ export default function VolunteerTable() {
     return Object.keys(stateDistrictData.India);
   }, []);
 
-  const getDistrictsForState = (stateName: string): string[] => {
+  const getDistrictsForState = useCallback((stateName: string): string[] => {
     const stateData =
       stateDistrictData.India[
         stateName as keyof typeof stateDistrictData.India
       ];
     if (!stateData || !stateData.districts) return [];
     return Object.keys(stateData.districts);
-  };
+  }, []);
 
-  const getLocationOptions = (levelName: string | undefined): string[] => {
-    if (!levelName) return INDIAN_STATES;
-
-    const levelNameLower = levelName.toLowerCase();
-    const levelNameHindi = levelName;
-
-    if (
-      levelNameLower.includes("state") ||
-      levelNameLower.includes("pradesh") ||
-      levelNameHindi.includes("प्रदेश")
-    ) {
-      return INDIAN_STATES;
-    }
-
-    // Check if it's division/district/mandal level
-    if (
-      levelNameLower.includes("division") ||
-      levelNameLower.includes("district") ||
-      levelNameLower.includes("mandal") ||
-      levelNameHindi.includes("संभाग") ||
-      levelNameHindi.includes("मंडल") ||
-      levelNameHindi.includes("जिला")
-    ) {
-      // If a state is selected, show its districts
-      if (selectedState) {
-        return getDistrictsForState(selectedState);
-      }
-      // Otherwise show states for selection
-      return INDIAN_STATES;
-    }
-
-    // Default to Indian states
-    return INDIAN_STATES;
-  };
-
-  const isDistrictLevel = (levelName: string | undefined): boolean => {
+  const isDistrictLevel = useCallback((levelName: string | undefined): boolean => {
     if (!levelName) return false;
     const levelNameLower = levelName.toLowerCase();
     const levelNameHindi = levelName;
@@ -116,49 +87,75 @@ export default function VolunteerTable() {
       levelNameHindi.includes("मंडल") ||
       levelNameHindi.includes("जिला")
     );
-  };
+  }, []);
+
+  const getLocationOptionsCallback = useCallback(
+    (levelName: string | undefined): string[] => {
+      if (!levelName) return INDIAN_STATES;
+
+      const levelNameLower = levelName.toLowerCase();
+      const levelNameHindi = levelName;
+
+      if (
+        levelNameLower.includes("state") ||
+        levelNameLower.includes("pradesh") ||
+        levelNameHindi.includes("प्रदेश")
+      ) {
+        return INDIAN_STATES;
+      }
+
+      if (
+        levelNameLower.includes("division") ||
+        levelNameLower.includes("district") ||
+        levelNameLower.includes("mandal") ||
+        levelNameHindi.includes("संभाग") ||
+        levelNameHindi.includes("मंडल") ||
+        levelNameHindi.includes("जिला")
+      ) {
+        if (selectedState) {
+          return getDistrictsForState(selectedState);
+        }
+
+        return INDIAN_STATES;
+      }
+
+      return INDIAN_STATES;
+    },
+    [selectedState, INDIAN_STATES, getDistrictsForState]
+  );
 
   const locationOptions = useMemo(() => {
-    return getLocationOptions(editing?.level_name);
-  }, [editing?.level_name, selectedState, INDIAN_STATES]);
+    return getLocationOptionsCallback(editing?.level_name);
+  }, [editing?.level_name, getLocationOptionsCallback]);
 
-  const initialStates = (v: any) => v.states || [];
+  const initialStates = (
+    v: VolunteerWithUser & { states?: string[] }
+  ): string[] => v.states || [];
 
-  const handleOpenEdit = (v: any) => {
-    setEditing({
-      ...v,
-      selectedStates: initialStates(v),
-      can_view_member_data: !!v.can_view_member_data,
-    });
-  };
+  const handleOpenEdit = useCallback(
+    (v: VolunteerWithUser & { states?: string[] }) => {
+      setEditing({
+        ...v,
+        selectedStates: initialStates(v),
+        can_view_member_data: !!v.can_view_member_data,
+      } as EditingVolunteer);
+    },
+    []
+  );
 
-  const handleDeleteClick = (volunteer: any) => {
+  const handleDeleteClick = useCallback((volunteer: VolunteerWithUser) => {
     setVolunteerToDelete(volunteer);
     setDeleteDialogOpen(true);
-  };
+  }, []);
 
-  const handleDeleteConfirm = async () => {
-    if (!volunteerToDelete) return;
+  const updateVolunteer = useCallback(
+    (id: number, data: UpdateVolunteerData) => {
+      return axios.patch(`/volunteer/volunteers/${id}/`, data);
+    },
+    [axios]
+  );
 
-    try {
-      setDeleting(true);
-      await axios.delete(`/volunteer/volunteers/${volunteerToDelete.id}/`);
-      setDeleteDialogOpen(false);
-      setVolunteerToDelete(null);
-      refetch();
-    } catch (err) {
-      console.error("Failed to delete volunteer:", err);
-    } finally {
-      setDeleting(false);
-    }
-  };
-
-  function updateVolunteer(id: number, data: any) {
-    // use PATCH to update partial volunteer fields
-    return axios.patch(`/volunteer/volunteers/${id}/`, data);
-  }
-
-  async function refetch() {
+  const refetch = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -166,51 +163,93 @@ export default function VolunteerTable() {
       const list = res.data?.results ?? res.data ?? [];
       setVolunteers(list);
     } catch (err) {
-      console.error(err);
+      if (err instanceof Error) {
+        console.error("Failed to fetch volunteers:", err);
+      }
       setError("Failed to load volunteers");
     } finally {
       setLoading(false);
     }
-  }
+  }, [axios]);
 
-  const handleSave = async () => {
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!volunteerToDelete) return;
+
+    try {
+      setDeleting(true);
+      await axios.delete(`/volunteer/volunteers/${volunteerToDelete.id}/`);
+      setDeleteDialogOpen(false);
+      setVolunteerToDelete(null);
+      await refetch();
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to delete volunteer:", err);
+      }
+    } finally {
+      setDeleting(false);
+    }
+  }, [volunteerToDelete, axios, refetch]);
+
+  const handleSave = useCallback(async () => {
     if (!editing) return;
     try {
       await updateVolunteer(editing.id, {
         can_view_member_data: editing.can_view_member_data,
         states: editing.selectedStates,
-      } as any);
+      });
       setEditing(null);
-      refetch();
+      await refetch();
     } catch (err) {
-      console.error(err);
+      if (err instanceof Error) {
+        console.error("Failed to save volunteer:", err);
+      }
     }
-  };
+  }, [editing, updateVolunteer, refetch]);
 
-  const handleUserSave = async (userId: number, data: any) => {
-    try {
-      await axios.put(`/account/detail/${userId}/`, data);
-      setOpenEditUser(false);
-      // optionally refresh volunteers to pick up any change
-      refetch();
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const handleUserSave = useCallback(
+    async (userId: number, data: Record<string, unknown>) => {
+      try {
+        await axios.put(`/account/detail/${userId}/`, data);
+        setOpenEditUser(false);
+        await refetch();
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Failed to update user:", err);
+        }
+      }
+    },
+    [axios, refetch]
+  );
 
-  const toggleState = (location: string) => {
+  const toggleState = useCallback((location: string) => {
     if (!editing) return;
     const set = new Set(editing.selectedStates || []);
     if (set.has(location)) set.delete(location);
     else set.add(location);
     setEditing({ ...editing, selectedStates: Array.from(set) });
-  };
+  }, [editing]);
 
   const rows = useMemo(() => volunteers || [], [volunteers]);
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [refetch]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-muted-foreground">Loading volunteers...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-destructive">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -229,7 +268,7 @@ export default function VolunteerTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.map((r: any) => (
+            {rows.map((r: VolunteerWithUser) => (
               <TableRow key={r.id}>
                 <TableCell>{r.id}</TableCell>
                 <TableCell className="flex items-center gap-3">
@@ -326,7 +365,7 @@ export default function VolunteerTable() {
                 <div className="flex items-center gap-2">
                   <Checkbox
                     checked={!!editing.can_view_member_data}
-                    onCheckedChange={(v: any) =>
+                    onCheckedChange={(v: boolean) =>
                       setEditing({ ...editing, can_view_member_data: !!v })
                     }
                   />
@@ -344,10 +383,12 @@ export default function VolunteerTable() {
                     {/* Simple Select for State Level */}
                     {!isDistrictLevel(editing?.level_name) ? (
                       <div className="relative">
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="w-full justify-start text-left font-normal"
-                          onClick={() => setStateDropdownOpen(!stateDropdownOpen)}
+                          onClick={() =>
+                            setStateDropdownOpen(!stateDropdownOpen)
+                          }
                         >
                           Select states...
                         </Button>
@@ -355,17 +396,22 @@ export default function VolunteerTable() {
                           <div className="absolute z-50 mt-1 w-full border rounded-md bg-popover shadow-md">
                             <div className="max-h-[300px] overflow-y-scroll p-2 space-y-1">
                               {INDIAN_STATES.map((state) => {
-                                const isSelected = editing.selectedStates?.includes(state);
+                                const isSelected =
+                                  editing.selectedStates?.includes(state);
                                 return (
                                   <div
                                     key={state}
                                     className={`px-3 py-2 hover:bg-accent rounded-sm cursor-pointer text-sm flex items-center justify-between ${
-                                      isSelected ? 'bg-primary/10 text-primary font-medium' : ''
+                                      isSelected
+                                        ? "bg-primary/10 text-primary font-medium"
+                                        : ""
                                     }`}
                                     onClick={() => toggleState(state)}
                                   >
                                     <span>{state}</span>
-                                    {isSelected && <Check className="h-4 w-4" />}
+                                    {isSelected && (
+                                      <Check className="h-4 w-4" />
+                                    )}
                                   </div>
                                 );
                               })}
@@ -403,10 +449,12 @@ export default function VolunteerTable() {
                               Step 2: Select Districts from {selectedState}
                             </label>
                             <div className="relative">
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 className="w-full justify-start text-left font-normal"
-                                onClick={() => setDistrictDropdownOpen(!districtDropdownOpen)}
+                                onClick={() =>
+                                  setDistrictDropdownOpen(!districtDropdownOpen)
+                                }
                               >
                                 Select districts...
                               </Button>
@@ -414,17 +462,22 @@ export default function VolunteerTable() {
                                 <div className="absolute z-50 mt-1 w-full border rounded-md bg-popover shadow-md">
                                   <div className="max-h-[300px] overflow-y-scroll p-2 space-y-1">
                                     {locationOptions.map((loc: string) => {
-                                      const isSelected = editing.selectedStates?.includes(loc);
+                                      const isSelected =
+                                        editing.selectedStates?.includes(loc);
                                       return (
                                         <div
                                           key={loc}
                                           className={`px-3 py-2 hover:bg-accent rounded-sm cursor-pointer text-sm flex items-center justify-between ${
-                                            isSelected ? 'bg-primary/10 text-primary font-medium' : ''
+                                            isSelected
+                                              ? "bg-primary/10 text-primary font-medium"
+                                              : ""
                                           }`}
                                           onClick={() => toggleState(loc)}
                                         >
                                           <span>{loc}</span>
-                                          {isSelected && <Check className="h-4 w-4" />}
+                                          {isSelected && (
+                                            <Check className="h-4 w-4" />
+                                          )}
                                         </div>
                                       );
                                     })}

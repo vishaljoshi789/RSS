@@ -32,6 +32,7 @@ const CareersPage = () => {
       level_name: null,
       designation: null,
       phone_number: null,
+      referred_by_volunteer: null,
       aadhar_card_front: null,
       aadhar_card_back: null,
       image: null,
@@ -53,7 +54,7 @@ const CareersPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const { processPayment, isProcessing, success, error } = useDonationPayment();
+  const { processPayment } = useDonationPayment();
 
   const LEVEL_AMOUNT_MAP: Record<string, number> = {
     
@@ -113,9 +114,15 @@ const CareersPage = () => {
 
         
         if (now - timestamp < thirtyMinutes) {
-          setApplicationData(parsed.applicationData || applicationData);
-          setAddressData(parsed.addressData || addressData);
-          setStep(parsed.step || 1);
+          if (parsed.applicationData) {
+            setApplicationData(parsed.applicationData);
+          }
+          if (parsed.addressData) {
+            setAddressData(parsed.addressData);
+          }
+          if (parsed.step) {
+            setStep(parsed.step);
+          }
 
           toast.success("Your form data has been restored. Please continue.", {
             duration: 5000,
@@ -129,8 +136,10 @@ const CareersPage = () => {
           toast.info("Previous session data was too old and has been cleared.");
         }
       } catch (error) {
-        console.error("Error restoring form data:", error);
-        sessionStorage.removeItem("volunteer_registration_data");
+        if( error instanceof Error){
+          console.error("Error restoring form data:", error);
+          sessionStorage.removeItem("volunteer_registration_data");
+        }
       }
     }
   }, []);
@@ -153,17 +162,13 @@ const CareersPage = () => {
       setTimeout(() => {
         toast.dismiss("payment-processing");
       }, 1000);
-    } catch (error: any) {
-      console.error("Registration or payment failed:", error);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Registration or payment failed:", error);
+      }
 
       toast.dismiss("member-registration");
       toast.dismiss("payment-processing");
-
-      const errorMessage =
-        error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        error?.message ||
-        "An error occurred. Please try again later.";
     }
   };
 
@@ -196,22 +201,23 @@ const CareersPage = () => {
         
         toast.dismiss("application-submit");
         toast.success("Application created successfully!");
-      } catch (appError: any) {
+      } catch (appError) {
         toast.dismiss("application-submit");
         console.error("Application creation error:", appError);
         
         
-        const status = appError?.response?.status;
-        const errorMsg = appError?.response?.data?.detail || 
-                        appError?.response?.data?.error || 
-                        appError?.response?.data?.message ||
-                        appError?.message;
+        const errorResponse = appError as { response?: { status?: number; data?: { detail?: string; error?: string; message?: string } }; message?: string };
+        const status = errorResponse?.response?.status;
+        const errorMsg = errorResponse?.response?.data?.detail || 
+                        errorResponse?.response?.data?.error || 
+                        errorResponse?.response?.data?.message ||
+                        errorResponse?.message;
         
         if (status === 401) {
           throw appError;
         } else if (status === 403) {
           toast.error(`Permission denied: ${errorMsg || 'You do not have permission to create applications.'}`);
-        } else if (status >= 400 && status < 500) {
+        } else if (status && status >= 400 && status < 500) {
           toast.error(`Application error: ${errorMsg || 'Invalid data submitted.'}`);
         } else {
           toast.error(`Failed to create application: ${errorMsg || 'Please try again.'}`);
@@ -232,21 +238,22 @@ const CareersPage = () => {
           toast.error("Address update returned unexpected status. Cannot proceed.");
           return;
         }
-      } catch (addressError: any) {
+      } catch (addressError) {
         toast.dismiss("address-update");
         console.error("Address update error:", addressError);
         
-        const status = addressError?.response?.status;
-        const errorMsg = addressError?.response?.data?.detail || 
-                        addressError?.response?.data?.error ||
-                        addressError?.message;
+        const errorResponse = addressError as { response?: { status?: number; data?: { detail?: string; error?: string } }; message?: string };
+        const status = errorResponse?.response?.status;
+        const errorMsg = errorResponse?.response?.data?.detail || 
+                        errorResponse?.response?.data?.error ||
+                        errorResponse?.message;
         
         if (status === 401) {
           throw addressError; 
         } else if (status === 403) {
           toast.error(`Permission denied: ${errorMsg || 'You do not have permission to update address.'}`);
           return;
-        } else if (status >= 400 && status < 500) {
+        } else if (status && status >= 400 && status < 500) {
           toast.error(`Address update failed: ${errorMsg || 'Invalid data submitted.'}`);
           return;
         } else {
@@ -280,6 +287,7 @@ const CareersPage = () => {
         level_name: null,
         designation: null,
         phone_number: null,
+        referred_by_volunteer: null,
         aadhar_card_front: null,
         aadhar_card_back: null,
         image: null,
@@ -299,7 +307,7 @@ const CareersPage = () => {
 
       setStep(1);
       
-    } catch (error: any) {
+    } catch (error) {
       console.error("Final submit error:", error);
       
       
@@ -308,11 +316,12 @@ const CareersPage = () => {
       toast.dismiss("payment-processing");
       
       
+      const errorResponse = error as { response?: { status?: number }; status?: number; message?: string };
       const is401Error = 
-        error?.response?.status === 401 || 
-        error?.status === 401 ||
-        error?.message?.includes("401") ||
-        error?.message?.toLowerCase().includes("unauthorized");
+        errorResponse?.response?.status === 401 || 
+        errorResponse?.status === 401 ||
+        errorResponse?.message?.includes("401") ||
+        errorResponse?.message?.toLowerCase().includes("unauthorized");
 
       if (is401Error) {
         
@@ -332,11 +341,12 @@ const CareersPage = () => {
         }, 2000);
       } else {
         
+        const errorData = errorResponse as { response?: { data?: { detail?: string; error?: string; message?: string } }; message?: string };
         const errorMessage = 
-          error?.response?.data?.detail ||
-          error?.response?.data?.error ||
-          error?.response?.data?.message ||
-          error?.message ||
+          errorData?.response?.data?.detail ||
+          errorData?.response?.data?.error ||
+          errorData?.response?.data?.message ||
+          errorData?.message ||
           "Failed to complete submission. Please try again.";
         
         toast.error(errorMessage, { duration: 5000 });

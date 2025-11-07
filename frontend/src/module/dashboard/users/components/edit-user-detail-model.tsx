@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -71,16 +70,16 @@ const formSchema = z.object({
   pan_number: z.string().optional(),
 
   // Account status
-  is_active: z.boolean().default(true),
-  is_verified: z.boolean().default(false),
-  is_blocked: z.boolean().default(false),
+  is_active: z.boolean(),
+  is_verified: z.boolean(),
+  is_blocked: z.boolean(),
 
   // Roles
-  is_volunteer: z.boolean().default(false),
-  is_staff_account: z.boolean().default(false),
-  is_field_worker: z.boolean().default(false),
-  is_admin_account: z.boolean().default(false),
-  is_member_account: z.boolean().default(false),
+  is_volunteer: z.boolean(),
+  is_staff_account: z.boolean(),
+  is_field_worker: z.boolean(),
+  is_admin_account: z.boolean(),
+  is_member_account: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -101,7 +100,7 @@ export function EditUserDetailModal({
   loading = false,
 }: EditUserDetailModalProps) {
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema) as any,
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -123,7 +122,7 @@ export function EditUserDetailModal({
       is_blocked: false,
       is_volunteer: false,
       is_staff_account: false,
-  is_field_worker: false,
+      is_field_worker: false,
       is_admin_account: false,
       is_member_account: false,
     },

@@ -25,14 +25,22 @@ export const useUsers = (search?: string) => {
       setTotalCount(data.count);
       setHasNext(!!data.next);
       setHasPrevious(!!data.previous);
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to fetch users";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching users:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMsg =
+        errorResponse.response?.data?.message || "Failed to fetch users";
       setError(errorMsg);
       toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, api]);
 
   const nextPage = useCallback(() => {
     if (hasNext) setPage((prev) => prev + 1);

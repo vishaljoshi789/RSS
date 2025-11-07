@@ -19,7 +19,7 @@ interface PhotoCardProps {
   index: number;
 }
 
-const PhotoCard: React.FC<PhotoCardProps> = ({ photo, index }) => {
+const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
 
@@ -248,8 +248,8 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, index }) => {
 };
 
 const PhotoGallery: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [isLoading, setIsLoading] = useState(false);
+  const [activeCategory] = useState("all");
+  const [isLoading] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
   const filteredPhotos = useMemo(() => {

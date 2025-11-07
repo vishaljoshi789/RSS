@@ -47,7 +47,7 @@ const DetailedInfoSection = () => {
           ।। सर्वेषामप्युपायानां दानं श्रेष्ठतमं मतम् ।।
         </h2>
         <p className="text-xs sm:text-sm md:text-base text-muted-foreground italic">
-          "सभी उपायों में दान सर्वश्रेष्ठ माना गया है"
+          &quot;सभी उपायों में दान सर्वश्रेष्ठ माना गया है&quot;
         </p>
       </div>
 
@@ -105,7 +105,7 @@ const DetailedInfoSection = () => {
             </CardTitle>
           </div>
           <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
-            <strong className="text-primary">"सनातनी हिंदू रक्षा अभियान (भारत)"</strong> के संकल्पों की पूर्ति हेतु निम्न आवश्यकताएं हैं:
+            <strong className="text-primary">&quot;सनातनी हिंदू रक्षा अभियान (भारत)&quot;</strong> के संकल्पों की पूर्ति हेतु निम्न आवश्यकताएं हैं:
           </p>
         </CardHeader>
         <CardContent className="p-4 sm:p-6">

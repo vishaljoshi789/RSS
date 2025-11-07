@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,7 +61,6 @@ export default function RegisterBusinessPage() {
   const [loading, setLoading] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [subcategories, setSubcategories] = useState<SubCategory[]>([]);
   const [filteredSubcategories, setFilteredSubcategories] = useState<
     SubCategory[]
   >([]);
@@ -102,6 +101,23 @@ export default function RegisterBusinessPage() {
     longitude: "",
   });
 
+  const fetchData = useCallback(async () => {
+    try {
+      const [categoriesRes, subcategoriesRes] = await Promise.all([
+        axios.get("/vyapari/category/"),
+        axios.get("/vyapari/subcategory/"),
+      ]);
+
+      setCategories(categoriesRes.data.results || categoriesRes.data || []);
+      setFilteredSubcategories(
+        subcategoriesRes.data.results || subcategoriesRes.data || []
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to load categories");
+    }
+  }, [axios]);
+
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       setShowLoginModal(true);
@@ -112,35 +128,7 @@ export default function RegisterBusinessPage() {
     if (isAuthenticated) {
       fetchData();
     }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (formData.category && formData.category !== "none") {
-      const filtered = subcategories.filter(
-        (sub) => sub.category.toString() === formData.category
-      );
-      setFilteredSubcategories(filtered);
-    } else {
-      setFilteredSubcategories([]);
-    }
-  }, [formData.category, subcategories]);
-
-  const fetchData = async () => {
-    try {
-      const [categoriesRes, subcategoriesRes] = await Promise.all([
-        axios.get("/vyapari/category/"),
-        axios.get("/vyapari/subcategory/"),
-      ]);
-
-      setCategories(categoriesRes.data.results || categoriesRes.data || []);
-      setSubcategories(
-        subcategoriesRes.data.results || subcategoriesRes.data || []
-      );
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to load categories");
-    }
-  };
+  }, [isAuthenticated, fetchData]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -303,7 +291,7 @@ export default function RegisterBusinessPage() {
       };
       submitFormData.append("address", JSON.stringify(address));
 
-      const location: any = {};
+      const location: Record<string, number> = {};
       if (formData.latitude) location.latitude = parseFloat(formData.latitude);
       if (formData.longitude)
         location.longitude = parseFloat(formData.longitude);
@@ -329,8 +317,10 @@ export default function RegisterBusinessPage() {
       setTimeout(() => {
         router.push("/vyapari");
       }, 2000);
-    } catch (error: any) {
-      console.error("Registration error:", error);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Registration error:", err);
+      }
     } finally {
       setLoading(false);
     }

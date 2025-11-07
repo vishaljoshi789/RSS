@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useRef } from "react";
+import Image from "next/image";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ import {
   FileText,
   Phone,
   Calendar,
-  Image,
+  ImageIcon,
   CreditCard,
   Download,
 } from "lucide-react";
@@ -46,18 +47,54 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import UserProfileModel from "./userProfile";
-import { createVolunteerAPI } from "@/module/dashboard/volunteer";
+
+interface Wing {
+  id: number;
+  name: string;
+}
+
+interface Level {
+  id: number;
+  name: string;
+}
+
+interface Designation {
+  id: number;
+  title: string;
+}
+
+interface VolunteerApplication {
+  id: number;
+  user: number;
+  user_name: string;
+  phone_number: string;
+  wing_name: string;
+  level_name: string;
+  designation_title: string;
+  image: string;
+  aadhar_card_front: string;
+  aadhar_card_back: string;
+  status: "pending" | "approved" | "rejected";
+  timestamp: string;
+  remarks?: string;
+}
+
+interface ApiErrorResponse {
+  message?: string;
+  error?: string;
+  detail?: string;
+}
 
 const VolunteerAssignment = () => {
   const axios = useAxios();
 
-  const [applications, setApplications] = useState<any[]>([]);
+  const [applications, setApplications] = useState<VolunteerApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [allWings, setAllWings] = useState<any[]>([]);
-  const [allLevels, setAllLevels] = useState<any[]>([]);
-  const [allDesignations, setAllDesignations] = useState<any[]>([]);
+  const [allWings, setAllWings] = useState<Wing[]>([]);
+  const [allLevels, setAllLevels] = useState<Level[]>([]);
+  const [allDesignations, setAllDesignations] = useState<Designation[]>([]);
 
   const [wingFilter, setWingFilter] = useState<string>("all");
   const [levelFilter, setLevelFilter] = useState<string>("all");
@@ -70,14 +107,14 @@ const VolunteerAssignment = () => {
   const [selectedApplicationId, setSelectedApplicationId] = useState<
     number | null
   >(null);
-  const [selectedApplication, setSelectedApplication] = useState<any>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<VolunteerApplication | null>(null);
   const [detailsDialog, setDetailsDialog] = useState<boolean>(false);
   const [imageViewerOpen, setImageViewerOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<{
     url: string;
     title: string;
   } | null>(null);
-  const api = createVolunteerAPI(axios);
 
   const initialFetchDone = useRef(false);
   const isInitialMount = useRef(true);
@@ -111,9 +148,12 @@ const VolunteerAssignment = () => {
         setApplications(
           applicationsResponse.data.results || applicationsResponse.data || []
         );
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error fetching initial data:", err);
-        setError(err.response?.data?.message || "Failed to fetch data");
+        const errorMessage =
+          (err as { response?: { data?: ApiErrorResponse } }).response?.data
+            ?.message || "Failed to fetch data";
+        setError(errorMessage);
       } finally {
         setLoading(false);
         isInitialMount.current = false;
@@ -121,7 +161,7 @@ const VolunteerAssignment = () => {
     };
 
     fetchInitialData();
-  }, []);
+  }, [axios]);
 
   useEffect(() => {
     if (isInitialMount.current) return;
@@ -142,20 +182,23 @@ const VolunteerAssignment = () => {
         }`;
         const response = await axios.get(url);
         setApplications(response.data.results || response.data || []);
-      } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to fetch applications");
+      } catch (err) {
+        const errorMessage =
+          (err as { response?: { data?: ApiErrorResponse } }).response?.data
+            ?.message || "Failed to fetch applications";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
     fetchApplications();
-  }, [wingFilter, levelFilter, designationFilter]);
+  }, [axios, wingFilter, levelFilter, designationFilter]);
 
   const filteredApplications = useMemo(() => {
     if (!searchTerm) return applications;
 
-    return applications.filter((app) => {
+    return applications.filter((app: VolunteerApplication) => {
       const searchLower = searchTerm.toLowerCase();
 
       return (
@@ -207,7 +250,7 @@ const VolunteerAssignment = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Wings</SelectItem>
-                {allWings.map((wing: any) => (
+                {allWings.map((wing: Wing) => (
                   <SelectItem key={wing.id} value={wing.id.toString()}>
                     {wing.name}
                   </SelectItem>
@@ -221,7 +264,7 @@ const VolunteerAssignment = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Levels</SelectItem>
-                {allLevels.map((level: any) => (
+                {allLevels.map((level: Level) => (
                   <SelectItem key={level.id} value={level.id.toString()}>
                     {level.name}
                   </SelectItem>
@@ -238,7 +281,7 @@ const VolunteerAssignment = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Designations</SelectItem>
-                {allDesignations.map((designation: any) => (
+                {allDesignations.map((designation: Designation) => (
                   <SelectItem
                     key={designation.id}
                     value={designation.id.toString()}
@@ -343,139 +386,144 @@ const VolunteerAssignment = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredApplications.map((application) => {
-                    const hasAadharFront = application.aadhar_card_front;
-                    const hasAadharBack = application.aadhar_card_back;
-                    const hasImage = application.image;
-                    const documentsCount = [
-                      hasAadharFront,
-                      hasAadharBack,
-                      hasImage,
-                    ].filter(Boolean).length;
+                  filteredApplications.map(
+                    (application: VolunteerApplication) => {
+                      const hasAadharFront = application.aadhar_card_front;
+                      const hasAadharBack = application.aadhar_card_back;
+                      const hasImage = application.image;
+                      const documentsCount = [
+                        hasAadharFront,
+                        hasAadharBack,
+                        hasImage,
+                      ].filter(Boolean).length;
 
-                    return (
-                      <TableRow key={application.id}>
-                        <TableCell>
-                          <div className="flex items-center space-x-3">
-                            {application.image ? (
-                              <div className="relative">
-                                <img
-                                  src={application.image}
-                                  alt="Profile"
-                                  className="w-10 h-10 rounded-full object-cover border"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                                <Users className="h-5 w-5 text-muted-foreground" />
-                              </div>
-                            )}
-                            <div>
-                              <div className="font-medium text-sm">
-                                {application.user_name ||
-                                  `User ${application.user}`}
-                              </div>
-                              <div className="flex items-center text-xs text-muted-foreground">
-                                <Phone className="h-3 w-3 mr-1" />
-                                {application.phone_number || "No phone"}
+                      return (
+                        <TableRow key={application.id}>
+                          <TableCell>
+                            <div className="flex items-center space-x-3">
+                              {application.image ? (
+                                <div className="relative w-10 h-10">
+                                  <Image
+                                    src={application.image}
+                                    alt="Profile"
+                                    fill
+                                    className="rounded-full object-cover border"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                                  <Users className="h-5 w-5 text-muted-foreground" />
+                                </div>
+                              )}
+                              <div>
+                                <div className="font-medium text-sm">
+                                  {application.user_name ||
+                                    `User ${application.user}`}
+                                </div>
+                                <div className="flex items-center text-xs text-muted-foreground">
+                                  <Phone className="h-3 w-3 mr-1" />
+                                  {application.phone_number || "No phone"}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm font-medium">
-                            {application.wing_name || "N/A"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">
-                            {application.level_name || "N/A"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm font-medium">
-                            {application.designation_title || "N/A"}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-1">
-                            <Badge variant="outline" className="text-xs">
-                              {documentsCount}/3 docs
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm font-medium">
+                              {application.wing_name || "N/A"}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm">
+                              {application.level_name || "N/A"}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="text-sm font-medium">
+                              {application.designation_title || "N/A"}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-1">
+                              <Badge variant="outline" className="text-xs">
+                                {documentsCount}/3 docs
+                              </Badge>
+                              <div className="flex space-x-1">
+                                {hasAadharFront && (
+                                  <div
+                                    className="w-2 h-2 bg-green-500 rounded-full"
+                                    title="Aadhar Front"
+                                  />
+                                )}
+                                {hasAadharBack && (
+                                  <div
+                                    className="w-2 h-2 bg-green-500 rounded-full"
+                                    title="Aadhar Back"
+                                  />
+                                )}
+                                {hasImage && (
+                                  <div
+                                    className="w-2 h-2 bg-blue-500 rounded-full"
+                                    title="Profile Image"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                application.status === "approved"
+                                  ? "default"
+                                  : application.status === "pending"
+                                  ? "secondary"
+                                  : "destructive"
+                              }
+                            >
+                              {application.status}
                             </Badge>
-                            <div className="flex space-x-1">
-                              {hasAadharFront && (
-                                <div
-                                  className="w-2 h-2 bg-green-500 rounded-full"
-                                  title="Aadhar Front"
-                                />
-                              )}
-                              {hasAadharBack && (
-                                <div
-                                  className="w-2 h-2 bg-green-500 rounded-full"
-                                  title="Aadhar Back"
-                                />
-                              )}
-                              {hasImage && (
-                                <div
-                                  className="w-2 h-2 bg-blue-500 rounded-full"
-                                  title="Profile Image"
-                                />
-                              )}
+                          </TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            <div className="flex items-center">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              {new Date(
+                                application.timestamp
+                              ).toLocaleDateString()}
                             </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              application.status === "approved"
-                                ? "default"
-                                : application.status === "pending"
-                                ? "secondary"
-                                : "destructive"
-                            }
-                          >
-                            {application.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">
-                          <div className="flex items-center">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            {new Date(
-                              application.timestamp
-                            ).toLocaleDateString()}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedApplication(application);
-                                setDetailsDialog(true);
-                              }}
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              Details
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setUserModel(true);
-                                setSelectedUserApplicationId(application.user);
-                                setSelectedApplicationId(application.id);
-                                setSelectedApplication(application);
-                              }}
-                            >
-                              <UserCheck className="h-4 w-4 mr-1" />
-                              Assign
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedApplication(application);
+                                  setDetailsDialog(true);
+                                }}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Details
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setUserModel(true);
+                                  setSelectedUserApplicationId(
+                                    application.user
+                                  );
+                                  setSelectedApplicationId(application.id);
+                                  setSelectedApplication(application);
+                                }}
+                              >
+                                <UserCheck className="h-4 w-4 mr-1" />
+                                Assign
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    }
+                  )
                 )}
               </TableBody>
             </Table>
@@ -619,8 +667,8 @@ const VolunteerAssignment = () => {
                           Aadhar Card (Front)
                         </label>
                         {selectedApplication.aadhar_card_front ? (
-                          <div 
-                            className="relative group cursor-pointer"
+                          <div
+                            className="relative group cursor-pointer w-full h-32"
                             onClick={() =>
                               handleImageView(
                                 selectedApplication.aadhar_card_front,
@@ -628,15 +676,18 @@ const VolunteerAssignment = () => {
                               )
                             }
                           >
-                            <img
+                            <Image
                               src={selectedApplication.aadhar_card_front}
                               alt="Aadhar Front"
-                              className="w-full h-32 object-cover rounded border hover:opacity-75 transition-opacity"
+                              fill
+                              className="object-cover rounded border hover:opacity-75 transition-opacity"
                             />
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black bg-opacity-60 rounded backdrop-blur-sm">
                               <div className="text-center text-white transform group-hover:scale-110 transition-transform duration-300">
                                 <Eye className="h-8 w-8 mx-auto mb-2 drop-shadow-lg" />
-                                <p className="text-sm font-medium">Click to View</p>
+                                <p className="text-sm font-medium">
+                                  Click to View
+                                </p>
                               </div>
                             </div>
                             <Badge className="absolute top-2 right-2 bg-green-500">
@@ -660,8 +711,8 @@ const VolunteerAssignment = () => {
                           Aadhar Card (Back)
                         </label>
                         {selectedApplication.aadhar_card_back ? (
-                          <div 
-                            className="relative group cursor-pointer"
+                          <div
+                            className="relative group cursor-pointer w-full h-32"
                             onClick={() =>
                               handleImageView(
                                 selectedApplication.aadhar_card_back,
@@ -669,15 +720,18 @@ const VolunteerAssignment = () => {
                               )
                             }
                           >
-                            <img
+                            <Image
                               src={selectedApplication.aadhar_card_back}
                               alt="Aadhar Back"
-                              className="w-full h-32 object-cover rounded border hover:opacity-75 transition-opacity"
+                              fill
+                              className="object-cover rounded border hover:opacity-75 transition-opacity"
                             />
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black bg-opacity-60 rounded backdrop-blur-sm">
                               <div className="text-center text-white transform group-hover:scale-110 transition-transform duration-300">
                                 <Eye className="h-8 w-8 mx-auto mb-2 drop-shadow-lg" />
-                                <p className="text-sm font-medium">Click to View</p>
+                                <p className="text-sm font-medium">
+                                  Click to View
+                                </p>
                               </div>
                             </div>
                             <Badge className="absolute top-2 right-2 bg-green-500">
@@ -701,8 +755,8 @@ const VolunteerAssignment = () => {
                           Profile Image
                         </label>
                         {selectedApplication.image ? (
-                          <div 
-                            className="relative group cursor-pointer"
+                          <div
+                            className="relative group cursor-pointer w-full h-32"
                             onClick={() =>
                               handleImageView(
                                 selectedApplication.image,
@@ -710,15 +764,18 @@ const VolunteerAssignment = () => {
                               )
                             }
                           >
-                            <img
+                            <Image
                               src={selectedApplication.image}
                               alt="Profile"
-                              className="w-full h-32 object-cover rounded border hover:opacity-75 transition-opacity"
+                              fill
+                              className="object-cover rounded border hover:opacity-75 transition-opacity"
                             />
                             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black bg-opacity-60 rounded backdrop-blur-sm">
                               <div className="text-center text-white transform group-hover:scale-110 transition-transform duration-300">
                                 <Eye className="h-8 w-8 mx-auto mb-2 drop-shadow-lg" />
-                                <p className="text-sm font-medium">Click to View</p>
+                                <p className="text-sm font-medium">
+                                  Click to View
+                                </p>
                               </div>
                             </div>
                             <Badge className="absolute top-2 right-2 bg-blue-500">
@@ -728,7 +785,7 @@ const VolunteerAssignment = () => {
                         ) : (
                           <div className="w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded flex items-center justify-center">
                             <div className="text-center">
-                              <Image className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
+                              <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
                               <p className="text-sm text-muted-foreground">
                                 Not uploaded
                               </p>
@@ -759,6 +816,9 @@ const VolunteerAssignment = () => {
                   const response = await axios.get("/volunteer/applications/");
                   setApplications(response.data.results || response.data || []);
                 } catch (err) {
+                  if (err instanceof Error) {
+                    console.error("Failed to assign as volunteer:", err);
+                  }
                   alert("Failed to assign as volunteer");
                 }
               }}
@@ -795,8 +855,10 @@ const VolunteerAssignment = () => {
                   <CardContent className="space-y-3">
                     <div className="flex items-center space-x-3">
                       {selectedApplication.image ? (
-                        <img
+                        <Image
                           src={selectedApplication.image}
+                          height={100}
+                          width={100}
                           alt="Profile"
                           className="w-16 h-16 rounded-full object-cover border-2"
                         />
@@ -911,8 +973,8 @@ const VolunteerAssignment = () => {
                         Aadhar Card (Front)
                       </label>
                       {selectedApplication.aadhar_card_front ? (
-                        <div 
-                          className="relative group cursor-pointer"
+                        <div
+                          className="relative group cursor-pointer w-full h-32"
                           onClick={() =>
                             handleImageView(
                               selectedApplication.aadhar_card_front,
@@ -920,15 +982,18 @@ const VolunteerAssignment = () => {
                             )
                           }
                         >
-                          <img
+                          <Image
                             src={selectedApplication.aadhar_card_front}
                             alt="Aadhar Front"
-                            className="w-full h-32 object-cover rounded border hover:opacity-75 transition-opacity"
+                            fill
+                            className="object-cover rounded border hover:opacity-75 transition-opacity"
                           />
                           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black bg-opacity-60 rounded backdrop-blur-sm">
                             <div className="text-center text-white transform group-hover:scale-110 transition-transform duration-300">
                               <Eye className="h-8 w-8 mx-auto mb-2 drop-shadow-lg" />
-                              <p className="text-sm font-medium">Click to View</p>
+                              <p className="text-sm font-medium">
+                                Click to View
+                              </p>
                             </div>
                           </div>
                           <Badge className="absolute top-2 right-2 bg-green-500">
@@ -952,8 +1017,8 @@ const VolunteerAssignment = () => {
                         Aadhar Card (Back)
                       </label>
                       {selectedApplication.aadhar_card_back ? (
-                        <div 
-                          className="relative group cursor-pointer"
+                        <div
+                          className="relative group cursor-pointer w-full h-32"
                           onClick={() =>
                             handleImageView(
                               selectedApplication.aadhar_card_back,
@@ -961,15 +1026,18 @@ const VolunteerAssignment = () => {
                             )
                           }
                         >
-                          <img
+                          <Image
                             src={selectedApplication.aadhar_card_back}
                             alt="Aadhar Back"
-                            className="w-full h-32 object-cover rounded border hover:opacity-75 transition-opacity"
+                            fill
+                            className="object-cover rounded border hover:opacity-75 transition-opacity"
                           />
                           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black bg-opacity-60 rounded backdrop-blur-sm">
                             <div className="text-center text-white transform group-hover:scale-110 transition-transform duration-300">
                               <Eye className="h-8 w-8 mx-auto mb-2 drop-shadow-lg" />
-                              <p className="text-sm font-medium">Click to View</p>
+                              <p className="text-sm font-medium">
+                                Click to View
+                              </p>
                             </div>
                           </div>
                           <Badge className="absolute top-2 right-2 bg-green-500">
@@ -993,8 +1061,8 @@ const VolunteerAssignment = () => {
                         Profile Image
                       </label>
                       {selectedApplication.image ? (
-                        <div 
-                          className="relative group cursor-pointer"
+                        <div
+                          className="relative group cursor-pointer w-full h-32"
                           onClick={() =>
                             handleImageView(
                               selectedApplication.image,
@@ -1002,15 +1070,18 @@ const VolunteerAssignment = () => {
                             )
                           }
                         >
-                          <img
+                          <Image
                             src={selectedApplication.image}
                             alt="Profile"
-                            className="w-full h-32 object-cover rounded border hover:opacity-75 transition-opacity"
+                            fill
+                            className="object-cover rounded border hover:opacity-75 transition-opacity"
                           />
                           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black bg-opacity-60 rounded backdrop-blur-sm">
                             <div className="text-center text-white transform group-hover:scale-110 transition-transform duration-300">
                               <Eye className="h-8 w-8 mx-auto mb-2 drop-shadow-lg" />
-                              <p className="text-sm font-medium">Click to View</p>
+                              <p className="text-sm font-medium">
+                                Click to View
+                              </p>
                             </div>
                           </div>
                           <Badge className="absolute top-2 right-2 bg-blue-500">
@@ -1020,7 +1091,7 @@ const VolunteerAssignment = () => {
                       ) : (
                         <div className="w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded flex items-center justify-center">
                           <div className="text-center">
-                            <Image className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
+                            <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
                             <p className="text-sm text-muted-foreground">
                               Not uploaded
                             </p>
@@ -1055,6 +1126,9 @@ const VolunteerAssignment = () => {
                       response.data.results || response.data || []
                     );
                   } catch (err) {
+                    if (err instanceof Error) {
+                      console.error("Failed to assign as volunteer:", err);
+                    }
                     alert("Failed to assign as volunteer");
                   }
                 }}
@@ -1082,6 +1156,7 @@ const VolunteerAssignment = () => {
           <div className="p-6 pt-4">
             {selectedImage && (
               <div className="relative bg-gray-50 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={selectedImage.url}
                   alt={selectedImage.title}

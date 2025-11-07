@@ -176,7 +176,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
 };
 
 const VideoGallery: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory] = useState("all");
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   const filteredVideos = useMemo(() => {

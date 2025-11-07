@@ -13,6 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { useDonationPayment } from '@/module/donation/hooks';
 import { ArrowLeft, CheckCircle, AlertCircle, Wallet, CreditCard, Building, Smartphone } from 'lucide-react';
 
+type PaymentMethod = 'CASH' | 'CHEQUE' | 'BANK_TRANSFER' | 'UPI';
+
 interface ManualPaymentFormData {
   name: string;
   email: string;
@@ -20,8 +22,17 @@ interface ManualPaymentFormData {
   amount: number;
   payment_for: string;
   notes: string;
-  method: 'CASH' | 'CHEQUE' | 'BANK_TRANSFER' | 'UPI';
-  payment_details: Record<string, any>;
+  method: PaymentMethod;
+  payment_details?: Record<string, unknown>;
+}
+
+interface AllPaymentDetails {
+  cheque_number: string;
+  cheque_date: string;
+  bank_name: string;
+  account_number: string;
+  upi_transaction_id: string;
+  reference_number: string;
 }
 
 const ManualPaymentPage = () => {
@@ -39,7 +50,7 @@ const ManualPaymentPage = () => {
     payment_details: {}
   });
 
-  const [paymentDetails, setPaymentDetails] = useState({
+  const [paymentDetails, setPaymentDetails] = useState<AllPaymentDetails>({
     cheque_number: '',
     cheque_date: '',
     bank_name: '',
@@ -48,15 +59,15 @@ const ManualPaymentPage = () => {
     reference_number: ''
   });
 
-  const handleInputChange = (field: keyof ManualPaymentFormData, value: any) => {
+  const handleInputChange = (field: keyof ManualPaymentFormData, value: string | number | PaymentMethod) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handlePaymentDetailChange = (field: string, value: string) => {
+  const handlePaymentDetailChange = (field: keyof AllPaymentDetails, value: string) => {
     setPaymentDetails(prev => ({ ...prev, [field]: value }));
   };
 
-  const getPaymentMethodIcon = (method: string) => {
+  const getPaymentMethodIcon = (method: PaymentMethod) => {
     switch (method) {
       case 'CASH': return <Wallet className="w-4 h-4" />;
       case 'CHEQUE': return <CreditCard className="w-4 h-4" />;
@@ -179,27 +190,23 @@ const ManualPaymentPage = () => {
     }
 
     // Filter payment details based on method
-    let relevantDetails: Record<string, any> = {};
+    const relevantDetails: Record<string, unknown> = {};
     switch (formData.method) {
       case 'CHEQUE':
-        relevantDetails = {
-          cheque_number: paymentDetails.cheque_number,
-          cheque_date: paymentDetails.cheque_date,
-          bank_name: paymentDetails.bank_name
-        };
+        relevantDetails.cheque_number = paymentDetails.cheque_number;
+        relevantDetails.cheque_date = paymentDetails.cheque_date;
+        relevantDetails.bank_name = paymentDetails.bank_name;
         break;
       case 'BANK_TRANSFER':
-        relevantDetails = {
-          account_number: paymentDetails.account_number,
-          reference_number: paymentDetails.reference_number,
-          bank_name: paymentDetails.bank_name
-        };
+        relevantDetails.account_number = paymentDetails.account_number;
+        relevantDetails.reference_number = paymentDetails.reference_number;
+        relevantDetails.bank_name = paymentDetails.bank_name;
         break;
       case 'UPI':
-        relevantDetails = {
-          upi_transaction_id: paymentDetails.upi_transaction_id,
-          reference_number: paymentDetails.reference_number
-        };
+        relevantDetails.upi_transaction_id = paymentDetails.upi_transaction_id;
+        relevantDetails.reference_number = paymentDetails.reference_number;
+        break;
+      case 'CASH':
         break;
     }
 

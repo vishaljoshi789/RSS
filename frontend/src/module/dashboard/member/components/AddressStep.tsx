@@ -28,16 +28,18 @@ type AddressStepProps = {
 export const AddressStep = ({ formData, errors, onChange, stateOptions, readOnlyFields }: AddressStepProps) => {
   const [showCustomDistrictInput, setShowCustomDistrictInput] = useState(false);
   
+  const stateDistrictData = rawStateDistrictData as { India?: Record<string, { districts?: Record<string, unknown> }> };
+  
   const derivedStates: string[] = (stateOptions && stateOptions.length > 0)
     ? stateOptions
-    : Object.keys((rawStateDistrictData as any)?.India || {}).sort((a: string, b: string) => a.localeCompare(b));
+    : Object.keys(stateDistrictData?.India || {}).sort((a: string, b: string) => a.localeCompare(b));
 
   const availableDistricts = useMemo(() => {
     if (!formData.state) return [];
-    const stateData = (rawStateDistrictData as any)?.India?.[formData.state];
+    const stateData = stateDistrictData?.India?.[formData.state];
     if (!stateData?.districts) return [];
     return Object.keys(stateData.districts).sort((a: string, b: string) => a.localeCompare(b));
-  }, [formData.state]);
+  }, [formData.state, stateDistrictData]);
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">

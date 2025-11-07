@@ -23,7 +23,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Search, FolderOpen } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { useWings } from "@/module/dashboard/volunteer";
 import type { Wing, WingFormData } from "@/module/dashboard/volunteer";
 
@@ -43,14 +42,17 @@ const WingManagement = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
-    
+
     try {
       setSubmitting(true);
       await createWing(formData);
       setIsCreateDialogOpen(false);
       setFormData({ name: "", description: "" });
     } catch (error) {
-      // Error already handled by hook
+      if (error instanceof Error) {
+        console.error("Error restoring form data:", error);
+        sessionStorage.removeItem("volunteer_registration_data");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -67,7 +69,10 @@ const WingManagement = () => {
       setCurrentWing(null);
       setFormData({ name: "", description: "" });
     } catch (error) {
-      // Error already handled by hook
+      if (error instanceof Error) {
+        console.error("Error restoring form data:", error);
+        sessionStorage.removeItem("volunteer_registration_data");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -82,7 +87,10 @@ const WingManagement = () => {
       setIsDeleteDialogOpen(false);
       setCurrentWing(null);
     } catch (error) {
-      // Error already handled by hook
+      if (error instanceof Error) {
+        console.error("Error restoring form data:", error);
+        sessionStorage.removeItem("volunteer_registration_data");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -150,7 +158,9 @@ const WingManagement = () => {
                   <TableCell colSpan={3} className="text-center py-12">
                     <div className="flex flex-col items-center justify-center text-muted-foreground">
                       <FolderOpen className="h-12 w-12 mb-4 opacity-50" />
-                      <h3 className="font-semibold text-lg mb-1">No wings found</h3>
+                      <h3 className="font-semibold text-lg mb-1">
+                        No wings found
+                      </h3>
                       <p className="text-sm mb-4">
                         {searchTerm
                           ? `No wings match "${searchTerm}"`
@@ -314,8 +324,8 @@ const WingManagement = () => {
           <DialogHeader>
             <DialogTitle>Delete Wing</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentWing?.name}"? This action
-              cannot be undone.
+              Are you sure you want to delete &quot;{currentWing?.name}&quot;?
+              This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

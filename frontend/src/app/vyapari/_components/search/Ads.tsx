@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, FreeMode } from "swiper/modules";
@@ -37,11 +37,7 @@ export const Ads: React.FC<AdsProps> = ({
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchActiveAds();
-  }, [selectedCategory, selectedState, selectedDistrict, selectedMarket]);
-
-  const fetchActiveAds = async () => {
+  const fetchActiveAds = useCallback(async () => {
     try {
       const params = new URLSearchParams();
 
@@ -76,7 +72,11 @@ export const Ads: React.FC<AdsProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios, selectedCategory, selectedState, selectedDistrict, selectedMarket]);
+
+  useEffect(() => {
+    fetchActiveAds();
+  }, [fetchActiveAds]);
 
   const handleAdClick = (ad: Ad) => {
     console.log(`Ad clicked: ${ad.title}`);

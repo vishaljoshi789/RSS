@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Building2, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -87,25 +87,16 @@ const BusinessesPageContent = () => {
     "West Bengal",
   ];
 
-  useEffect(() => {
-    fetchCategories();
-    fetchBusinesses();
-  }, []);
-
-  useEffect(() => {
-    fetchBusinesses();
-  }, [searchQuery, selectedCategory, selectedState]);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await axios.get("/vyapari/category/");
       setCategories(response.data.results || response.data || []);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
-  };
+  }, [axios]);
 
-  const fetchBusinesses = async () => {
+  const fetchBusinesses = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -131,7 +122,12 @@ const BusinessesPageContent = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios, searchQuery, selectedCategory, selectedState]);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchBusinesses();
+  }, [fetchCategories, fetchBusinesses]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

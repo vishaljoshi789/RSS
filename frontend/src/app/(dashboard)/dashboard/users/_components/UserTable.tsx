@@ -69,11 +69,11 @@ export function UserTable({
     }
   }, [initialUsers]);
 
-  const debounce = (fn: (...args: any[]) => void, wait = 500) => {
+  const debounce = (fn: (value: string) => void, wait = 500) => {
     let t: ReturnType<typeof setTimeout> | null = null;
-    return (...args: any[]) => {
+    return (value: string) => {
       if (t) clearTimeout(t);
-      t = setTimeout(() => fn(...args), wait);
+      t = setTimeout(() => fn(value), wait);
     };
   };
 
@@ -89,7 +89,7 @@ export function UserTable({
       hasFilteredRef.current = true;
 
       try {
-        const filterParams: Record<string, any> = {
+        const filterParams: Record<string, string | number | boolean> = {
           page,
           page_size: pageSize,
         };
@@ -252,30 +252,6 @@ export function UserTable({
     return roles;
   };
 
-  const getUserPrimaryRole = (
-    user: User
-  ): {
-    label: string;
-    variant: "default" | "secondary" | "destructive" | "outline";
-  } => {
-    if (user.is_blocked) {
-      return { label: "Blocked", variant: "destructive" };
-    }
-    if (user.is_admin_account || user.is_superuser) {
-      return { label: "Admin", variant: "destructive" };
-    }
-    if (user.is_staff_account) {
-      return { label: "Staff", variant: "default" };
-    }
-    if (user.is_volunteer) {
-      return { label: "Volunteer", variant: "outline" };
-    }
-    if (user.is_member_account) {
-      return { label: "Member", variant: "secondary" };
-    }
-
-    return { label: "User", variant: "secondary" };
-  };
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return "??";

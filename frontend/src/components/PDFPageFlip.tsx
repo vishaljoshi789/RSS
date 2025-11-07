@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import HTMLFlipBook from "react-pageflip";
 import * as pdfjsLib from "pdfjs-dist";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf-worker/pdf.worker.min.mjs";
 
@@ -24,7 +24,7 @@ const PDFPageFlip: React.FC<PDFPageFlipProps> = ({
   width = 550,
   height = 733,
 }) => {
-  const bookRef = useRef<any>(null);
+  const bookRef = useRef<{ pageFlip: () => { flipNext: () => void; flipPrev: () => void } } | null>(null);
   const [pages, setPages] = useState<PageData[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -120,7 +120,7 @@ const PDFPageFlip: React.FC<PDFPageFlipProps> = ({
 
   const isMobile = screenWidth <= 640;
 
-  const onFlip = (e: any) => {
+  const onFlip = (e: { data: number }) => {
     setCurrentPage(e.data);
   };
 
