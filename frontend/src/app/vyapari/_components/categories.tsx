@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Layers, AlertCircle } from "lucide-react";
@@ -16,23 +16,26 @@ const VyapariCategories = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       const response = await axios.get("/vyapari/category/");
       setCategories(response.data.results || response.data || []);
-    } catch (err: any) {
-      console.error("Error fetching categories:", err);
-      setError(err.response?.data?.message || "Failed to load categories");
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching categories:", err);
+      }
+      const errorResponse = err as { response?: { data?: { message?: string } } };
+      setError(errorResponse.response?.data?.message || "Failed to load categories");
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   return (
     <section className="w-full bg-muted/30 py-16 sm:py-20">

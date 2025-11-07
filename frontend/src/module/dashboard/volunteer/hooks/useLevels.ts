@@ -13,67 +13,87 @@ export const useLevels = (wingName?: string) => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchLevels = useCallback(async () => {
-    
     try {
       setLoading(true);
       setError(null);
       const data = await api.getLevels(wingName);
       setLevels(data);
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to fetch levels";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to fetch levels:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMsg =
+        errorResponse.response?.data?.message || "Failed to fetch levels";
       setError(errorMsg);
-      console.error("Failed to fetch levels:", err);
     } finally {
       setLoading(false);
     }
-  }, [wingName]);
+  }, [wingName, api]);
 
   const createLevel = useCallback(async (data: LevelFormData) => {
     try {
       const payload: LevelFormData = {
         ...data,
         name: Array.isArray(data.name)
-          ? data.name.map((n: any) =>
-              typeof n === "string" ? n : n?.en ?? String(n)
-            )
-          : [String(data.name as any)],
+          ? (data.name.map((n: string | Record<string, unknown>) =>
+              typeof n === "string" ? n : (n as Record<string, unknown>)?.en ?? String(n)
+            ) as string[])
+          : [String(data.name as string)],
       };
 
       const newLevel = await api.createLevel(payload);
       await fetchLevels();
       toast.success("Level created successfully");
       return newLevel;
-    } catch (err: any) {
-      console.error("Failed to create level:", err);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to create level:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      console.error("Failed to create level:", errorResponse);
       throw err;
     }
-  }, []);
+  }, [api, fetchLevels]);
 
   const updateLevel = useCallback(
     async (id: number, data: Partial<LevelFormData>) => {
       try {
-      
-      let payload: Partial<LevelFormData> = { ...data };
-      if (data.name) {
-        payload = {
-          ...payload,
-          name: Array.isArray(data.name)
-            ? data.name.map((n: any) => (typeof n === "string" ? n : n?.en ?? String(n)))
-            : [String((data.name as any))],
-        };
-      }
+        let payload: Partial<LevelFormData> = { ...data };
+        if (data.name) {
+          payload = {
+            ...payload,
+            name: Array.isArray(data.name)
+              ? (data.name.map((n: string | Record<string, unknown>) =>
+                  typeof n === "string" ? n : (n as Record<string, unknown>)?.en ?? String(n)
+                ) as string[])
+              : [String(data.name as string)],
+          };
+        }
 
-      const updatedLevel = await api.updateLevel(id, payload);
-        
+        const updatedLevel = await api.updateLevel(id, payload);
         await fetchLevels();
         toast.success("Level updated successfully");
         return updatedLevel;
-      } catch (err: any) {
-        console.error("Failed to update level:", err);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Failed to update level:", err);
+        }
+        const errorResponse = err as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        console.error("Failed to update level:", errorResponse);
         throw err;
       }
     },
-    []
+    [api, fetchLevels]
   );
 
   const deleteLevel = useCallback(async (id: number) => {
@@ -81,11 +101,12 @@ export const useLevels = (wingName?: string) => {
       await api.deleteLevel(id);
       setLevels((prev) => prev.filter((level) => level.id !== id));
       toast.success("Level deleted successfully");
-    } catch (err: any) {
-      console.error("Failed to delete level:", err);
-      throw err;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to delete level:", err);
+      }
     }
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     fetchLevels();

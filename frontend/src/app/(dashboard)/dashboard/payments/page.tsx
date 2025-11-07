@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PaymentStats } from "./_components/PaymentStats";
 import { TransactionTable } from "./_components/TransactionTable";
-import { Plus, Wallet } from "lucide-react";
+import { Plus } from "lucide-react";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 
 

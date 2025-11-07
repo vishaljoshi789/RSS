@@ -30,19 +30,34 @@ import {
 } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Search, Award } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useWings, useLevels, useDesignations } from "@/module/dashboard/volunteer";
-import type { Designation, DesignationFormData } from "@/module/dashboard/volunteer";
+import {
+  useWings,
+  useLevels,
+  useDesignations,
+} from "@/module/dashboard/volunteer";
+import type {
+  Designation,
+  DesignationFormData,
+} from "@/module/dashboard/volunteer";
+import { toast } from "sonner";
 
 const PadManagement = () => {
   const { wings } = useWings();
   const { levels } = useLevels();
-  const { designations, loading, createDesignation, updateDesignation, deleteDesignation } = useDesignations();
-  
+  const {
+    designations,
+    loading,
+    createDesignation,
+    updateDesignation,
+    deleteDesignation,
+  } = useDesignations();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentDesignation, setCurrentDesignation] = useState<Designation | null>(null);
+  const [currentDesignation, setCurrentDesignation] =
+    useState<Designation | null>(null);
   const [formData, setFormData] = useState<DesignationFormData>({
     title: "",
     level: 0,
@@ -63,8 +78,9 @@ const PadManagement = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim() || !formData.level || !formData.total_positions) return;
-    
+    if (!formData.title.trim() || !formData.level || !formData.total_positions)
+      return;
+
     try {
       setSubmitting(true);
       await createDesignation(formData);
@@ -72,7 +88,9 @@ const PadManagement = () => {
       setFormData({ title: "", level: 0, total_positions: 1 });
       setSelectedWing(0);
     } catch (error) {
-      // Error already handled by hook
+      const message =
+        error instanceof Error ? error.message : "Failed to create level";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -80,7 +98,8 @@ const PadManagement = () => {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentDesignation || !formData.title.trim() || !formData.level) return;
+    if (!currentDesignation || !formData.title.trim() || !formData.level)
+      return;
 
     try {
       setSubmitting(true);
@@ -90,7 +109,9 @@ const PadManagement = () => {
       setFormData({ title: "", level: 0, total_positions: 1 });
       setSelectedWing(0);
     } catch (error) {
-      // Error already handled by hook
+      const message =
+        error instanceof Error ? error.message : "Failed to create level";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -105,7 +126,9 @@ const PadManagement = () => {
       setIsDeleteDialogOpen(false);
       setCurrentDesignation(null);
     } catch (error) {
-      // Error already handled by hook
+      const message =
+        error instanceof Error ? error.message : "Failed to create level";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -194,7 +217,9 @@ const PadManagement = () => {
                   <TableCell colSpan={5} className="text-center py-12">
                     <div className="flex flex-col items-center justify-center text-muted-foreground">
                       <Award className="h-12 w-12 mb-4 opacity-50" />
-                      <h3 className="font-semibold text-lg mb-1">No designations found</h3>
+                      <h3 className="font-semibold text-lg mb-1">
+                        No designations found
+                      </h3>
                       <p className="text-sm mb-4">
                         {searchTerm
                           ? `No designations match "${searchTerm}"`
@@ -215,11 +240,15 @@ const PadManagement = () => {
               ) : (
                 filteredDesignations.map((designation) => (
                   <TableRow key={designation.id}>
-                    <TableCell className="font-medium">{designation.title}</TableCell>
+                    <TableCell className="font-medium">
+                      {designation.title}
+                    </TableCell>
                     <TableCell>{getWingName(designation.level)}</TableCell>
                     <TableCell>{getLevelName(designation.level)}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{designation.total_positions}</Badge>
+                      <Badge variant="outline">
+                        {designation.total_positions}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -301,7 +330,8 @@ const PadManagement = () => {
               </div>
               <div>
                 <Label htmlFor="title" className="mb-2 block">
-                  Pad Title (Designation) <span className="text-red-500">*</span>
+                  Pad Title (Designation){" "}
+                  <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="title"
@@ -407,7 +437,8 @@ const PadManagement = () => {
               </div>
               <div>
                 <Label htmlFor="edit-title" className="mb-2 block">
-                  Pad Title (Designation) <span className="text-red-500">*</span>
+                  Pad Title (Designation){" "}
+                  <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="edit-title"
@@ -465,8 +496,8 @@ const PadManagement = () => {
           <DialogHeader>
             <DialogTitle>Delete Pad (Designation)</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentDesignation?.title}"? This will also
-              remove all position assignments.
+              Are you sure you want to delete &quot;{currentDesignation?.title}&quot;?
+              This will also remove all position assignments.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

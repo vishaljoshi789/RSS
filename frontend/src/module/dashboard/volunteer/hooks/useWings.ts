@@ -18,14 +18,21 @@ export const useWings = () => {
       setError(null);
       const data = await api.getWings();
       setWings(data);
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to fetch wings";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to fetch wings:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMsg =
+        errorResponse.response?.data?.message || "Failed to fetch wings";
       setError(errorMsg);
-      console.error("Failed to fetch wings:", err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [api]);
 
   const createWing = useCallback(async (data: WingFormData) => {
     try {
@@ -33,11 +40,18 @@ export const useWings = () => {
       setWings((prev) => [...prev, newWing]);
       toast.success("Wing created successfully");
       return newWing;
-    } catch (err: any) {
-      console.error("Failed to create wing:", err);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to create wing:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      console.error("Failed to create wing:", errorResponse);
       throw err;
     }
-  }, []);
+  }, [api]);
 
   const updateWing = useCallback(
     async (id: number, data: Partial<WingFormData>) => {
@@ -48,12 +62,19 @@ export const useWings = () => {
         );
         toast.success("Wing updated successfully");
         return updatedWing;
-      } catch (err: any) {
-        console.error("Failed to update wing:", err);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Failed to update wing:", err);
+        }
+        const errorResponse = err as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        console.error("Failed to update wing:", errorResponse);
         throw err;
       }
     },
-    []
+    [api]
   );
 
   const deleteWing = useCallback(async (id: number) => {
@@ -61,11 +82,18 @@ export const useWings = () => {
       await api.deleteWing(id);
       setWings((prev) => prev.filter((wing) => wing.id !== id));
       toast.success("Wing deleted successfully");
-    } catch (err: any) {
-      console.error("Failed to delete wing:", err);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to delete wing:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      console.error("Failed to delete wing:", errorResponse);
       throw err;
     }
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     fetchWings();

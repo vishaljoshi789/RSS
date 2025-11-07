@@ -83,22 +83,25 @@ export const useMemberSubmit = () => {
           responseError.includes("already a member") ||
           responseError.includes("user already a member")
         ) {
-          // Create an error object that mimics axios error structure
-          const error: any = new Error(response.data.message || response.data.error);
-          error.response = {
-            data: response.data
-          };
+          // User is already a member
           setError(response.data.message || response.data.error);
           setLoading(false);
-          throw error;
+          const memberError = new Error(response.data.message || response.data.error);
+          throw memberError;
         }
 
         setSuccess(true);
         setLoading(false);
         return response.data;
-      } catch (err: any) {
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Membership submission error:", err);
+        }
+        
+        const errorResponse = err as { response?: { data?: { error?: string; message?: string } }; message?: string };
+        
         // Only process error if it's not already processed above
-        if (!err.response) {
+        if (!errorResponse.response) {
           const errorMessage = "Failed to submit membership form. Please try again.";
           setError(errorMessage);
           setLoading(false);
@@ -106,16 +109,16 @@ export const useMemberSubmit = () => {
         }
         
         const errorMessage =
-          err?.response?.data?.error ||
-          err?.response?.data?.message ||
-          err?.message ||
+          errorResponse?.response?.data?.error ||
+          errorResponse?.response?.data?.message ||
+          errorResponse?.message ||
           "Failed to submit membership form. Please try again.";
         setError(errorMessage);
         setLoading(false);
         throw err;
       }
     },
-    []
+    [axios]
   );
 
   const reset = useCallback(() => {

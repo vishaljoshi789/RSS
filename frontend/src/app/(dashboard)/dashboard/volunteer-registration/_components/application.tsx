@@ -152,7 +152,7 @@ const ApplicationForm = ({
     }
   };
 
-  const handleChange = (key: keyof ApplicationFormData, value: any) => {
+  const handleChange = (key: keyof ApplicationFormData, value: string | number | File | null) => {
     setData((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -266,6 +266,22 @@ const ApplicationForm = ({
                 required
               />
             </div>
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="referred_by_volunteer">
+              Referred By <span className="text-muted-foreground">(Optional)</span>
+            </Label>
+            <Input
+              id="referred_by_volunteer"
+              type="text"
+              placeholder="Enter name or User ID of person who referred you"
+              value={data.referred_by_volunteer || ""}
+              onChange={(e) => handleChange("referred_by_volunteer", e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              If someone referred you to join RSS, please enter their name or User ID here.
+            </p>
           </div>
 
           <div className="grid gap-3">

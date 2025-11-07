@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
 
-const layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const axiosInstance = useAxios();
   const { setUserData } = useAuth();
   const pathname = usePathname();
@@ -120,6 +120,4 @@ const layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
       </SidebarInset>
     </SidebarProvider>
   );
-};
-
-export default layout;
+}

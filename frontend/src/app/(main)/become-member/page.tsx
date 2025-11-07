@@ -410,7 +410,7 @@ const BecomeMemberPage = () => {
         city: formState.city,
         state: formState.state,
         postal_code: formState.postal_code,
-        country: (formState as any).country || "India",
+        country: "India",
       };
 
       // Step 1: Register member
@@ -438,16 +438,19 @@ const BecomeMemberPage = () => {
       setTimeout(() => {
         toast.dismiss("payment-processing");
       }, 1000);
-    } catch (error: any) {
-      console.error("Registration or payment failed:", error);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Registration or payment failed:", error);
+      }
 
       toast.dismiss("member-registration");
       toast.dismiss("payment-processing");
 
+      const errorResponse = error as { response?: { data?: { error?: string; message?: string } }; message?: string };
       const errorMessage =
-        error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        error?.message ||
+        errorResponse?.response?.data?.error ||
+        errorResponse?.response?.data?.message ||
+        errorResponse?.message ||
         "An error occurred. Please try again later.";
 
       const isAlreadyMemberError =

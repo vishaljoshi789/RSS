@@ -26,15 +26,23 @@ export const useLevelsById = () => {
 
       const data = await api.getLevels(wing.name);
       setLevels(data);
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || "Failed to fetch levels";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to fetch levels:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMsg =
+        errorResponse.response?.data?.message || "Failed to fetch levels";
       setError(errorMsg);
       toast.error(errorMsg);
       setLevels([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [api]);
 
   return {
     levels,

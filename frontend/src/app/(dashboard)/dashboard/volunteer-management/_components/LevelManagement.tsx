@@ -59,7 +59,8 @@ const LevelManagement = () => {
       setIsCreateDialogOpen(false);
       setFormData({ name: [], wing: 0 });
     } catch (error) {
-      toast.error("Failed to create level");
+      const message = error instanceof Error ? error.message : "Failed to create level";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -84,7 +85,8 @@ const LevelManagement = () => {
       setCurrentLevel(null);
       setFormData({ name: [], wing: 0 });
     } catch (error) {
-      // Error already handled by hook
+      const message = error instanceof Error ? error.message : "Failed to create level";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -98,8 +100,9 @@ const LevelManagement = () => {
       await deleteLevel(currentLevel.id);
       setIsDeleteDialogOpen(false);
       setCurrentLevel(null);
-    } catch (error) {
-      // Error already handled by hook
+    }catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to create level";
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -409,7 +412,7 @@ const LevelManagement = () => {
           <DialogHeader>
             <DialogTitle>Delete Level</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentLevel?.name}"? This
+              Are you sure you want to delete &quot;{currentLevel?.name}&quot;? This
               action cannot be undone.
             </DialogDescription>
           </DialogHeader>

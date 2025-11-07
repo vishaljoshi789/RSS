@@ -12,6 +12,13 @@ import {
 } from "./_components";
 import { User, ReferralItem } from "./referal";
 import { RoleGuard } from "@/components/auth/RoleGuard";
+import { AxiosError } from "axios";
+
+interface ApiErrorResponse {
+  message?: string;
+  error?: string;
+  detail?: string;
+}
 
 function ReferralsPageContent() {
   const axios = useAxios();
@@ -74,11 +81,13 @@ function ReferralsPageContent() {
       } else {
         toast.success(`${referralsList.length} रेफरल मिले`);
       }
-    } catch (err: any) {
+    } catch (err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+    
       console.error("Search error:", err);
       const errorMsg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
+        axiosError.response?.data?.message ||
+        axiosError.response?.data?.error ||
         "उपयोगकर्ता खोजने में त्रुटि हुई";
       setError(errorMsg);
       toast.error(errorMsg);

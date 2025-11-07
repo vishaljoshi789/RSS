@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import useAxios from "@/hooks/use-axios";
 import stateDistrictData from "@/lib/state-district.json";
@@ -62,24 +62,24 @@ const VyapariSearchPage = () => {
   const availableDistricts = getDistrictsForState(selectedState);
   const availableCities = getCitiesForDistrict(selectedState, selectedDistrict);
 
-  useEffect(() => {
-    const fetchCategoriesAndSubcategories = async () => {
-      try {
-        const [categoriesRes, subcategoriesRes] = await Promise.all([
-          axios.get("/vyapari/category/"),
-          axios.get("/vyapari/subcategory/"),
-        ]);
-        setCategories(categoriesRes.data.results || categoriesRes.data || []);
-        setSubcategories(
-          subcategoriesRes.data.results || subcategoriesRes.data || []
-        );
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
+  const fetchCategoriesAndSubcategories = useCallback(async () => {
+    try {
+      const [categoriesRes, subcategoriesRes] = await Promise.all([
+        axios.get("/vyapari/category/"),
+        axios.get("/vyapari/subcategory/"),
+      ]);
+      setCategories(categoriesRes.data.results || categoriesRes.data || []);
+      setSubcategories(
+        subcategoriesRes.data.results || subcategoriesRes.data || []
+      );
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  }, [axios]);
 
+  useEffect(() => {
     fetchCategoriesAndSubcategories();
-  }, []);
+  }, [fetchCategoriesAndSubcategories]);
 
   useEffect(() => {
     if (selectedCategory && selectedCategory !== "all") {
@@ -100,7 +100,7 @@ const VyapariSearchPage = () => {
     }
   }, [selectedCategory, subcategories, categories]);
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -143,11 +143,20 @@ const VyapariSearchPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    axios,
+    searchQuery,
+    selectedTags,
+    selectedCategory,
+    selectedSubcategory,
+    selectedCity,
+    selectedState,
+    selectedDistrict,
+  ]);
 
   useEffect(() => {
     handleSearch();
-  }, []);
+  }, [handleSearch]);
 
   const clearFilters = () => {
     setSearchQuery("");

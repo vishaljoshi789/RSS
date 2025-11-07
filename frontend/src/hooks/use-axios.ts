@@ -5,7 +5,6 @@ import axios, {
   AxiosError,
   InternalAxiosRequestConfig,
 } from "axios";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { useCallback, useMemo } from "react";
@@ -14,12 +13,11 @@ import { getApiBaseUrl } from "@/lib/env";
 interface ApiError {
   message: string;
   status: number;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 const useAxios = (): AxiosInstance => {
   const { refreshToken, logout, isAuthenticated } = useAuth();
-  const router = useRouter();
 
   const baseURL = getApiBaseUrl();
 
@@ -36,7 +34,7 @@ const useAxios = (): AxiosInstance => {
     return instance;
   }, [baseURL]);
 
-  const handleRequestError = useCallback((error: any) => {
+  const handleRequestError = useCallback((error: Error) => {
     console.error("Request setup error:", error);
     toast.error("Request configuration error");
     return Promise.reject(error);
@@ -87,15 +85,12 @@ const useAxios = (): AxiosInstance => {
       const apiError: ApiError = {
         message: "An error occurred",
         status: error.response?.status || 0,
-        data: error.response?.data,
+        data: error.response?.data as Record<string, unknown> | undefined,
       };
-
-      // Debug logging
-      console.log('[API Error] Status:', error.response?.status, 'Data:', error.response?.data);
 
       switch (error.response?.status) {
         case 400:
-          const errorData = error.response.data as any;
+          const errorData = error.response.data as Record<string, unknown>;
 
           if (
             errorData &&
@@ -103,12 +98,9 @@ const useAxios = (): AxiosInstance => {
             !errorData.message &&
             !errorData.detail
           ) {
-            let hasFieldErrors = false;
-
             Object.keys(errorData).forEach((field) => {
               const fieldErrors = errorData[field];
               if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
-                hasFieldErrors = true;
                 fieldErrors.forEach((msg: string) => {
                   const fieldName =
                     field.charAt(0).toUpperCase() +
@@ -116,22 +108,15 @@ const useAxios = (): AxiosInstance => {
                   toast.error(`${fieldName}: ${msg}`);
                 });
               } else if (typeof fieldErrors === "string") {
-                hasFieldErrors = true;
                 const fieldName =
                   field.charAt(0).toUpperCase() +
                   field.slice(1).replace(/_/g, " ");
                 toast.error(`${fieldName}: ${fieldErrors}`);
               }
             });
-
-            if (!hasFieldErrors) {
-              apiError.message =
-                errorData.message || errorData.detail || "Bad request";
-              toast.error(apiError.message);
-            }
           } else {
             apiError.message =
-              errorData?.message || errorData?.detail || "Bad request";
+              (errorData?.message as string) || (errorData?.detail as string) || "Bad request";
             toast.error(apiError.message);
           }
           break;
@@ -156,8 +141,9 @@ const useAxios = (): AxiosInstance => {
 
         case 422:
           apiError.message = "Validation error";
-          if ((error.response.data as any)?.errors) {
-            const validationErrors = (error.response.data as any).errors;
+          const validationData = error.response.data as Record<string, unknown>;
+          if (validationData?.errors) {
+            const validationErrors = validationData.errors as Record<string, string[]>;
             Object.keys(validationErrors).forEach((field) => {
               toast.error(`${field}: ${validationErrors[field][0]}`);
             });
@@ -193,13 +179,15 @@ const useAxios = (): AxiosInstance => {
             apiError.message = "Network error";
             toast.error("Network error. Please check your connection.");
           } else {
-            const errorData = error.response?.data as any;
-            if (errorData && typeof errorData === 'object') {
-              const hasFieldErrors = Object.keys(errorData).some(key => 
-                Array.isArray(errorData[key]) || typeof errorData[key] === 'string'
+            const defaultErrorData = error.response?.data as Record<string, unknown>;
+            if (defaultErrorData && typeof defaultErrorData === 'object') {
+              const hasFieldErrors = Object.keys(defaultErrorData).some(key => 
+                Array.isArray(defaultErrorData[key]) || typeof defaultErrorData[key] === 'string'
               );
               
-              
+              if (hasFieldErrors) {
+                // Field errors are already handled, no need for additional action
+              }
             } 
           }
           break;
@@ -207,7 +195,7 @@ const useAxios = (): AxiosInstance => {
 
       return Promise.reject(apiError);
     },
-    [refreshToken, logout, isAuthenticated, router, axiosInstance]
+    [refreshToken, logout, isAuthenticated, axiosInstance]
   );
 
   useMemo(() => {

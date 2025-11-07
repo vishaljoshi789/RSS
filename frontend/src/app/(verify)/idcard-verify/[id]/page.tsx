@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect} from 'react';
 import { useParams } from 'next/navigation';
 import useAxios from '@/hooks/use-axios';
 import { User } from '@/types/auth.types';
+import Image from 'next/image';
 
 const IDCardManagement = () => {
   const { id } = useParams(); 
@@ -12,9 +12,6 @@ const IDCardManagement = () => {
   const [user, setUser] = useState<User | null>(null);
 
   const [loading, setLoading] = useState(true);
- 
-
-  const quote = 'सेवा परमो धर्मः';
 
   useEffect(() => {
     async function fetchMemberData() {
@@ -55,8 +52,10 @@ const IDCardManagement = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
       <div className="w-full max-w-sm bg-white shadow-xl rounded-2xl overflow-hidden">
         <div className="relative">
-          <img
-            src={user.image}
+          <Image
+            src={user.image || '/placeholder-user.jpg'}
+            height={100}
+            width={100}
             alt="User"
             className="w-full h-48 object-cover"
           />

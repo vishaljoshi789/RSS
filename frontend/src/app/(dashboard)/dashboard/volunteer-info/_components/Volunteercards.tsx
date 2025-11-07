@@ -37,7 +37,7 @@ const VolunteerCard: React.FC = () => {
     }
     fetchVolunteers()
     return () => { mounted = false }
-  }, [])
+  }, [api])
 
   useEffect(() => {
     const q = searchQuery.toLowerCase()

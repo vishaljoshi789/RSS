@@ -35,9 +35,16 @@ export const useDesignationsById = () => {
           wing.name
         );
         setDesignations(data);
-      } catch (err: any) {
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Failed to fetch designations:", err);
+        }
+        const errorResponse = err as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
         const errorMsg =
-          err.response?.data?.message || "Failed to fetch designations";
+          errorResponse.response?.data?.message || "Failed to fetch designations";
         setError(errorMsg);
         toast.error(errorMsg);
         setDesignations([]);
@@ -45,7 +52,7 @@ export const useDesignationsById = () => {
         setLoading(false);
       }
     },
-    []
+    [api]
   );
 
   return {

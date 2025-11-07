@@ -73,10 +73,12 @@ export function ContactAddressStep({
         setEmailVerified(false);
         toast.error("Email not found. Please ensure you have registered as a user first.");
       }
-    } catch (error: any) {
-      console.error("Error checking email:", error);
-      toast.error("Failed to verify email. Please try again.");
-      setEmailVerified(false);
+    } catch (error) {
+      if (error instanceof Error){
+        console.error("Error checking email:", error);
+        toast.error("Failed to verify email. Please try again.");
+        setEmailVerified(false);
+      }
     } finally {
       setCheckingEmail(false);
     }
@@ -105,10 +107,12 @@ export function ContactAddressStep({
         setReferralVerified(false);
         toast.error("Referral ID not found. Please check the user ID.");
       }
-    } catch (error: any) {
-      console.error("Error checking referral:", error);
-      toast.error("Failed to verify referral. Please try again.");
-      setReferralVerified(false);
+    } catch (error) {
+      if(error instanceof Error){
+        console.error("Error checking referral:", error);
+        toast.error("Failed to verify referral. Please try again.");
+        setReferralVerified(false);
+      }
     } finally {
       setCheckingReferral(false);
     }

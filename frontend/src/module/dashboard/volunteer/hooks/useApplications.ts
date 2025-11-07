@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import { createVolunteerAPI } from "../api";
-import { Application, ApplicationFilters, PaginatedResponse } from "../types";
+import { Application, ApplicationFilters, ApplicationFormData, PaginatedResponse } from "../types";
 
 export function useApplications(filters?: ApplicationFilters) {
   const axios = useAxios();
@@ -25,8 +25,16 @@ export function useApplications(filters?: ApplicationFilters) {
       setApplications(data.results);
       setCount(data.count);
       setTotalPages(Math.ceil(data.count / 10));
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || "Failed to fetch applications";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching applications:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message || "Failed to fetch applications";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -38,25 +46,41 @@ export function useApplications(filters?: ApplicationFilters) {
     fetchApplications();
   }, [fetchApplications]);
 
-  const createApplication = async (data: any) => {
+  const createApplication = async (data: ApplicationFormData) => {
     try {
       await api.createApplication(data);
       toast.success("Application submitted successfully");
       fetchApplications();
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || "Failed to submit application";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error creating application:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message || "Failed to submit application";
       toast.error(errorMessage);
       throw err;
     }
   };
 
-  const updateApplication = async (id: number, data: any) => {
+  const updateApplication = async (id: number, data: Partial<ApplicationFormData>) => {
     try {
       await api.updateApplication(id, data);
       toast.success("Application updated successfully");
       fetchApplications();
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || "Failed to update application";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error updating application:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message || "Failed to update application";
       toast.error(errorMessage);
       throw err;
     }
@@ -67,8 +91,16 @@ export function useApplications(filters?: ApplicationFilters) {
       await api.deleteApplication(id);
       toast.success("Application deleted successfully");
       fetchApplications();
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || "Failed to delete application";
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error deleting application:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      const errorMessage =
+        errorResponse.response?.data?.message || "Failed to delete application";
       toast.error(errorMessage);
       throw err;
     }

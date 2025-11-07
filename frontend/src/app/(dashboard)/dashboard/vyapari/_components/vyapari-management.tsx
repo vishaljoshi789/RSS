@@ -1,21 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Plus,
   Pencil,
   Trash2,
-  Eye,
   Search,
-  MapPin,
   Phone,
   Mail,
-  Globe,
   CheckCircle,
   XCircle,
   Clock,
   ShieldCheck,
-  ShieldX,
   Ban,
   UnlockKeyhole,
   Layers,
@@ -72,7 +68,7 @@ export default function VyapariManagement() {
   const [isUnblockDialogOpen, setIsUnblockDialogOpen] = useState(false);
   const [currentVyapari, setCurrentVyapari] = useState<Vyapari | null>(null);
 
-  const fetchData = async (search?: string) => {
+  const fetchData = useCallback(async (search?: string) => {
     try {
       setLoading(true);
       const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
@@ -86,16 +82,17 @@ export default function VyapariManagement() {
       setSubcategories(
         subcategoriesRes.data.results || subcategoriesRes.data || []
       );
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to fetch data");
+    } catch (error) {
+      const errorResponse = error as { response?: { data?: { message?: string } } };
+      toast.error(errorResponse.response?.data?.message || "Failed to fetch data");
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -103,7 +100,7 @@ export default function VyapariManagement() {
     }, 400);
 
     return () => clearTimeout(handler);
-  }, [searchTerm]);
+  }, [searchTerm, fetchData]);
 
   const getCategoryName = (categoryId: number | null) => {
     if (!categoryId) return "N/A";
@@ -136,8 +133,12 @@ export default function VyapariManagement() {
       setIsDeleteDialogOpen(false);
       setCurrentVyapari(null);
       fetchData();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to delete business");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Delete error:", error);
+      }
+      const errorResponse = error as { response?: { data?: { message?: string } } };
+      toast.error(errorResponse.response?.data?.message || "Failed to delete business");
     }
   };
 
@@ -171,7 +172,10 @@ export default function VyapariManagement() {
       setIsVerifyDialogOpen(false);
       setCurrentVyapari(null);
       fetchData();
-    } catch (error: any) {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Verify error:", error);
+      }
       toast.error("Failed to verify business");
     }
   };
@@ -187,7 +191,10 @@ export default function VyapariManagement() {
       setIsUnverifyDialogOpen(false);
       setCurrentVyapari(null);
       fetchData();
-    } catch (error: any) {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Unverify error:", error);
+      }
       toast.error("Failed to unverify business");
     }
   };
@@ -203,7 +210,10 @@ export default function VyapariManagement() {
       setIsBlockDialogOpen(false);
       setCurrentVyapari(null);
       fetchData();
-    } catch (error: any) {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Block error:", error);
+      }
       toast.error("Failed to block business");
     }
   };
@@ -219,7 +229,10 @@ export default function VyapariManagement() {
       setIsUnblockDialogOpen(false);
       setCurrentVyapari(null);
       fetchData();
-    } catch (error: any) {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Unblock error:", error);
+      }
       toast.error("Failed to unblock business");
     }
   };
@@ -454,7 +467,7 @@ export default function VyapariManagement() {
           <DialogHeader>
             <DialogTitle>Delete Business</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentVyapari?.name}"? This
+              Are you sure you want to delete &quot;{currentVyapari?.name}&quot;? This
               action cannot be undone.
             </DialogDescription>
           </DialogHeader>
@@ -485,7 +498,7 @@ export default function VyapariManagement() {
             <DialogDescription asChild>
               <div>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Are you sure you want to verify "{currentVyapari?.name}"?
+                  Are you sure you want to verify &quot;{currentVyapari?.name}&quot;?
                 </p>
                 <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
                   <div className="text-sm text-green-800 font-medium">
@@ -534,7 +547,7 @@ export default function VyapariManagement() {
             <DialogDescription asChild>
               <div>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Are you sure you want to unverify "{currentVyapari?.name}"?
+                  Are you sure you want to unverify &quot;{currentVyapari?.name}&quot;?
                 </p>
                 <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
                   <div className="text-sm text-orange-800 font-medium">
@@ -581,7 +594,7 @@ export default function VyapariManagement() {
             <DialogDescription asChild>
               <div>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Are you sure you want to block "{currentVyapari?.name}"?
+                  Are you sure you want to block &quot;{currentVyapari?.name}&quot;?
                 </p>
                 <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
                   <div className="text-sm text-red-800 font-medium">
@@ -625,7 +638,7 @@ export default function VyapariManagement() {
             <DialogDescription asChild>
               <div>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Are you sure you want to unblock "{currentVyapari?.name}"?
+                  Are you sure you want to unblock &quot;{currentVyapari?.name}&quot;?
                 </p>
                 <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
                   <div className="text-sm text-green-800 font-medium">

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowLeft,
   Building2,
@@ -57,15 +56,11 @@ export default function CategoryDetailPage() {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("all");
   const [verificationFilter, setVerificationFilter] = useState<string>("all");
 
-  useEffect(() => {
-    fetchData();
-  }, [categoryId]);
-
   const getImageUrl = (imagePath: string | null | undefined) => {
     return buildMediaUrl(imagePath) ?? null;
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -91,14 +86,21 @@ export default function CategoryDetailPage() {
         []
       ).filter((v: Vyapari) => v.category === parseInt(categoryId));
       setVyaparis(filteredVyaparis);
-    } catch (err: any) {
-      console.error("Error fetching data:", err);
-      setError(err.response?.data?.message || "Failed to load category data");
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching data:", err);
+      }
+      const errorResponse = err as { response?: { data?: { message?: string } } };
+      setError(errorResponse.response?.data?.message || "Failed to load category data");
       toast.error("Failed to load category");
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios, categoryId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // Get subcategory name
   const getSubcategoryName = (subcategoryId: number | null) => {

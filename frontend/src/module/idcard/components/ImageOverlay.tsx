@@ -84,15 +84,18 @@ export default function ImageOverlay() {
 
     
     try {
-      const qrcodeModule: any = await import('qrcode')
-      const dataUrl = await qrcodeModule.toDataURL(qrValue, { margin: 1, scale: 8 })
+      const qrcodeModule = await import('qrcode') as { default: { toDataURL: (value: string, options: Record<string, unknown>) => Promise<string> } }
+      const dataUrl = await qrcodeModule.default.toDataURL(qrValue, { margin: 1, scale: 8 })
       const id = `qr_${Date.now()}`
       setFields((p) => [
         ...p,
         { id, label: 'QR', value: '', top: 40, left: 200, removable: true, imageSrc: dataUrl, width: 180, height: 180 },
       ])
       return
-    } catch (err) {
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Failed to generate QR code:", error);
+      }
       
       const api = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrValue)}`
       const id = `qr_${Date.now()}`
@@ -125,7 +128,6 @@ export default function ImageOverlay() {
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   const imgRect = img.getBoundingClientRect()
-  const containerRect = container.getBoundingClientRect()
   const scaleX = canvas.width / imgRect.width
   const scaleY = canvas.height / imgRect.height
 
@@ -149,7 +151,9 @@ export default function ImageOverlay() {
             try {
               ctx.drawImage(imgEl, x, y, w, h)
             } catch (e) {
-              console.warn('Failed to draw overlay image', e)
+              if (e instanceof Error) {
+                console.warn('Failed to draw overlay image', e);
+              }
               hadImageErrors = true
             }
             resolve()
@@ -259,10 +263,13 @@ export default function ImageOverlay() {
         return
       }
 
-      let jsPDFModule: any
+      let jsPDFModule: { jsPDF: new (options: Record<string, unknown>) => { addImage: (dataUrl: string, format: string, x: number, y: number, w: number, h: number) => void; addPage: (format: [number, number]) => void; save: (filename: string) => void } }
       try {
-        jsPDFModule = await import('jspdf')
+        jsPDFModule = await import('jspdf') as { jsPDF: new (options: Record<string, unknown>) => { addImage: (dataUrl: string, format: string, x: number, y: number, w: number, h: number) => void; addPage: (format: [number, number]) => void; save: (filename: string) => void } }
       } catch (err) {
+        if (err instanceof Error) {
+          console.error("Failed to import jsPDF:", err);
+        }
         alert('jsPDF is not installed. Run `npm install jspdf` in the frontend folder and reload.')
         return
       }
@@ -282,9 +289,12 @@ export default function ImageOverlay() {
       pdf.addImage(imgDataUrl, 'PNG', 0, 0, w, h)
 
       pdf.save('idcard_two_page.pdf')
-    } catch (err: any) {
-      console.error(err)
-      alert('Failed to create two-page PDF: ' + (err?.message || err))
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to create two-page PDF:", err);
+      }
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      alert('Failed to create two-page PDF: ' + errorMessage)
     }
   }
 
@@ -380,6 +390,7 @@ export default function ImageOverlay() {
 
         <div className="col-span-2">
           <div ref={containerRef} className="relative border rounded overflow-hidden" style={{ height: 720 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={imgUrl} alt="preview" className="w-full h-full object-contain" />
 
             {(() => {

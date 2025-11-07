@@ -20,7 +20,6 @@ import {
   Mountain,
   Sparkles,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const getIcon = (id: number) => {

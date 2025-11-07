@@ -28,11 +28,9 @@ import Link from 'next/link'
 const Member: React.FC = () => {
   const api = useAxios()
   const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
   const [page] = useState<number>(1)
   const [pageSize] = useState<number>(25)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
-  const [expandedIds, setExpandedIds] = useState<number[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [debouncedTerm, setDebouncedTerm] = useState<string>('')
   const [filterType, setFilterType] = useState<'all' | 'volunteer' | 'member'>('all')
@@ -40,9 +38,8 @@ const Member: React.FC = () => {
   useEffect(() => {
     let mounted = true
     const fetchUsers = async () => {
-      setLoading(true)
       try {
-        const filterParams: Record<string, any> = { page, page_size: pageSize }
+        const filterParams: Record<string, string | number | boolean> = { page, page_size: pageSize }
         if (debouncedTerm) filterParams.search = debouncedTerm
         if (filterType === 'volunteer') filterParams.is_volunteer = true
         if (filterType === 'member') filterParams.is_member_account = true
@@ -55,15 +52,15 @@ const Member: React.FC = () => {
         else if (data && Array.isArray(data.data)) list = data.data
         if (mounted) setUsers(list)
       } catch (err) {
-        console.error('Failed to fetch users', err)
-      } finally {
-        if (mounted) setLoading(false)
+        if (err instanceof Error) {
+          console.error('Failed to fetch users', err)
+        }
       }
     }
 
     fetchUsers()
     return () => { mounted = false }
-  }, [page, pageSize, debouncedTerm, filterType])
+  }, [api, page, pageSize, debouncedTerm, filterType])
 
   const toggleSortOrder = () => setSortOrder((s) => (s === 'asc' ? 'desc' : 'asc'))
 
@@ -96,14 +93,6 @@ const Member: React.FC = () => {
     return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
   })
 
-  const handleEdit = (user: User) => {
-    console.log('Edit user', user)
-  }
-
-  const handleView = (user: User) => {
-    console.log('View user', user)
-  }
-
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">People / Volunteers</h2>
@@ -111,7 +100,7 @@ const Member: React.FC = () => {
       <div className="flex gap-3 items-center mb-3">
         <Input placeholder="Search by name, email, phone, or user id..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full max-w-md" />
 
-        <Select value={filterType} onValueChange={(v) => setFilterType(v as any)}>
+        <Select value={filterType} onValueChange={(v) => setFilterType(v as 'all' | 'volunteer' | 'member')}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
@@ -159,7 +148,6 @@ const Member: React.FC = () => {
             ) : (
               sortedUsers.map((user) => {
                 const userRoles = getUserRoles(user)
-                const isExpanded = expandedIds.includes(user.id)
                 return (
                   <React.Fragment key={user.id}>
                     <TableRow>
@@ -240,14 +228,13 @@ const Member: React.FC = () => {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => handleView(user)}
-                                >
-                                  <Eye className="h-4 w-4" />
-                                </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
                               </TooltipTrigger>
                               <TooltipContent>
                                 <p>View Details</p>
@@ -258,14 +245,13 @@ const Member: React.FC = () => {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => handleEdit(user)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
                               </TooltipTrigger>
                               <TooltipContent>
                                 <p>Edit User</p>
@@ -275,41 +261,6 @@ const Member: React.FC = () => {
                         </div>
                       </TableCell>
                     </TableRow>
-
-                    {isExpanded && (
-                      <TableRow>
-                        <TableCell colSpan={8} className="bg-gray-50">
-                          <div className="grid grid-cols-2 gap-4 p-4 text-sm">
-                            <div><strong>ID:</strong> {user.id}</div>
-                            <div><strong>Username:</strong> {user.username}</div>
-                            <div><strong>User ID:</strong> {user.user_id}</div>
-                            <div><strong>DOB:</strong> {user.dob || 'N/A'}</div>
-                            <div><strong>Aadhar:</strong> {user.aadhar_number || 'N/A'}</div>
-                            <div><strong>PAN:</strong> {user.pan_number || 'N/A'}</div>
-                            <div><strong>Street:</strong> {user.street || 'N/A'}</div>
-                            <div><strong>Sub-district:</strong> {user.sub_district || 'N/A'}</div>
-                            <div><strong>District:</strong> {user.district || 'N/A'}</div>
-                            <div><strong>City:</strong> {user.city || 'N/A'}</div>
-                            <div><strong>State:</strong> {user.state || 'N/A'}</div>
-                            <div><strong>Country:</strong> {user.country || 'N/A'}</div>
-                            <div><strong>Postal Code:</strong> {user.postal_code || 'N/A'}</div>
-                            <div><strong>Referred By:</strong> {user.referred_by ?? 'N/A'}</div>
-                            <div><strong>Verified:</strong> {user.is_verified ? 'Yes' : 'No'}</div>
-                            <div><strong>Blocked:</strong> {user.is_blocked ? 'Yes' : 'No'}</div>
-                            <div><strong>Volunteer:</strong> {user.is_volunteer ? 'Yes' : 'No'}</div>
-                            <div><strong>Business Account:</strong> {user.is_business_account ? 'Yes' : 'No'}</div>
-                            <div><strong>Staff Account:</strong> {user.is_staff_account ? 'Yes' : 'No'}</div>
-                            <div><strong>Member Account:</strong> {user.is_member_account ? 'Yes' : 'No'}</div>
-                            <div><strong>Field Worker:</strong> {user.is_field_worker ? 'Yes' : 'No'}</div>
-                            <div><strong>Is Staff:</strong> {user.is_staff ? 'Yes' : 'No'}</div>
-                            <div><strong>Is Active:</strong> {user.is_active ? 'Yes' : 'No'}</div>
-                            <div><strong>Superuser:</strong> {user.is_superuser ? 'Yes' : 'No'}</div>
-                            <div><strong>Date Joined:</strong> {user.date_joined}</div>
-                            <div><strong>Last Login:</strong> {user.last_login || 'N/A'}</div>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )}
                   </React.Fragment>
                 )
               })

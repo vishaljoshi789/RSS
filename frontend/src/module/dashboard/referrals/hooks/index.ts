@@ -5,10 +5,10 @@ import useAxios from "@/hooks/use-axios";
 
 export interface ReferralData {
   total_referrals: number;
-  referrals: any[];
+  referrals: Record<string, unknown>[];
 }
 
-export function useReferrals(userId?: string | number) {
+export function useReferrals() {
   const [referralData, setReferralData] = useState<ReferralData>({
     total_referrals: 0,
     referrals: [],
@@ -40,18 +40,21 @@ export function useReferrals(userId?: string | number) {
           referrals: referralsList,
         });
       }
-    } catch (err: any) {
-      console.error("Error fetching referrals:", err);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error fetching referrals:", err);
+      }
+      const errorResponse = err as { response?: { data?: { message?: string } }; message?: string };
       setError(
-        err.response?.data?.message ||
-          err.message ||
+        errorResponse.response?.data?.message ||
+          errorResponse.message ||
           "Failed to fetch referrals"
       );
       setReferralData({ total_referrals: 0, referrals: [] });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [axios]);
 
   useEffect(() => {
     fetchReferrals();

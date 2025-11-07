@@ -20,7 +20,6 @@ import {
   Banknote,
   Building2,
   CheckCircle,
-  Gift,
   Users,
   Video,
   Calendar,
@@ -277,10 +276,10 @@ const Donation = () => {
               </p>
               <div className="bg-white dark:bg-background rounded-xl p-6 border-2 border-orange-200 dark:border-orange-800">
                 <p className="text-base md:text-lg text-orange-700 dark:text-orange-300 font-semibold italic leading-relaxed">
-                  "जो दिया वह बचेगा, जो रोका वह मिट जाएगा।
+                  &quot;जो दिया वह बचेगा, जो रोका वह मिट जाएगा।
                   <br />
                   धर्म में लगाया गया धन ही पुण्य बनकर पीढ़ियों को रक्षा देता
-                  है।"
+                  है।&quot;
                 </p>
               </div>
             </CardContent>

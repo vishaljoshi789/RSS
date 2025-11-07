@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, Pencil, Trash2, Image as ImageIcon, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,24 +57,25 @@ export default function CategoryManagement() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchCategories = async (search?: string) => {
+  const fetchCategories = useCallback(async (search?: string) => {
     try {
       setLoading(true);
       const searchParam = search ? `?search=${encodeURIComponent(search)}` : "";
       const response = await axios.get(`/vyapari/category/${searchParam}`);
       setCategories(response.data.results || response.data || []);
-    } catch (error: any) {
+    } catch (error) {
+      const errorResponse = error as { response?: { data?: { message?: string } } };
       toast.error(
-        error.response?.data?.message || "Failed to fetch categories"
+        errorResponse.response?.data?.message || "Failed to fetch categories"
       );
     } finally {
       setLoading(false);
     }
-  };
+  }, [axios]);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -82,7 +83,7 @@ export default function CategoryManagement() {
     }, 400);
 
     return () => clearTimeout(handler);
-  }, [searchTerm]);
+  }, [searchTerm, fetchCategories]);
 
   // Handle image selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,9 +135,10 @@ export default function CategoryManagement() {
       setIsCreateDialogOpen(false);
       resetForm();
       fetchCategories();
-    } catch (error: any) {
+    } catch (error) {
+      const errorResponse = error as { response?: { data?: { name?: string[] } } };
       toast.error(
-        error.response?.data?.name?.[0] || "Failed to create category"
+        errorResponse.response?.data?.name?.[0] || "Failed to create category"
       );
     } finally {
       setSubmitting(false);
@@ -177,9 +179,10 @@ export default function CategoryManagement() {
       setIsEditDialogOpen(false);
       resetForm();
       fetchCategories();
-    } catch (error: any) {
+    } catch (error) {
+      const errorResponse = error as { response?: { data?: { name?: string[] } } };
       toast.error(
-        error.response?.data?.name?.[0] || "Failed to update category"
+        errorResponse.response?.data?.name?.[0] || "Failed to update category"
       );
     } finally {
       setSubmitting(false);
@@ -204,8 +207,9 @@ export default function CategoryManagement() {
       setIsDeleteDialogOpen(false);
       setCurrentCategory(null);
       fetchCategories();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to delete category");
+    } catch (error) {
+      const errorResponse = error as { response?: { data?: { message?: string } } };
+      toast.error(errorResponse.response?.data?.message || "Failed to delete category");
     } finally {
       setSubmitting(false);
     }
@@ -483,7 +487,7 @@ export default function CategoryManagement() {
           <DialogHeader>
             <DialogTitle>Delete Category</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{currentCategory?.name}"? This
+              Are you sure you want to delete &quot;{currentCategory?.name}&quot;? This
               action cannot be undone.
             </DialogDescription>
           </DialogHeader>

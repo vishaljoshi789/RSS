@@ -28,15 +28,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import {
-  Search,
-  Download,
-  Eye,
-  ArrowUpDown,
-  Loader2,
-  Building2,
-  Wallet,
-} from "lucide-react";
+import { Search, Download, Eye, ArrowUpDown, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -200,14 +192,16 @@ export function TransactionTable({
           description: "Unable to fetch payment information. Please try again.",
         });
       }
-    } catch (error: any) {
-      console.error("Error fetching payment details:", error);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error fetching payment details:", error);
 
-      toast.error("Failed to load payment details", {
-        description:
-          error.message ||
-          "An error occurred while fetching payment information.",
-      });
+        toast.error("Failed to load payment details", {
+          description:
+            error.message ||
+            "An error occurred while fetching payment information.",
+        });
+      }
     } finally {
       setLoadingPaymentId(null);
     }

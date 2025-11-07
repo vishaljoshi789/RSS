@@ -19,9 +19,10 @@ import {
   Gift,
 } from "lucide-react";
 import { toast } from "sonner";
+import { User } from "@/types/auth.types";
 
 interface ReferralModalProps {
-  userData: any;
+  userData: User;
   referralCount: number;
 }
 
@@ -29,7 +30,7 @@ export default function ReferralModal({ userData, referralCount }: ReferralModal
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const referralId = userData?.user_id || userData?.id || "N/A";
+  const referralId = String(userData?.user_id || userData?.id || "N/A");
 
   const referralLink = useMemo(() => {
     const origin =
@@ -46,7 +47,10 @@ export default function ReferralModal({ userData, referralCount }: ReferralModal
       toast.success(`${type} copied to clipboard!`);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      toast.error("Failed to copy to clipboard");
+      if(err instanceof Error){
+        console.error(err)
+        toast.error("Failed to copy to clipboard");
+      }
     }
   };
 
@@ -58,8 +62,11 @@ export default function ReferralModal({ userData, referralCount }: ReferralModal
           text: `Join me in RSS using my referral ID: ${referralId}`,
           url: referralLink,
         });
-      } catch (err) {
+      } catch (error) {
         // User cancelled sharing or sharing failed
+        if(error instanceof Error){
+          console.error(error)
+        }
         copyToClipboard(referralLink, "Referral link");
       }
     } else {
@@ -101,11 +108,11 @@ export default function ReferralModal({ userData, referralCount }: ReferralModal
             </div>
             {referralCount === 0 ? (
               <p className="text-sm text-gray-500">
-                You haven't referred anyone yet. Start sharing your referral ID!
+                You haven&apos;t referred anyone yet. Start sharing your referral ID!
               </p>
             ) : (
               <p className="text-sm text-gray-500">
-                Great job! You've helped {referralCount} people join RSS.
+                Great job! You&apos;ve helped {referralCount} people join RSS.
               </p>
             )}
           </div>
@@ -166,7 +173,7 @@ export default function ReferralModal({ userData, referralCount }: ReferralModal
             <ol className="text-sm text-blue-800 space-y-1">
               <li>1. Share your referral ID: <span className="font-mono font-bold">{referralId}</span></li>
               <li>2. Ask them to enter it during registration</li>
-              <li>3. They'll be linked to you as their referrer</li>
+              <li>3. They&apos;ll be linked to you as their referrer</li>
               <li>4. Help them become active RSS members</li>
             </ol>
           </div>

@@ -2,20 +2,20 @@
 
 import useAxios from '@/hooks/use-axios';
 import { User } from '@/types/auth.types';
-import React, { useEffect, useState } from 'react';
-import { Mail, Phone, MapPin, Briefcase, User2, Shield, UserIcon, CheckCircle2, IdCard, Calendar, CreditCard, XCircle } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Mail, Phone, MapPin, Briefcase, Shield, UserIcon, CheckCircle2, IdCard, Calendar, CreditCard, XCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
-const userProfileModel = ({id} : {id : number | null}) => {
+export default function UserProfileModel({id} : {id : number | null}) {
     const api = useAxios();
   const [userData, setUserData] = useState<User | null>(null);
 
-  const fetchUserProfile = async (userId: number) => {
+  const fetchUserProfile = useCallback(async (userId: number) => {
     const response = await api.get(`/account/detail/${userId}`);
     setUserData(response.data);
-  };
+  }, [api]);
 
    const getInitials = (name: string) => {
     if (!name) return "??";
@@ -50,12 +50,16 @@ const userProfileModel = ({id} : {id : number | null}) => {
     label,
     value,
   }: {
-    icon: any;
+    icon: React.ReactNode | React.ComponentType<{ className?: string }>;
     label: string;
     value: string | undefined;
   }) => (
     <div className="flex items-start gap-3 py-2">
-      <Icon className="h-4 w-4 text-muted-foreground mt-0.5" />
+      {typeof Icon === 'function' ? (
+        <Icon className="h-4 w-4 text-muted-foreground mt-0.5" />
+      ) : (
+        Icon
+      )}
       <div className="flex-1 space-y-1">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
         <p className="text-sm">{value || "Not provided"}</p>
@@ -67,7 +71,7 @@ const userProfileModel = ({id} : {id : number | null}) => {
     if (id) {
       fetchUserProfile(id);
     }
-  }, [id]);
+  }, [id, fetchUserProfile]);
 
   if (!userData) {
     return (
@@ -76,18 +80,6 @@ const userProfileModel = ({id} : {id : number | null}) => {
       </div>
     );
   }
-
-  const address = [
-    userData.street,
-    userData.sub_district,
-    userData.district,
-    userData.city,
-    userData.state,
-    userData.country,
-    userData.postal_code,
-  ]
-    .filter(Boolean)
-    .join(', ');
 
   const roles: string[] = [];
   if (userData.is_admin_account) roles.push('Admin');
@@ -337,4 +329,3 @@ const userProfileModel = ({id} : {id : number | null}) => {
         </div>
   );
 };
-export default userProfileModel

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import {
   Dialog,
   DialogContent,
@@ -22,8 +22,6 @@ import {
   Trophy,
 } from "lucide-react";
 import {
-  pressCategories,
-  getPressByCategory,
   formatPressDate,
   getRecentPress,
   PressItem,
@@ -224,10 +222,7 @@ const PressCard: React.FC<PressCardProps> = ({
 };
 
 const Press: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [layout] = useState<"grid" | "masonry">("grid");
-
-  const filteredPress = getPressByCategory(activeCategory);
+  
   const recentPress = getRecentPress(3);
 
   return (

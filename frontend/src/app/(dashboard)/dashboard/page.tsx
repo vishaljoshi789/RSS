@@ -2,7 +2,6 @@
 
 import React, { useEffect } from "react";
 import useAuth from "@/hooks/use-auth";
-import Referral from "@/module/dashboard/users/components/referral-model";
 import { useReferrals } from "@/module/dashboard/referrals/hooks";
 // import IDCardManagement from "./id-card-management/page";
 import StatCard from "./_components/stat-card";
@@ -22,13 +21,14 @@ export default function Page() {
   useEffect(() => {
     const data = async () => {
       try {
-        const api = await axios.get("/dashboard/referrals");
+        await axios.get("/dashboard/referrals");
       } catch (error) {
         console.error("Error fetching referral data:", error);
       }
     };
     data();
-  }, []);
+    
+  }, [axios]);
 
   return (
     <div className="space-y-6">

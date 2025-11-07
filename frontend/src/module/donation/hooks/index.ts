@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, use } from "react";
+import { useState, useCallback } from "react";
 import useAxios from "@/hooks/use-axios";
 import { useAuth } from "@/hooks/use-auth";
 import type { DonationFormData, ManualPaymentFormData } from "../types";
@@ -37,7 +37,9 @@ function convertNumberToWords(num: number): string {
 
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: new (options: RazorpayOptions) => {
+      open: () => void;
+    };
   }
 }
 
@@ -49,13 +51,13 @@ interface RazorpayOptions {
   description: string;
   image?: string;
   order_id: string;
-  handler: (response: any) => void;
+  handler: (response: PaymentResponse) => void;
   prefill?: {
     name?: string;
     email?: string;
     contact?: string;
   };
-  notes?: Record<string, any>;
+  notes?: Record<string, unknown>;
   theme?: {
     color?: string;
   };
@@ -164,34 +166,43 @@ export function useDonationPayment() {
           razorpay_key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
           message: "Order created successfully",
         };
-      } catch (error: any) {
-        
-        const errorDetails = {
-          message: error?.message || "Unknown error",
-          response: error?.response?.data || null,
-          status: error?.response?.status || null,
-          config: {
-            url: error?.config?.url || "Unknown URL",
-            method: error?.config?.method || "Unknown method",
-          }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Order creation error:", error);
+        }
+        const errorResponse = error as {
+          response?: { status?: number; data?: { error?: string; message?: string } };
+          config?: { url?: string; method?: string };
+          code?: string;
+          message?: string;
         };
-        console.error("Order creation error:", errorDetails);
-        
-        
+
+        const errorDetails = {
+          message: errorResponse?.message || "Unknown error",
+          response: errorResponse?.response?.data || null,
+          status: errorResponse?.response?.status || null,
+          config: {
+            url: errorResponse?.config?.url || "Unknown URL",
+            method: errorResponse?.config?.method || "Unknown method",
+          },
+        };
+        console.error("Order creation error details:", errorDetails);
+
         let errorMessage = "Failed to create order";
-        
-        if (error?.response?.data?.error) {
-          errorMessage = error.response.data.error;
-        } else if (error?.response?.data?.message) {
-          errorMessage = error.response.data.message;
-        } else if (error?.message) {
-          errorMessage = error.message;
-        } else if (error?.response?.status === 401) {
+
+        if (errorResponse?.response?.data?.error) {
+          errorMessage = errorResponse.response.data.error;
+        } else if (errorResponse?.response?.data?.message) {
+          errorMessage = errorResponse.response.data.message;
+        } else if (errorResponse?.message) {
+          errorMessage = errorResponse.message;
+        } else if (errorResponse?.response?.status === 401) {
           errorMessage = "Please login to continue with payment";
-        } else if (error?.response?.status === 500) {
+        } else if (errorResponse?.response?.status === 500) {
           errorMessage = "Server error. Please try again later";
-        } else if (error?.code === 'ERR_NETWORK') {
-          errorMessage = "Network error. Please check your internet connection";
+        } else if (errorResponse?.code === "ERR_NETWORK") {
+          errorMessage =
+            "Network error. Please check your internet connection";
         }
         
         return {
@@ -228,22 +239,27 @@ export function useDonationPayment() {
           order_id: response.data.order_id,
           status: response.data.status,
         };
-      } catch (error: any) {
-        // Improved error logging
-        console.error("Payment verification error:", {
-          message: error?.message || "Unknown error",
-          response: error?.response?.data || null,
-          status: error?.response?.status || null,
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Payment verification error:", err);
+        }
+        const errorResponse = err as {
+          response?: { data?: { error?: string; message?: string } };
+          message?: string;
+        };
+        console.error("Payment verification error details:", {
+          message: errorResponse?.message || "Unknown error",
+          response: errorResponse?.response?.data || null,
         });
         
         let errorMessage = "Payment verification failed";
         
-        if (error?.response?.data?.error) {
-          errorMessage = error.response.data.error;
-        } else if (error?.response?.data?.message) {
-          errorMessage = error.response.data.message;
-        } else if (error?.message) {
-          errorMessage = error.message;
+        if (errorResponse?.response?.data?.error) {
+          errorMessage = errorResponse.response.data.error;
+        } else if (errorResponse?.response?.data?.message) {
+          errorMessage = errorResponse.response.data.message;
+        } else if (errorResponse?.message) {
+          errorMessage = errorResponse.message;
         }
         
         return {
@@ -323,29 +339,35 @@ export function useDonationPayment() {
                 setReceiptUrl(verificationResponse.receipt_url || null);
                 setCurrentStep("completed");
 
-                
+                const userCountry = user?.country || "N/A";
+                const userState = user?.state || "N/A";
+                const userCity = user?.city || "N/A";
+                const userPostalCode = user?.postal_code || "N/A";
+
                 setTimeout(() => {
                   const receiptParams = new URLSearchParams({
-                    name: formData.name || '',
-                    phone: formData.phone || '',
-                    date: new Date().toLocaleDateString('en-IN'),
-                    mode: 'Online payment',
+                    name: formData.name || "",
+                    phone: formData.phone || "",
+                    date: new Date().toLocaleDateString("en-IN"),
+                    mode: "Online payment",
                     amount: String(formData.amount / 100),
                     amountWords: convertNumberToWords(formData.amount / 100),
-                    receiptNumber: verificationResponse.payment_id || verificationResponse.order_id || 'N/A',
-                    country: user?.country || 'N/A',
-                    state: user?.state || 'N/A',
-                    city: user?.city || 'N/A',
-                    postal_code: user?.postal_code || 'N/A',
+                    receiptNumber:
+                      verificationResponse.payment_id ||
+                      verificationResponse.order_id ||
+                      "N/A",
+                    country: userCountry,
+                    state: userState,
+                    city: userCity,
+                    postal_code: userPostalCode,
                   });
 
-                  const receiptUrl = `/receipt?${receiptParams.toString()}`;
-                  
-                  
-                  const link = document.createElement('a');
-                  link.href = receiptUrl;
-                  link.target = '_blank';
-                  link.rel = 'noopener noreferrer';
+                  const receiptUrlString = `/receipt?${receiptParams.toString()}`;
+
+                  const link = document.createElement("a");
+                  link.href = receiptUrlString;
+                  link.target = "_blank";
+                  link.rel = "noopener noreferrer";
                   document.body.appendChild(link);
                   link.click();
                   document.body.removeChild(link);
@@ -355,12 +377,18 @@ export function useDonationPayment() {
                   verificationResponse.error || "Payment verification failed"
                 );
               }
-            } catch (verifyError: any) {
-              console.error(
-                "Step 3 Failed: Payment verification error",
-                verifyError
-              );
-              setError(verifyError.message || "Payment verification failed");
+            } catch (verifyError) {
+              if (verifyError instanceof Error) {
+                console.error(
+                  "Step 3 Failed: Payment verification error",
+                  verifyError
+                );
+              }
+              const errorMsg =
+                verifyError instanceof Error
+                  ? verifyError.message
+                  : "Payment verification failed";
+              setError(errorMsg);
               setCurrentStep("idle");
             } finally {
               setIsProcessing(false);
@@ -394,15 +422,20 @@ export function useDonationPayment() {
 
         const rzp = new window.Razorpay(options);
         rzp.open();
-      } catch (error: any) {
-        setError(
-          error.message || "An error occurred during payment processing"
-        );
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Payment processing error:", error);
+        }
+        const errorMsg =
+          error instanceof Error
+            ? error.message
+            : "An error occurred during payment processing";
+        setError(errorMsg);
         setIsProcessing(false);
         setCurrentStep("idle");
       }
     },
-    [createOrder, verifyPayment]
+    [createOrder, verifyPayment, user?.country, user?.state, user?.city, user?.postal_code]
   );
 
   const mannualPayment = useCallback(
@@ -440,19 +473,26 @@ export function useDonationPayment() {
         } else {
           throw new Error("Invalid response from server");
         }
-      } catch (error: any) {
-        console.error("Manual payment error:", error);
+        
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Manual payment error:", err);
+        }
+        const errorResponse = err as {
+          response?: { status?: number; data?: { error?: string; message?: string } };
+          message?: string;
+        };
 
         let errorMessage = "Manual payment entry failed";
 
-        if (error.response?.status === 403) {
+        if (errorResponse?.response?.status === 403) {
           errorMessage =
             "You need admin or staff privileges to create manual payments. Please contact an administrator to get the required permissions.";
         } else {
           errorMessage =
-            error.response?.data?.error ||
-            error.response?.data?.message ||
-            error.message ||
+            errorResponse?.response?.data?.error ||
+            errorResponse?.response?.data?.message ||
+            errorResponse?.message ||
             "Manual payment entry failed";
         }
 
@@ -461,7 +501,7 @@ export function useDonationPayment() {
         setIsProcessing(false);
       }
     },
-    [user]
+    [axios]
   );
 
   const reset = useCallback(() => {

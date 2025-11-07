@@ -47,7 +47,7 @@ function UsersPageContent() {
       currentParams.set("page_size", pageSizeFromUrl.toString());
       router.replace(`?${currentParams.toString()}`, { scroll: false });
     }
-  }, []);
+  }, [pageFromUrl, pageSizeFromUrl, router, searchParams]);
 
   useEffect(() => {
     setCurrentPage(pageFromUrl);
@@ -66,7 +66,7 @@ function UsersPageContent() {
     selectedUserId || 0
   );
 
-  const { user: editingUser, loading: editUserLoading } = useUserById(
+  const { user: editingUser } = useUserById(
     editingUserId || 0
   );
 
@@ -91,9 +91,12 @@ function UsersPageContent() {
         });
       }
     } catch (error) {
-      toast.error("Failed to update user", {
-        description: "An unexpected error occurred",
-      });
+      if(error instanceof Error){
+        console.error(error)
+        toast.error("Failed to update user", {
+          description: `An unexpected error occurred`,
+        });
+      }
     } finally {
       setIsSaving(false);
     }

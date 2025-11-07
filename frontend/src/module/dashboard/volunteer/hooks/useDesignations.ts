@@ -18,15 +18,21 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
       setError(null);
       const data = await api.getDesignations(levelName, wingName);
       setDesignations(data);
-    } catch (err: any) {
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to fetch designations:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
       const errorMsg =
-        err.response?.data?.message || "Failed to fetch designations";
+        errorResponse.response?.data?.message || "Failed to fetch designations";
       setError(errorMsg);
-      console.error("Failed to fetch designations:", err);
     } finally {
       setLoading(false);
     }
-  }, [levelName, wingName]);
+  }, [levelName, wingName, api]);
 
   const createDesignation = useCallback(async (data: DesignationFormData) => {
     try {
@@ -34,11 +40,18 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
       setDesignations((prev) => [...prev, newDesignation]);
       toast.success("Designation created successfully");
       return newDesignation;
-    } catch (err: any) {
-      console.error("Failed to create designation:", err);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to create designation:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      console.error("Failed to create designation:", errorResponse);
       throw err;
     }
-  }, []);
+  }, [api]);
 
   const updateDesignation = useCallback(
     async (id: number, data: Partial<DesignationFormData>) => {
@@ -51,12 +64,19 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
         );
         toast.success("Designation updated successfully");
         return updatedDesignation;
-      } catch (err: any) {
-        console.error("Failed to update designation:", err);
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Failed to update designation:", err);
+        }
+        const errorResponse = err as {
+          response?: { data?: { message?: string } };
+          message?: string;
+        };
+        console.error("Failed to update designation:", errorResponse);
         throw err;
       }
     },
-    []
+    [api]
   );
 
   const deleteDesignation = useCallback(async (id: number) => {
@@ -66,11 +86,18 @@ export const useDesignations = (levelName?: string, wingName?: string) => {
         prev.filter((designation) => designation.id !== id)
       );
       toast.success("Designation deleted successfully");
-    } catch (err: any) {
-      console.error("Failed to delete designation:", err);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Failed to delete designation:", err);
+      }
+      const errorResponse = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      console.error("Failed to delete designation:", errorResponse);
       throw err;
     }
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     fetchDesignations();

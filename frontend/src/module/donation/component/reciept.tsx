@@ -144,8 +144,8 @@ const Receipt: React.FC<ReceiptProps> = ({
 
         <div className="bg-yellow-300 px-4 py-2 mb-6">
           <p className="text-center text-sm font-bold text-gray-900">
-            "Thank you for your support and for your belief in doing good.we
-            simply couldn't do what we do without amazing people like you."
+            &quot;Thank you for your support and for your belief in doing good.we
+            simply couldn&apos;t do what we do without amazing people like you.&quot;
           </p>
         </div>
 

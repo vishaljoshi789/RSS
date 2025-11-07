@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Table,
   TableBody,
@@ -15,15 +14,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useUserPayments } from '../hooks';
+import type { Payment } from '../hooks';
 import { 
-  ArrowUpRight, 
-  Calendar, 
+  ArrowUpRight,
   CreditCard, 
   DollarSign, 
   AlertCircle, 
   Receipt,
   Loader2,
-  Eye,
   Wallet,
   Building2,
   Smartphone
@@ -78,7 +76,7 @@ const UserTransactionHistory = () => {
     );
   };
 
-  const getPaymentMethodIcon = (payment: any) => {
+  const getPaymentMethodIcon = (payment: Payment) => {
     const method = (payment.payment_details?.method || payment.method)?.toLowerCase();
     const methodDetails = payment.payment_details?.method_details;
     
@@ -200,15 +198,6 @@ const UserTransactionHistory = () => {
     }
     
     return <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">General</Badge>;
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
   };
 
   if (loading) {
