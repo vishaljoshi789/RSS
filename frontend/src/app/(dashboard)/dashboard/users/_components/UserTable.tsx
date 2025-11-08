@@ -32,7 +32,6 @@ import {
   Edit,
   Search,
   ArrowUpDown,
-  User as UserIcon,
   CheckCircle2,
   Loader2,
 } from "lucide-react";
