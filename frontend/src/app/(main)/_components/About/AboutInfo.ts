@@ -21,7 +21,7 @@ export const aboutData: AboutData = {
     conclusion: "हम संघर्षों से सीखे हैं, सेवा को जीवन बनाया है, और सनातन के लिए समर्पण को अपना धर्म।"
   },
   ctaText: "Read More",
-  ctaLink: "https://joinrss.org.in/about-us/",
+  ctaLink: "/about-us",
   image: "/hero/about.png",
   imageAlt: "राष्ट्रीय सेवा संघ भारतवर्ष"
 };
