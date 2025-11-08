@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import useAxios from "@/hooks/use-axios";
+import { getUserImageUrl } from "@/lib/media";
 
 interface UserTableProps {
   users: User[];
@@ -349,17 +350,16 @@ export function UserTable({
             ) : (
               sortedUsers.map((user) => {
                 const userRoles = getUserRoles(user);
+                const userImageUrl = getUserImageUrl(user.image);
                 return (
                   <TableRow key={user.id}>
                     <TableCell>
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={user.image} alt={user.name} />
+                        {userImageUrl && (
+                          <AvatarImage src={userImageUrl} alt={user.name || "User"} />
+                        )}
                         <AvatarFallback>
-                          {user.image ? (
-                            <UserIcon className="h-5 w-5" />
-                          ) : (
-                            getInitials(user.name)
-                          )}
+                          {getInitials(user.name)}
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
