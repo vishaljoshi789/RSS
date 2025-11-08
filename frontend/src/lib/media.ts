@@ -8,6 +8,11 @@ function ensureLeadingSlash(path: string): string {
   return path.startsWith("/") ? path : `/${path}`;
 }
 
+function getMediaBaseUrl(): string {
+  const apiBaseUrl = getApiBaseUrl();
+  return apiBaseUrl.replace(/\/api$/, '');
+}
+
 export function buildMediaUrl(path?: string | null): string | undefined {
   if (!path) {
     return undefined;
@@ -17,7 +22,7 @@ export function buildMediaUrl(path?: string | null): string | undefined {
     return path;
   }
 
-  const baseUrl = getApiBaseUrl();
+  const baseUrl = getMediaBaseUrl();
   return `${baseUrl}${ensureLeadingSlash(path)}`;
 }
 
