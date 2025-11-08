@@ -25,6 +25,7 @@ import {
   PersonalDetailsStep,
   AddressStep,
   PhotoUploadStep,
+  DeclarationStep,
   ReviewStep,
 } from "@/module/dashboard/member/components";
 import { useMemberSubmit } from "@/module/dashboard/member/hooks";
@@ -46,6 +47,9 @@ type FormState = {
   postal_code: string;
   image: File | null;
   referred_by?: string;
+  declaration_accepted: boolean;
+  declaration_date: string;
+  declaration_name: string;
 };
 
 
@@ -64,6 +68,9 @@ const defaultFormState: FormState = {
   postal_code: "",
   image: null,
   referred_by: "",
+  declaration_accepted: false,
+  declaration_date: new Date().toISOString().split('T')[0],
+  declaration_name: "",
 };
 
 type StateDistrictData = typeof rawStateDistrictData;
@@ -90,6 +97,10 @@ const steps: StepConfig[] = [
   {
     title: "Identification",
     description: "Upload a recent passport size photo.",
+  },
+  {
+    title: "Legal Declaration",
+    description: "Accept terms and conditions.",
   },
   {
     title: "Review & payment",
@@ -123,7 +134,6 @@ const BecomeMemberPage = () => {
   const { user } = useAuth();
   const stateOptions = useMemo(() => getIndianStates(rawStateDistrictData), []);
 
-  // Pre-fill form from authenticated user data (from AuthContext only, no localStorage)
   useEffect(() => {
     if (userDataLoaded || !user) {
       return;
@@ -210,7 +220,7 @@ const BecomeMemberPage = () => {
     setUserDataLoaded(true);
   }, [user, userDataLoaded, stateOptions]);
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | boolean) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => {
@@ -294,6 +304,15 @@ const BecomeMemberPage = () => {
       }
     }
 
+    if (stepIndex === 3) {
+      if (!formState.declaration_name.trim()) {
+        stepErrors.declaration_name = "Please enter your name for declaration.";
+      }
+      if (!formState.declaration_accepted) {
+        stepErrors.declaration_accepted = "You must accept the terms and declaration to proceed.";
+      }
+    }
+
     setErrors(stepErrors);
     return Object.keys(stepErrors).length === 0;
   };
@@ -304,6 +323,13 @@ const BecomeMemberPage = () => {
         description: "Check the form for any errors highlighted in red.",
       });
       return;
+    }
+
+    if (activeStep === 2 && formState.name && !formState.declaration_name) {
+      setFormState((prev) => ({
+        ...prev,
+        declaration_name: prev.name,
+      }));
     }
 
     setErrors({});
@@ -503,6 +529,16 @@ const BecomeMemberPage = () => {
           formData={formState}
           errors={errors}
           onFileChange={handleFileChange}
+        />
+      );
+    }
+
+    if (activeStep === 3) {
+      return (
+        <DeclarationStep
+          formData={formState}
+          errors={errors}
+          onChange={handleChange}
         />
       );
     }
