@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef, type ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   Loader2,
@@ -51,7 +52,6 @@ type FormState = {
   declaration_date: string;
   declaration_name: string;
 };
-
 
 
 const defaultFormState: FormState = {
@@ -116,6 +116,8 @@ const BecomeMemberPage = () => {
   const [userDataLoaded, setUserDataLoaded] = useState(false);
   const [formState, setFormState] = useState<FormState>(defaultFormState);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const router = useRouter();
 
   const formDataRef = useRef<{
     name: string;
@@ -369,32 +371,24 @@ const BecomeMemberPage = () => {
 
       setSubmitted(true);
 
-      
-        const receiptParams = new URLSearchParams({
-          name: savedFormData.name || "",
-          phone: savedFormData.phone || "",
-          date: new Date().toLocaleDateString("en-IN"),
-          mode: "Online payment",
-          amount: "199",
-          amountWords: "One Hundred Ninety Nine Rupees Only",
-          receiptNumber: "MEMBER_" + Date.now(),
-          country: savedFormData.country || "India",
-          state: savedFormData.state || "",
-          city: savedFormData.city || "",
-          postal_code: savedFormData.postal_code || "",
-        });
+      // Navigate to receipt page instead of opening popup
+      const receiptParams = new URLSearchParams({
+        name: savedFormData.name || "",
+        phone: savedFormData.phone || "",
+        date: new Date().toLocaleDateString("en-IN"),
+        mode: "Online payment",
+        amount: "199",
+        amountWords: "One Hundred Ninety Nine Rupees Only",
+        receiptNumber: "MEMBER_" + Date.now(),
+        country: savedFormData.country || "India",
+        state: savedFormData.state || "",
+        city: savedFormData.city || "",
+        postal_code: savedFormData.postal_code || "",
+      });
 
-        const receiptUrl = `/receipt?${receiptParams.toString()}`;
-
-        const link = document.createElement("a");
-        link.href = receiptUrl;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      router.push(`/receipt?${receiptParams.toString()}`);
     }
-  }, [paymentSuccess, submitted]);
+  }, [paymentSuccess, submitted, router]);
 
   useEffect(() => {
     if (paymentError) {
