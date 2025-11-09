@@ -27,6 +27,7 @@ urlpatterns = [
         path('payment/', include('payment.urls')),
         path('vyapari/', include('vyapari.urls')),
         path('volunteer/', include('volunteer.urls')),
+        path('admin/', include('adminpanel.urls')),
     ])),
 ]
 

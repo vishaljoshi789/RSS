@@ -1,25 +1,24 @@
+import os
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 from django.db.models import Count
+from django.http import FileResponse
 
 from account.models import User
 from dashboard.permissions import IsAdminOrIsStaff
 from .serializers import UserInfoSerializer, ReferralSerializer
 from vyapari.serializers import VyapariSerializer
 from vyapari.models import Vyapari
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.http import FileResponse
+from .models import District
+from .serializers import DistrictSerializer
 from .pdf_builder.utils.builder import generate_pdf
 from .pdf_builder.utils.templates import ID_CARD_LAYOUT, CERTIFICATE_LAYOUT, JOINING_LETTER_LAYOUT
 
-import os
-from django.conf import settings
+
 
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
@@ -140,3 +139,8 @@ class GetDocumentView(APIView):
             filename=f"{doc_type}.pdf",
             content_type="application/pdf",
         )
+
+class DistrictListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = District.objects.all()
+    serializer_class = DistrictSerializer
