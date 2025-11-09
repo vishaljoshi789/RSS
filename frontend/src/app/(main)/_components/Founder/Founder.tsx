@@ -46,6 +46,7 @@ const Founder = () => {
             modules={[Autoplay, Pagination]}
             slidesPerView={1}
             spaceBetween={16}
+            loop={true}
             autoplay={{
               delay: 3500,
               disableOnInteraction: false,
@@ -95,13 +96,13 @@ const Founder = () => {
                     </div>
                     
                     {/* Quote section - optional, shorter */}
-                    {member.quote && (
+                    {/* {member.quote && (
                       <div className="p-4 bg-background/95 backdrop-blur-sm flex-1">
                         <p className="text-xs text-muted-foreground italic text-center leading-relaxed line-clamp-2">
                           &ldquo;{member.quote}&rdquo;
                         </p>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </SwiperSlide>
@@ -109,46 +110,77 @@ const Founder = () => {
           </Swiper>
         </div>
 
-        <div className="hidden lg:grid lg:grid-cols-2 xl:grid-cols-4 gap-6 mb-12">
-          {founderInfo.members.map((member) => (
-            <div
-              key={member.id}
-              className="group bg-background rounded-2xl border border-border overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-300 flex flex-col"
-            >
-              <div className="relative w-full aspect-[4/5] overflow-hidden bg-muted">
-                <Image
-                  src={member.photo}
-                  alt={member.name}
-                  fill
-                  sizes="(max-width: 1279px) 50vw, 25vw"
-                  className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                  placeholder="blur"
-                  blurDataURL={IMAGE_BLUR_DATA_URL}
-                  priority={member.id === 1}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
+        <div className="hidden lg:block mb-12">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            slidesPerView={4}
+            spaceBetween={24}
+            loop={true}
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+            }}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            breakpoints={{
+              1024: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              1280: {
+                slidesPerView: 3,
+                spaceBetween: 24,
+              },
+              1536: {
+                slidesPerView: 4,
+                spaceBetween: 24,
+              },
+            }}
+            className="pb-12"
+          >
+            {founderInfo.members.map((member) => (
+              <SwiperSlide key={member.id}>
+                <div className="h-full">
+                  <div className="group bg-background rounded-2xl border border-border overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-300 flex flex-col h-full">
+                    <div className="relative w-full aspect-[4/5] overflow-hidden bg-muted">
+                      <Image
+                        src={member.photo}
+                        alt={member.name}
+                        fill
+                        sizes="(max-width: 1279px) 50vw, 25vw"
+                        className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                        placeholder="blur"
+                        blurDataURL={IMAGE_BLUR_DATA_URL}
+                        priority={member.id === 1}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
 
-              <div className="p-5 bg-background flex-1 flex flex-col">
-                <h3 className="text-lg xl:text-xl font-bold text-foreground mb-2 text-center">
-                  {member.name}
-                </h3>
-                <p className="text-sm text-primary font-semibold mb-3 text-center">
-                  {member.designation}
-                </p>
-                {member.quote && (
-                  <div className="mt-auto pt-3 border-t border-border">
-                    <p className="text-xs xl:text-sm text-muted-foreground italic text-center leading-relaxed line-clamp-3">
-                      &ldquo;{member.quote}&rdquo;
-                    </p>
+                    <div className="p-5 bg-background flex-1 flex flex-col">
+                      <h3 className="text-lg xl:text-xl font-bold text-foreground mb-2 text-center">
+                        {member.name}
+                      </h3>
+                      <p className="text-sm text-primary font-semibold mb-3 text-center">
+                        {member.designation}
+                      </p>
+                      {/* {member.quote && (
+                        <div className="mt-auto pt-3 border-t border-border">
+                          <p className="text-xs xl:text-sm text-muted-foreground italic text-center leading-relaxed line-clamp-3">
+                            &ldquo;{member.quote}&rdquo;
+                          </p>
+                        </div>
+                      )} */}
+                    </div>
                   </div>
-                )}
-              </div>
-            </div>
-          ))}
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
 
-        <div className="relative mx-4 lg:mx-0 mb-10">
+        {/* <div className="relative mx-4 lg:mx-0 mb-10">
           <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 p-6 lg:p-10 rounded-2xl lg:rounded-3xl border border-primary/20 relative overflow-hidden">
             <div className="absolute top-4 left-4 lg:top-6 lg:left-8 w-8 h-8 lg:w-12 lg:h-12 bg-primary/10 rounded-full" />
             <div className="absolute bottom-4 right-4 lg:bottom-6 lg:right-8 w-6 h-6 lg:w-8 lg:h-8 bg-primary/20 rounded-full" />
@@ -163,7 +195,7 @@ const Founder = () => {
               </cite>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="text-center mx-4 lg:mx-0">
           <div className="max-w-4xl mx-auto bg-background p-6 lg:p-9 rounded-2xl border border-border shadow-lg">
