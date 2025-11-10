@@ -106,49 +106,220 @@ That's it! No need to modify individual page files if you're using `allowedRoles
 
 ---
 
-## 📝 Adding a New Protected Route
+## 📝 Adding a New Protected Route (Complete Step-by-Step)
 
-### 1. Add route configuration to `route-access.ts`:
+### Step 1: Create Route Folder Structure
 
-```typescript
-{
-  path: "/dashboard/new-feature",
-  allowedRoles: ["admin"],
-  description: "New feature - admin only",
-}
+Create the following structure under `src/app/(dashboard)/dashboard/`:
+
+```
+your-route-name/
+├── page.tsx       (Required - main component)
+├── layout.tsx     (Required - for RoleGuard wrapper)
+├── loading.tsx    (Optional - loading state)
+└── error.tsx      (Optional - error boundary)
 ```
 
-### 2. Create your page with RoleGuard:
+### Step 2: Create Layout with RoleGuard
+
+**File: `src/app/(dashboard)/dashboard/your-route-name/layout.tsx`**
 
 ```tsx
-// src/app/(dashboard)/dashboard/new-feature/page.tsx
-"use client";
-
 import { RoleGuard } from "@/components/auth/RoleGuard";
 
-export default function NewFeaturePage() {
+export default function YourRouteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <RoleGuard allowedRoles="auto" showUnauthorized={true}>
-      <div>
-        <h1>New Feature</h1>
-        {/* Your content */}
-      </div>
+    <RoleGuard allowedRoles={["admin", "staff"]} showUnauthorized={true}>
+      {children}
     </RoleGuard>
   );
 }
 ```
 
-### 3. (Optional) Add navigation item to `nav-config.ts`:
+**Important:** Use `layout.tsx` instead of wrapping content in `page.tsx` for cleaner separation.
+
+### Step 3: Add Route Access Configuration
+
+**File: `src/lib/route-access.ts`**
+
+Add your route to the `ROUTE_ACCESS_MAP` array:
 
 ```typescript
 {
-  title: "New Feature",
-  url: "/dashboard/new-feature",
-  icon: Star,
-  description: "Manage new feature",
-  roles: ["admin"],
+  path: "/dashboard/your-route-name",
+  allowedRoles: ["admin", "staff"],
+  description: "Your feature description - admin and staff only",
 }
 ```
+
+### Step 4: Add Navigation Menu Item
+
+**File: `src/app/(dashboard)/dashboard/_components/nav-config.ts`**
+
+Add to the appropriate section in the navigation array:
+
+```typescript
+{
+  name: "Your Route Name",
+  href: "/dashboard/your-route-name",
+  icon: YourIcon, // Import from lucide-react
+  roles: ["admin", "staff"],
+}
+```
+
+### Step 5: Create Your Page Component
+
+**File: `src/app/(dashboard)/dashboard/your-route-name/page.tsx`**
+
+```tsx
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export default function YourRoutePage() {
+  return (
+    <div className="container mx-auto p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Feature</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Your content here */}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+### Step 6 (Optional): Add Loading State
+
+**File: `src/app/(dashboard)/dashboard/your-route-name/loading.tsx`**
+
+```tsx
+export default function Loading() {
+  return (
+    <div className="container mx-auto p-6">
+      <div className="h-64 bg-muted animate-pulse rounded" />
+    </div>
+  );
+}
+```
+
+### Step 7 (Optional): Add Error Boundary
+
+**File: `src/app/(dashboard)/dashboard/your-route-name/error.tsx`**
+
+```tsx
+"use client";
+
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error("Error:", error);
+  }, [error]);
+
+  return (
+    <div className="container mx-auto p-6">
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Something went wrong!</AlertTitle>
+        <AlertDescription className="mt-2">
+          {error.message || "An error occurred."}
+        </AlertDescription>
+        <Button variant="outline" size="sm" onClick={reset} className="mt-4">
+          Try again
+        </Button>
+      </Alert>
+    </div>
+  );
+}
+```
+
+---
+
+## ✅ Complete Checklist for New Routes
+
+- [ ] **Step 1:** Create route folder structure
+- [ ] **Step 2:** Create `layout.tsx` with `RoleGuard`
+- [ ] **Step 3:** Add route to `route-access.ts`
+- [ ] **Step 4:** Add navigation item to `nav-config.ts`
+- [ ] **Step 5:** Create `page.tsx` with your component
+- [ ] **Step 6 (Optional):** Add `loading.tsx`
+- [ ] **Step 7 (Optional):** Add `error.tsx`
+- [ ] **Test:** Login as different roles and verify access control works
+- [ ] **Verify:** Check that navigation item appears only for authorized roles
+
+---
+
+## 🎯 Quick Example: Country-State Management Route
+
+Here's a real example from the codebase:
+
+**1. Folder structure:**
+```
+dashboard/country-state-management/
+├── page.tsx
+├── layout.tsx
+├── loading.tsx
+└── error.tsx
+```
+
+**2. Layout (`layout.tsx`):**
+```tsx
+import { RoleGuard } from "@/components/auth/RoleGuard";
+
+export default function CountryStateManagementLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <RoleGuard allowedRoles={["admin", "staff"]} showUnauthorized={true}>
+      {children}
+    </RoleGuard>
+  );
+}
+```
+
+**3. Route access (`route-access.ts`):**
+```typescript
+{
+  path: "/dashboard/country-state-management",
+  allowedRoles: ["admin", "staff"],
+  description: "Country and State management - admin and staff only",
+}
+```
+
+**4. Navigation (`nav-config.ts`):**
+```typescript
+{
+  name: "Country Management",
+  href: "/dashboard/country-state-management",
+  icon: Globe,
+  roles: ["admin", "staff"],
+}
+```
+
+---
+
+## 🔑 Key Points to Remember
+
+1. **Always use `layout.tsx`** for `RoleGuard` - don't wrap content in `page.tsx`
+2. **Match roles exactly** between `route-access.ts`, `nav-config.ts`, and `layout.tsx`
+3. **Test thoroughly** by logging in as different user roles
+4. **Keep roles consistent** - if you add a new role, update it everywhere
+5. **Error boundaries are important** - add `error.tsx` for production-ready routes
 
 ---
 
@@ -167,6 +338,7 @@ export default function NewFeaturePage() {
 | `/dashboard/id-card-management` | member, volunteer | ID card collection |
 | `/dashboard/volunteer-registration` | volunteer, member | Volunteer registration |
 | `/dashboard/volunteer-info` | volunteer, member | Volunteer information |
+| `/dashboard/country-state-management` | admin, staff | Country and state management |
 
 ---
 
