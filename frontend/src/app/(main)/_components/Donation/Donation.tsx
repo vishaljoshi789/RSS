@@ -31,8 +31,7 @@ const benefits = [
   { icon: CheckCircle, text: "आभार प्रमाणपत्र" },
   { icon: Users, text: "संघ की सदस्यता" },
   { icon: Video, text: "सेवा कार्यों की रिपोर्ट" },
-  { icon: Calendar, text: "आयोजनों में विशेष आमंत्रण" },
-  { icon: Sparkles, text: "संतों का आशीर्वाद" },
+  { icon: Calendar, text: "आयोजनों में विशेष आमंत्रण" }
 ];
 
 const Donation = () => {
@@ -247,15 +246,16 @@ const Donation = () => {
           <Card className="shadow-lg border-2 border-primary/10">
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl md:text-3xl font-bold text-foreground">
-                💬 हम क्यों माँगते हैं आपका साथ?
+                हम क्यों माँगते हैं आपका साथ?
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 text-center">
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                क्योंकि हम जानते हैं — आप केवल दर्शक नहीं, बल्कि{" "}
+                क्योंकि हम जानते हैं — आप केवल दर्शक नहीं,
+                <br />
                 <strong className="text-foreground">
-                  धर्म और देश के रक्षक
-                </strong>{" "}
+                बल्कि  धर्म और देश के रक्षक
+                </strong>
                 भी हैं।
               </p>
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
@@ -263,31 +263,18 @@ const Donation = () => {
                 <strong className="text-foreground">संपूर्ण जीवन</strong> बन
                 सकता है।
               </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Call to Action */}
-        <div className="mt-8 max-w-5xl mx-auto">
-          <Card className="shadow-xl border-2 border-orange-300 dark:border-orange-700 bg-gradient-to-br from-orange-50 via-orange-100/50 to-orange-50 dark:from-orange-950/30 dark:via-orange-900/20 dark:to-orange-950/30">
-            <CardContent className="p-8 md:p-10 text-center space-y-6">
-              <p className="text-xl md:text-2xl font-bold text-foreground">
-                🙏 तो आज… कुछ मत सोचिए। केवल हृदय से दीजिए।
-              </p>
-              <div className="bg-white dark:bg-background rounded-xl p-6 border-2 border-orange-200 dark:border-orange-800">
-                <p className="text-base md:text-lg text-orange-700 dark:text-orange-300 font-semibold italic leading-relaxed">
-                  &quot;जो दिया वह बचेगा, जो रोका वह मिट जाएगा।
-                  <br />
-                  धर्म में लगाया गया धन ही पुण्य बनकर पीढ़ियों को रक्षा देता
-                  है।&quot;
+              <p className="text-base md:text-lg text-muted-foreground italic mb-3">
+                  यह केवल संगठन नहीं, यह आपकी आत्मा का उत्तर है।
                 </p>
-              </div>
+                <p className="text-lg md:text-xl font-bold text-foreground">
+                  यह केवल दान नहीं, यह धर्मयुद्ध में आपकी उपस्थिति है!
+                </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Final Call to Action */}
-        <div className="mt-8 max-w-5xl mx-auto">
+        {/* <div className="mt-8 max-w-5xl mx-auto">
           <Card className="shadow-2xl border-2 border-amber-400 dark:border-amber-700 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-amber-950/30">
             <CardContent className="p-8 md:p-12 text-center space-y-6">
               <Badge className="bg-primary text-white px-6 py-2 text-base mb-4">
@@ -316,7 +303,7 @@ const Donation = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
     </section>
   );
