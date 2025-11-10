@@ -9,6 +9,7 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
+import Link from "next/link";
 
 const Founder = () => {
   return (
@@ -18,7 +19,7 @@ const Founder = () => {
           <div className="inline-flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-full mb-4 lg:mb-6">
             <Star className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
             <span className="text-sm lg:text-base text-primary font-semibold">
-              Leadership
+              नेतृत्व एवं मार्गदर्शन
             </span>
           </div>
           <h2 className="text-2xl lg:text-4xl font-bold text-foreground mb-3 lg:mb-4">
@@ -86,7 +87,7 @@ const Founder = () => {
                       
                       {/* Name overlay on image for better mobile UX */}
                       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                        <h3 className="text-lg font-bold text-white mb-1 leading-tight">
+                        <h3 className="text-lg font-bold text-white mb-1 leading-tight whitespace-nowrap">
                           {member.name}
                         </h3>
                         <p className="text-xs font-medium text-orange-300">
@@ -96,13 +97,13 @@ const Founder = () => {
                     </div>
                     
                     {/* Quote section - optional, shorter */}
-                    {/* {member.quote && (
+                    {member.quote && (
                       <div className="p-4 bg-background/95 backdrop-blur-sm flex-1">
                         <p className="text-xs text-muted-foreground italic text-center leading-relaxed line-clamp-2">
                           &ldquo;{member.quote}&rdquo;
                         </p>
                       </div>
-                    )} */}
+                    )}
                   </div>
                 </div>
               </SwiperSlide>
@@ -165,13 +166,13 @@ const Founder = () => {
                       <p className="text-sm text-primary font-semibold mb-3 text-center">
                         {member.designation}
                       </p>
-                      {/* {member.quote && (
+                      {member.quote && (
                         <div className="mt-auto pt-3 border-t border-border">
                           <p className="text-xs xl:text-sm text-muted-foreground italic text-center leading-relaxed line-clamp-3">
                             &ldquo;{member.quote}&rdquo;
                           </p>
                         </div>
-                      )} */}
+                      )}
                     </div>
                   </div>
                 </div>
@@ -202,17 +203,28 @@ const Founder = () => {
             <div className="inline-flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-full mb-4">
               <Users className="w-5 h-5 text-primary" />
               <span className="text-sm text-primary font-semibold">
-                Join Us
+                Be Part of the Change
               </span>
             </div>
             <h4 className="text-xl lg:text-3xl font-bold text-foreground mb-4 lg:mb-5">
-              Join Our Mission
+              राष्ट्र सेवा का संकल्प लें
             </h4>
-            <p className="text-base lg:text-xl text-muted-foreground leading-relaxed mb-6 lg:mb-8 px-2">
+            <p className="text-base lg:text-xl text-muted-foreground leading-relaxed mb-4 lg:mb-6 px-2">
               {founderInfo.callToAction}
             </p>
+            <p className="text-sm lg:text-lg text-primary/80 font-semibold italic mb-6 lg:mb-8 px-2">
+              &ldquo;जब हम एक साथ आते हैं, तो कोई भी लक्ष्य असंभव नहीं है। आपकी छोटी सी भागीदारी राष्ट्र निर्माण में बड़ा बदलाव ला सकती है।&rdquo;
+            </p>
 
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center gap-6">
+              <Link
+                href="/team"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105"
+              >
+                <Users className="w-5 h-5" />
+                View All Volunteer's
+              </Link>
+              
               <div className="w-24 lg:w-32 h-1 bg-gradient-to-r from-primary to-primary/50 rounded-full" />
             </div>
           </div>
