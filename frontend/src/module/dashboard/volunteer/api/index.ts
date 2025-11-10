@@ -248,6 +248,9 @@ export class VolunteerAPI {
     if (data.phone_number !== undefined && data.phone_number !== null) {
       formData.append("phone_number", data.phone_number);
     }
+    if (data.referred_by_volunteer !== undefined && data.referred_by_volunteer !== null) {
+      formData.append("referred_by_volunteer", data.referred_by_volunteer);
+    }
     formData.append("status", "pending");
 
     if (data.aadhar_card_front) {
