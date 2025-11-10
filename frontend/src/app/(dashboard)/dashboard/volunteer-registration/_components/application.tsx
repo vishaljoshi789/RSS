@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-
 
 import {
   useDesignationsById,
@@ -92,16 +91,24 @@ const ApplicationForm = ({
   }, [designations, data.designation]);
 
   
+  // Prevent redundant fetches on StrictMode double-invocation
+  const fetchedWingRef = useRef<number | null>(null);
   useEffect(() => {
-    if (selectedWing) {
+    if (selectedWing && fetchedWingRef.current !== selectedWing) {
+      fetchedWingRef.current = selectedWing;
       fetchLevelsByWingId(selectedWing);
     }
   }, [selectedWing, fetchLevelsByWingId]);
 
   
+  const fetchedDesignationKeyRef = useRef<string | null>(null);
   useEffect(() => {
     if (selectedWing && selectedLevel) {
-      fetchDesignationsByIds(selectedWing, selectedLevel);
+      const key = `${selectedWing}:${selectedLevel}`;
+      if (fetchedDesignationKeyRef.current !== key) {
+        fetchedDesignationKeyRef.current = key;
+        fetchDesignationsByIds(selectedWing, selectedLevel);
+      }
     }
   }, [selectedWing, selectedLevel, fetchDesignationsByIds]);
 

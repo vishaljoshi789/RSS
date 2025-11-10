@@ -35,7 +35,6 @@ export const useWings = () => {
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const createWing = useCallback(async (data: WingFormData) => {
@@ -55,7 +54,6 @@ export const useWings = () => {
       console.error("Failed to create wing:", errorResponse);
       throw err;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateWing = useCallback(
@@ -79,7 +77,7 @@ export const useWings = () => {
         throw err;
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     []
   );
 
@@ -99,7 +97,6 @@ export const useWings = () => {
       console.error("Failed to delete wing:", errorResponse);
       throw err;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

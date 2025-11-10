@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import { createVolunteerAPI } from "../api";
@@ -6,7 +6,7 @@ import { Level } from "../types";
 
 export const useLevelsById = () => {
   const axios = useAxios();
-  const api = createVolunteerAPI(axios);
+  const api = useMemo(() => createVolunteerAPI(axios), [axios]);
 
   const [levels, setLevels] = useState<Level[]>([]);
   const [loading, setLoading] = useState(false);
