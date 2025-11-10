@@ -166,78 +166,96 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="max-w-4xl w-full p-0 bg-transparent border-0">
+      <DialogContent className="max-w-7xl w-[95vw] sm:w-[90vw] p-0 bg-black border-0 gap-0">
         <DialogTitle className="sr-only">
           {photo.title} - Photo Gallery
         </DialogTitle>
-        <div className="relative bg-black rounded-lg overflow-hidden">
-          <div className="relative aspect-auto max-h-[80vh] overflow-hidden">
-            {!imageError ? (
-              <>
-                <Image
-                  src={photo.imageUrl}
-                  alt={photo.alt}
-                  width={photo.width}
-                  height={photo.height}
-                  className={`w-full h-full object-contain transition-opacity duration-300 ${
-                    isLoading ? "opacity-0" : "opacity-100"
-                  }`}
-                  priority
-                  placeholder="blur"
-                  blurDataURL={IMAGE_BLUR_DATA_URL}
-                  onLoad={() => setIsLoading(false)}
-                  onError={() => {
-                    setImageError(true);
-                    setIsLoading(false);
-                  }}
-                />
-                {isLoading && (
-                  <div className="absolute inset-0 bg-black flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className="text-white text-sm">Loading image...</p>
-                    </div>
+
+        {/* Image Container */}
+        <div className="relative bg-black overflow-hidden">
+          <div className="relative max-h-[85vh] flex items-center justify-center bg-black">
+            {/* Loading State */}
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black z-10 transition-opacity duration-500">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 border-4 border-orange-500/20 rounded-full" />
+                    <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-orange-500 rounded-full animate-spin" />
                   </div>
-                )}
-              </>
+                  <div className="flex flex-col items-center gap-1">
+                    <p className="text-white text-base font-medium">
+                      Loading image...
+                    </p>
+                    <p className="text-gray-400 text-sm">Please wait</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!imageError ? (
+              <Image
+                src={photo.imageUrl}
+                alt={photo.alt}
+                width={photo.width}
+                height={photo.height}
+                className={`w-full h-auto max-h-[85vh] object-contain transition-opacity duration-300 ${
+                  isLoading ? "opacity-0" : "opacity-100"
+                }`}
+                priority
+                placeholder="blur"
+                blurDataURL={IMAGE_BLUR_DATA_URL}
+                onLoad={() => setIsLoading(false)}
+                onError={() => {
+                  setImageError(true);
+                  setIsLoading(false);
+                }}
+              />
             ) : (
-              <div className="w-full h-64 bg-gray-900 flex items-center justify-center text-white">
+              <div className="w-full h-96 bg-gray-900 flex items-center justify-center text-white">
                 <div className="text-center">
                   <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Image could not be loaded</p>
+                  <p className="text-lg">Image could not be loaded</p>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-            <div className="text-white">
-              <h3 className="text-xl font-bold mb-2">{photo.title}</h3>
-              <div className="flex items-center gap-2">
+          {/* Image Info Bar - Below the image */}
+          <div className="bg-gradient-to-b from-black/90 to-black p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-white font-bold text-lg sm:text-xl mb-2 leading-tight">
+                  {photo.title}
+                </h3>
+                <p className="text-gray-300 text-sm">
+                  Dimensions: {photo.width} × {photo.height}px
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 flex-shrink-0">
                 <Badge
                   variant="secondary"
                   className={`
                     ${
                       photo.category === "religious"
-                        ? "bg-orange-600 text-white"
+                        ? "bg-orange-600 hover:bg-orange-700 text-white"
                         : ""
                     }
                     ${
                       photo.category === "social"
-                        ? "bg-green-600 text-white"
+                        ? "bg-green-600 hover:bg-green-700 text-white"
                         : ""
                     }
                     ${
-                      photo.category === "other" ? "bg-blue-600 text-white" : ""
+                      photo.category === "other"
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : ""
                     }
                   `}
                 >
                   {photo.category.charAt(0).toUpperCase() +
                     photo.category.slice(1)}
                 </Badge>
-                <span className="text-gray-300 text-sm">
-                  {photo.width} × {photo.height}
-                </span>
               </div>
             </div>
           </div>
@@ -268,7 +286,6 @@ const PhotoGallery: React.FC = () => {
 
   return (
     <div className="w-full">
-
       {isLoading && (
         <div className="text-center py-12">
           <div className="inline-flex items-center gap-3">
