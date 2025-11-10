@@ -137,7 +137,3 @@ export const AddressStep = ({ formData, errors, onChange, readOnlyFields }: Addr
     </div>
   );
 };
-
-function formStateLabel(value: string) {
-  return value || "";
-}

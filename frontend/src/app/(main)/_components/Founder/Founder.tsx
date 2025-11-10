@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { Quote, Star, Users } from "lucide-react";
+import { Star, Users } from "lucide-react";
 import { founderInfo } from "./FounderInfo";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -222,7 +222,7 @@ const Founder = () => {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105"
               >
                 <Users className="w-5 h-5" />
-                View All Volunteer's
+                View All Volunteers
               </Link>
               
               <div className="w-24 lg:w-32 h-1 bg-gradient-to-r from-primary to-primary/50 rounded-full" />

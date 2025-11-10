@@ -22,7 +22,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter();
 
-  const isProduction = process.env.NODE_ENV === "production";
   const baseURL = getApiBaseUrl();
 
   const [authState, setAuthState] = useState<AuthState>({

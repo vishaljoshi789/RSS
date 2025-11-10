@@ -35,7 +35,7 @@ export const useWings = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [api]);
 
   const createWing = useCallback(async (data: WingFormData) => {
     try {
@@ -54,7 +54,7 @@ export const useWings = () => {
       console.error("Failed to create wing:", errorResponse);
       throw err;
     }
-  }, []);
+  }, [api]);
 
   const updateWing = useCallback(
     async (id: number, data: Partial<WingFormData>) => {
@@ -77,8 +77,7 @@ export const useWings = () => {
         throw err;
       }
     },
-
-    []
+    [api]
   );
 
   const deleteWing = useCallback(async (id: number) => {
@@ -97,7 +96,7 @@ export const useWings = () => {
       console.error("Failed to delete wing:", errorResponse);
       throw err;
     }
-  }, []);
+  }, [api]);
 
   useEffect(() => {
     fetchWings();

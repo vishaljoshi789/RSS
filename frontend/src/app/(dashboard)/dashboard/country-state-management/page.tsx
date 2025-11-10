@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Globe, MapPin, Plus, AlertCircle, Loader2, CheckCircle2, Trash2 } from "lucide-react";
+import { Globe, MapPin, Plus, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import { useCountryApi } from "@/module/country/hooks";
 import { toast } from "sonner";
 
@@ -105,7 +105,7 @@ export default function CountryStateManagementPage() {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            You don't have permission to manage states and districts. Only admin and staff users can access this page.
+            You don&apos;t have permission to manage states and districts. Only admin and staff users can access this page.
           </AlertDescription>
         </Alert>
       </div>

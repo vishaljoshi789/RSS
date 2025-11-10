@@ -4,7 +4,6 @@ import Image from "next/image";
 import { aboutData } from "./AboutInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
 import Link from "next/link";
-import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const About = () => {
   return (

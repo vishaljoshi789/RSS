@@ -19,18 +19,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, X, Trash2, Check } from "lucide-react";
+import { Pencil, X, Trash2 } from "lucide-react";
 import ErrorState from "@/components/status/ErrorState";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { EditUserDetailModal } from "@/module/dashboard/users/components/edit-user-detail-model";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import useAxios from "@/hooks/use-axios";
 import { useAuth } from "@/hooks/use-auth";
 import { VolunteerWithUser } from "@/module/dashboard/volunteer/types";
@@ -55,7 +48,6 @@ export default function VolunteerTable() {
   const { isAdmin, isStaff } = useAuth();
   const {
     states,
-    districts,
     isLoadingStates,
     isLoadingDistricts,
     statesError,
@@ -200,17 +192,6 @@ export default function VolunteerTable() {
       }
     },
     [axios, refetch]
-  );
-
-  const toggleState = useCallback(
-    (location: string) => {
-      if (!editing) return;
-      const set = new Set(editing.selectedStates || []);
-      if (set.has(location)) set.delete(location);
-      else set.add(location);
-      setEditing({ ...editing, selectedStates: Array.from(set) });
-    },
-    [editing]
   );
 
   const removeSelectedLocation = useCallback(

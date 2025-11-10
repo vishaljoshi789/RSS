@@ -23,7 +23,6 @@ import {
   Users,
   Video,
   Calendar,
-  Sparkles,
 } from "lucide-react";
 import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 

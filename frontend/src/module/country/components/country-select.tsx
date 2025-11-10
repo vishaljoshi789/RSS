@@ -346,10 +346,10 @@ const StateSelect: React.FC<SelectComponentProps & {
 
   // Handle potential API errors gracefully
   const safeError = error || statesError;
-  const safeStates = Array.isArray(states) ? states : [];
 
   // Enhanced items with create option
   const enhancedItems = React.useMemo(() => {
+    const safeStates = Array.isArray(states) ? states : [];
     const items = [...safeStates];
     
     if (showCreateOption && canCreateState && newStateName.trim()) {
@@ -357,11 +357,11 @@ const StateSelect: React.FC<SelectComponentProps & {
         id: -1,
         name: `Create "${newStateName.trim()}"`,
         isCreateOption: true
-      } as any);
+      } as { id: number; name: string; isCreateOption?: boolean });
     }
     
     return items;
-  }, [safeStates, showCreateOption, canCreateState, newStateName]);
+  }, [states, showCreateOption, canCreateState, newStateName]);
 
   if (!countrySelected) {
     return (
@@ -496,10 +496,10 @@ const DistrictSelect: React.FC<SelectComponentProps & {
 
   // Handle potential API errors gracefully
   const safeError = error || districtsError;
-  const safeDistricts = Array.isArray(districts) ? districts : [];
 
   // Enhanced items with create option
   const enhancedItems = React.useMemo(() => {
+    const safeDistricts = Array.isArray(districts) ? districts : [];
     const items = [...safeDistricts];
     
     if (showCreateOption && canCreateDistrict && newDistrictName.trim() && selectedStateId) {
@@ -507,11 +507,11 @@ const DistrictSelect: React.FC<SelectComponentProps & {
         id: -1,
         name: `Create "${newDistrictName.trim()}"`,
         isCreateOption: true
-      } as any);
+      } as { id: number; name: string; state?: number; isCreateOption?: boolean });
     }
     
     return items;
-  }, [safeDistricts, showCreateOption, canCreateDistrict, newDistrictName, selectedStateId]);
+  }, [districts, showCreateOption, canCreateDistrict, newDistrictName, selectedStateId]);
 
   if (!stateSelected) {
     return (

@@ -59,8 +59,8 @@ export default function UserProfileModel({id} : {id : number | null}) {
   }) => {
     let renderedIcon: React.ReactElement;
     if (React.isValidElement(Icon)) {
-      const existingClass = (Icon.props as any)?.className || '';
-      renderedIcon = React.cloneElement(Icon as React.ReactElement<any>, {
+      const existingClass = (Icon.props as Record<string, unknown>)?.className || '';
+      renderedIcon = React.cloneElement(Icon as React.ReactElement<Record<string, unknown>>, {
         className: `${existingClass} h-4 w-4 text-muted-foreground mt-0.5`.trim(),
       });
     } else {

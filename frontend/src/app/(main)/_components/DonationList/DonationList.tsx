@@ -315,7 +315,7 @@ const DonationList = () => {
               Your Name Can Be on This List Too
             </h3>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              Become a part of social service by contributing to the sacred work of Rashtriya Seva Sangh. Your every donation can bring change to someone's life.
+              Become a part of social service by contributing to the sacred work of Rashtriya Seva Sangh. Your every donation can bring change to someone&apos;s life.
             </p>
           </div>
         </div>
