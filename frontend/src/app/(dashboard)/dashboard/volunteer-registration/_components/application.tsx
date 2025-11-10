@@ -165,6 +165,52 @@ const ApplicationForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!selectedWing) {
+      toast.error("Please select a wing");
+      return;
+    }
+
+    if (!selectedLevel) {
+      toast.error("Please select a level");
+      return;
+    }
+
+    if (!selectedDesignation) {
+      toast.error("Please select a designation");
+      return;
+    }
+
+    if (!data.phone_number || data.phone_number.trim().length === 0) {
+      toast.error("Please enter your phone number");
+      return;
+    }
+
+    if (data.phone_number.trim().length !== 10) {
+      toast.error("Phone number must be exactly 10 digits");
+      return;
+    }
+
+    if (!data.referred_by_volunteer || data.referred_by_volunteer.trim().length === 0) {
+      toast.error("Please enter the name or User ID of the person who referred you");
+      return;
+    }
+
+    if (!data.aadhar_card_front) {
+      toast.error("Please upload Aadhar card front");
+      return;
+    }
+
+    if (!data.aadhar_card_back) {
+      toast.error("Please upload Aadhar card back");
+      return;
+    }
+
+    if (!data.image) {
+      toast.error("Please upload your profile photo");
+      return;
+    }
+
     setData((prev) => ({
       ...prev,
       wing: selectedWing,
@@ -276,18 +322,19 @@ const ApplicationForm = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="referred_by_volunteer">
-              Referred By <span className="text-muted-foreground">(Optional)</span>
+            <Label htmlFor="referred_by_volunteer" className="flex items-center gap-1">
+              Referred By <span className="text-destructive">*</span>
             </Label>
             <Input
               id="referred_by_volunteer"
               type="text"
+              required
               placeholder="Enter name or User ID of person who referred you"
               value={data.referred_by_volunteer || ""}
               onChange={(e) => handleChange("referred_by_volunteer", e.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              If someone referred you to join RSS, please enter their name or User ID here.
+              <span className="font-medium">Required:</span> Enter the name or User ID of the person who referred you to join RSS.
             </p>
           </div>
 
