@@ -1,10 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
-import type { Swiper as SwiperType } from "swiper";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,12 +15,8 @@ import {
   Clock,
   Calendar,
   Video as VideoIcon,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import {
-  videoCategories,
-  getVideosByCategory,
   formatDuration,
   formatDate,
   VideoItem,
@@ -39,7 +32,7 @@ interface VideoCardProps {
   index: number;
 }
 
-const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
+export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   const [videoLoading, setVideoLoading] = useState(true);
@@ -50,9 +43,10 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
     }}>
 
       <DialogTrigger asChild>
-        <Card className="group cursor-pointer bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]">
+        <Card className="group cursor-pointer bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden">
           <CardContent className="p-0">
-            <div className="relative aspect-video overflow-hidden rounded-t-lg">
+            
+            <div className="relative aspect-video">
               {!imageError ? (
                 <>
                   <Image
@@ -62,7 +56,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
                     className={`object-cover transition-transform duration-300 group-hover:scale-110 ${
                       isLoading ? "opacity-0" : "opacity-100"
                     }`}
-                    sizes="320px"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
                     onLoad={() => setIsLoading(false)}
                     onError={() => {
                       setImageError(true);
@@ -81,25 +75,30 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
                 </div>
               )}
 
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="bg-white/90 rounded-full p-3 shadow-lg">
-                    <Play className="w-8 h-8 text-orange-600 fill-current ml-1" />
-                  </div>
+              
+              <div className="absolute inset-0 bg-black/0 lg:group-hover:bg-black/30 transition-all duration-300" />
+
+              
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="bg-white/90 lg:group-hover:bg-white rounded-full p-3 lg:p-4 shadow-lg transform lg:group-hover:scale-110 transition-all duration-300">
+                  <Play className="w-8 h-8 lg:w-10 lg:h-10 text-orange-600 fill-current ml-0.5 lg:ml-1" />
                 </div>
               </div>
 
-              <div className="absolute bottom-3 right-3">
-                <Badge className="bg-black/70 text-white font-semibold">
+              
+              <div className="absolute top-3 right-3">
+                <Badge className="bg-black/70 text-white font-semibold text-xs">
                   <Clock className="w-3 h-3 mr-1" />
                   {formatDuration(video.duration)}
                 </Badge>
               </div>
 
+              
               <div className="absolute top-3 left-3">
                 <Badge
                   variant="secondary"
                   className={`
+                    text-xs
                     ${
                       video.category === "event"
                         ? "bg-blue-500/90 text-white"
@@ -129,15 +128,16 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               </div>
             </div>
 
-            <div className="p-4">
-              <h3 className="font-bold text-gray-900 text-lg mb-2 leading-tight line-clamp-2">
+            
+            <div className="p-4 lg:absolute lg:bottom-0 lg:left-0 lg:right-0 lg:p-4 lg:text-white lg:bg-gradient-to-t lg:from-black/80 lg:via-black/50 lg:to-transparent lg:transform lg:translate-y-2 lg:group-hover:translate-y-0 lg:transition-transform lg:duration-300">
+              <h3 className="font-bold text-gray-900 lg:text-white text-base lg:text-lg mb-1 leading-tight line-clamp-2 lg:drop-shadow-lg">
                 {video.title}
               </h3>
-              <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+              <p className="text-gray-600 lg:text-white/90 text-sm mb-2 line-clamp-2 lg:line-clamp-1 lg:drop-shadow-md lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity lg:duration-300">
                 {video.description}
               </p>
 
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2 text-xs text-gray-500 lg:text-white/80">
                 <Calendar className="w-3 h-3" />
                 <span>{formatDate(video.uploadDate)}</span>
               </div>
@@ -146,155 +146,69 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         </Card>
       </DialogTrigger>
 
-      <DialogContent className="max-w-6xl w-full p-0 bg-black border-0">
+      <DialogContent className="max-w-7xl w-[95vw] sm:w-[90vw] p-0 bg-black border-0 gap-0">
         <DialogTitle className="sr-only">
           {video.title} - Video Player
         </DialogTitle>
-        <div className="relative bg-black rounded-lg overflow-hidden">
-          <div className="relative aspect-video">
+        
+        
+        <div className="relative bg-black overflow-hidden">
+          <div className="relative aspect-video bg-black">
+            
             {videoLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                  <p className="text-white text-sm">Loading video...</p>
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-900 to-black z-10 transition-opacity duration-500">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 border-4 border-orange-500/20 rounded-full" />
+                    <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent border-t-orange-500 rounded-full animate-spin" />
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <p className="text-white text-base font-medium">Loading video...</p>
+                    <p className="text-gray-400 text-sm">Please wait</p>
+                  </div>
                 </div>
               </div>
             )}
+            
+            
             <iframe
               src={video.videoUrl}
               title={video.title}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              className="w-full h-full absolute inset-0 border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
               allowFullScreen
+              loading="lazy"
               onLoad={() => setVideoLoading(false)}
+              style={{ colorScheme: 'dark' }}
             />
+          </div>
+          
+          
+          <div className="bg-gradient-to-b from-black/90 to-black p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-white font-bold text-lg sm:text-xl mb-2 leading-tight">
+                  {video.title}
+                </h3>
+                <p className="text-gray-300 text-sm line-clamp-2">
+                  {video.description}
+                </p>
+              </div>
+              
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <Badge className="bg-orange-600 hover:bg-orange-700 text-white">
+                  <Clock className="w-3 h-3 mr-1" />
+                  {formatDuration(video.duration)}
+                </Badge>
+                <Badge className="bg-gray-700 hover:bg-gray-600 text-white">
+                  <Calendar className="w-3 h-3 mr-1" />
+                  {formatDate(video.uploadDate)}
+                </Badge>
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
-
-const VideoGallery: React.FC = () => {
-  const [activeCategory] = useState("all");
-  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
-
-  const filteredVideos = useMemo(() => {
-    return getVideosByCategory(activeCategory);
-  }, [activeCategory]);
-
-  return (
-    <div className="w-full">
-      {/*       
-      <div className="flex flex-wrap gap-2 mb-6 justify-center">
-        {videoCategories.map((category) => (
-          <Button
-            key={category.key}
-            variant={activeCategory === category.key ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveCategory(category.key)}
-            className="flex items-center gap-2"
-          >
-            <span className="text-base">{category.icon}</span>
-            <span>{category.label}</span>
-          </Button>
-        ))}
-      </div> */}
-
-      <div className="text-center mb-6">
-        <p className="text-gray-600">
-          Showing{" "}
-          <span className="font-semibold text-orange-600">
-            {filteredVideos.length}
-          </span>{" "}
-          videos
-          {activeCategory !== "all" && (
-            <span>
-              {" "}
-              in{" "}
-              <span className="font-semibold">
-                {
-                  videoCategories.find((cat) => cat.key === activeCategory)
-                    ?.label
-                }
-              </span>
-            </span>
-          )}
-        </p>
-      </div>
-
-      {/* Swiper Video Gallery */}
-      <div className="relative max-w-5xl mx-auto">
-        {/* Custom Navigation Buttons */}
-        <button
-          onClick={() => swiperInstance?.slidePrev()}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={filteredVideos.length === 0}
-        >
-          <ChevronLeft className="w-5 h-5 text-gray-700" />
-        </button>
-
-        <button
-          onClick={() => swiperInstance?.slideNext()}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={filteredVideos.length === 0}
-        >
-          <ChevronRight className="w-5 h-5 text-gray-700" />
-        </button>
-
-        {filteredVideos.length > 0 ? (
-          <Swiper
-            modules={[Navigation, Pagination]}
-            spaceBetween={30}
-            slidesPerView={1}
-            breakpoints={{
-              640: {
-                slidesPerView: 1,
-              },
-              768: {
-                slidesPerView: 2,
-              },
-              1024: {
-                slidesPerView: 3.5,
-              },
-            }}
-            onSwiper={setSwiperInstance}
-            pagination={{
-              clickable: true,
-              dynamicBullets: true,
-            }}
-            className="pb-12"
-          >
-            {filteredVideos.map((video, index) => (
-              <SwiperSlide key={video.id}>
-                <VideoCard video={video} index={index} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        ) : (
-          <div className="text-center py-16">
-            <VideoIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No videos found
-            </h3>
-            <p className="text-gray-600">
-              No videos available in the {activeCategory} category.
-            </p>
-          </div>
-        )}
-      </div>
-
-      <style jsx global>{`
-        .swiper-pagination-bullet {
-          background: #f97316;
-          opacity: 0.5;
-        }
-        .swiper-pagination-bullet-active {
-          opacity: 1;
-        }
-      `}</style>
-    </div>
-  );
-};
-
-export default VideoGallery;
