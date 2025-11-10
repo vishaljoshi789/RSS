@@ -4,12 +4,14 @@ import React from "react";
 import Image from "next/image";
 import { Card} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 import { 
   CheckCircle, 
   Flag, 
   Eye,
-  Sparkles
+  Sparkles,
+  Target
 } from "lucide-react";
 import { 
   rssInfoData 
@@ -52,6 +54,13 @@ const RssOverview = () => {
         
         <div className="mb-16">
           <div className="text-center mb-12">
+            <Badge
+              variant="secondary"
+              className="mb-6 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20"
+            >
+              <Target className="w-4 h-4 mr-2" />
+              मूल सिद्धांत
+            </Badge>
             <h2 className="text-2xl lg:text-4xl font-bold text-foreground mb-4">
               हमारे मूल सिद्धांत
             </h2>
@@ -68,10 +77,10 @@ const RssOverview = () => {
                   <TabsTrigger 
                     key={tab.id} 
                     value={tab.id}
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-3 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs sm:text-sm font-medium"
+                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-3 py-3 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm text-xs sm:text-sm font-medium transition-all"
                   >
                     {getTabIcon(tab.icon)}
-                    <span>{tab.title}</span>
+                    <span className="text-sm">{tab.id}</span>
                   </TabsTrigger>
                 ))}
               </TabsList>
