@@ -31,7 +31,6 @@ import {
 } from "@/module/dashboard/member/components";
 import { useMemberSubmit } from "@/module/dashboard/member/hooks";
 import { useDonationPayment } from "@/module/donation";
-import rawStateDistrictData from "@/lib/state-district.json";
 import { useAuth } from "@/context/AuthContext";
 
 type FormState = {
@@ -71,13 +70,6 @@ const defaultFormState: FormState = {
   declaration_accepted: false,
   declaration_date: new Date().toISOString().split('T')[0],
   declaration_name: "",
-};
-
-type StateDistrictData = typeof rawStateDistrictData;
-
-const getIndianStates = (data: StateDistrictData): string[] => {
-  if (!data?.India) return [];
-  return Object.keys(data.India).sort((a, b) => a.localeCompare(b));
 };
 
 type StepConfig = {
@@ -134,7 +126,6 @@ const BecomeMemberPage = () => {
   });
 
   const { user } = useAuth();
-  const stateOptions = useMemo(() => getIndianStates(rawStateDistrictData), []);
 
   useEffect(() => {
     if (userDataLoaded || !user) {
@@ -200,10 +191,7 @@ const BecomeMemberPage = () => {
 
       const maybeState = safeGet("state");
       if (!updated.state && maybeState) {
-        const matchedState = stateOptions.find(
-          (option) => option.toLowerCase() === maybeState.toLowerCase()
-        );
-        updated.state = matchedState || maybeState;
+        updated.state = maybeState;
       }
 
       const maybePostal = safeGet("postal_code");
@@ -220,7 +208,7 @@ const BecomeMemberPage = () => {
     });
 
     setUserDataLoaded(true);
-  }, [user, userDataLoaded, stateOptions]);
+  }, [user, userDataLoaded]);
 
   const handleChange = (field: string, value: string | boolean) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
@@ -512,7 +500,6 @@ const BecomeMemberPage = () => {
           formData={formState}
           errors={errors}
           onChange={handleChange}
-          stateOptions={stateOptions}
         />
       );
     }
