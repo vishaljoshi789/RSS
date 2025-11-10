@@ -195,12 +195,6 @@ const Footer: React.FC = () => {
             <p className="text-gray-400 text-xs sm:text-sm text-center md:text-left">
               {organizationInfo.copyright}
             </p>
-
-            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400">
-              <span>Made with</span>
-              <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500 fill-current" />
-              <span>for Bharat</span>
-            </div>
           </div>
         </div>
       </div>
