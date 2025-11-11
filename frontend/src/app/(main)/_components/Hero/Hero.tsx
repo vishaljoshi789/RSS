@@ -127,7 +127,7 @@ const Hero = () => {
                         50K+
                       </div>
                     </div>
-                    <div className="text-xs md:text-sm text-muted-foreground whitespace-nowrap">
+                    <div className="text-xs md:text-sm text-muted-foreground">
                       Active Members
                     </div>
                   </div>
