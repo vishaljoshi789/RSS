@@ -97,11 +97,11 @@ const DonationList = () => {
           </Badge>
 
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">
-            Our Generous Donors
+            Pillars of <span className="text-red-600">Support</span>
           </h2>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            List of generous donors contributing to the service work of Rashtriya Seva Sangh
+            Gratitude to Our Generous Donors: Partners in Upholding Sanatana Culture and National Welfare.
           </p>
         </div>
 
@@ -312,10 +312,10 @@ const DonationList = () => {
           <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
             <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
             <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              Your Name Can Be on This List Too
+              Legacy of Giving: Add Your Name
             </h3>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              Become a part of social service by contributing to the sacred work of Rashtriya Seva Sangh. Your every donation can bring change to someone&apos;s life.
+              Enroll Your Commitment: Contribute to the Sacred Work of Rashtriya Seva Sangh. Every Donation is a Step Towards a Stronger, Vedic Bharat.
             </p>
           </div>
         </div>
