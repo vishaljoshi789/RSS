@@ -22,21 +22,23 @@ const Founder = () => {
               नेतृत्व एवं मार्गदर्शन
             </span>
           </div>
-          <h2 className="text-2xl lg:text-4xl font-bold text-foreground mb-3 lg:mb-4">
-            Meet Our Team
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-3 lg:mb-4">
+            Our core <span className="text-red-600"> Team</span>
           </h2>
           <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-            The visionaries leading our mission to serve the nation
+            The Dedicated Leadership Driving Our Seva.
           </p>
         </div>
 
         <div className="text-center mb-8 lg:mb-12 space-y-4 px-4 lg:px-0">
           <p className="text-xl lg:text-3xl font-bold text-primary">
-            {founderInfo.greeting}
+            <span>वंदे मातरम् !!</span>
+            <span className="inline-block w-3" />
+            <span>जय श्री राम !!</span>
           </p>
-          <h3 className="text-lg lg:text-2xl font-semibold text-foreground">
-            {founderInfo.orgName}
-          </h3>
+          {/* <p className="text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            {founderInfo.title}
+          </p> */}
           <p className="text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {founderInfo.description}
           </p>
@@ -127,15 +129,15 @@ const Founder = () => {
             }}
             breakpoints={{
               1024: {
-                slidesPerView: 2,
+                slidesPerView: 3,
                 spaceBetween: 20,
               },
               1280: {
-                slidesPerView: 3,
+                slidesPerView: 4,
                 spaceBetween: 24,
               },
               1536: {
-                slidesPerView: 4,
+                slidesPerView: 5,
                 spaceBetween: 24,
               },
             }}
@@ -207,13 +209,13 @@ const Founder = () => {
               </span>
             </div>
             <h4 className="text-xl lg:text-3xl font-bold text-foreground mb-4 lg:mb-5">
-              राष्ट्र सेवा का संकल्प लें
+              सेवा का संकल्प, राष्ट्र की शक्ति
             </h4>
             <p className="text-base lg:text-xl text-muted-foreground leading-relaxed mb-4 lg:mb-6 px-2">
               {founderInfo.callToAction}
             </p>
             <p className="text-sm lg:text-lg text-primary/80 font-semibold italic mb-6 lg:mb-8 px-2">
-              &ldquo;जब हम एक साथ आते हैं, तो कोई भी लक्ष्य असंभव नहीं है। आपकी छोटी सी भागीदारी राष्ट्र निर्माण में बड़ा बदलाव ला सकती है।&rdquo;
+              &ldquo;एक छोटी पहल भी बड़े परिवर्तन की नींव रखती है—आपका सहयोग राष्ट्रनिर्माण में अमूल्य है।&rdquo;
             </p>
 
             <div className="flex flex-col items-center gap-6">
