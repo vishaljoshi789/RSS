@@ -67,3 +67,10 @@ class Application(models.Model):
 
     def __str__(self):
         return f"ApplicationLog for {self.user.username} on {self.timestamp}"
+
+class VolunteerWorkingArea(models.Model):
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE, related_name='working_areas')
+    area_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.area_name} - {self.volunteer.user.username}"

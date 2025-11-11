@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
 from rest_framework import serializers
-from .models import Wing, Level, Designation, Volunteer, Application
+from .models import VolunteerWorkingArea, Wing, Level, Designation, Volunteer, Application
 from dashboard.serializers import UserInfoSerializer
 
 class WingSerializer(ModelSerializer):
@@ -20,11 +20,17 @@ class DesignationSerializer(ModelSerializer):
         model = Designation
         fields = '__all__'
 
+class VolunteerWorkingAreaSerializer(ModelSerializer):
+    class Meta:
+        model = VolunteerWorkingArea
+        fields = '__all__'
+
 class VolunteerSerializer(ModelSerializer):
     user = UserInfoSerializer(read_only=True)
     wing_name = serializers.CharField(source='wing.name', read_only=True)
     level_name = serializers.CharField(source='level.name', read_only=True)
-    designation_title = serializers.CharField(source='designation.title', read_only=True)   
+    designation_title = serializers.CharField(source='designation.title', read_only=True)
+    working_areas = VolunteerWorkingAreaSerializer(many=True, read_only=True)
     class Meta:
         model = Volunteer
         fields = '__all__'
@@ -46,3 +52,4 @@ class ApplicationDetailSerializer(ModelSerializer):
     class Meta:
         model = Application
         fields = '__all__'
+

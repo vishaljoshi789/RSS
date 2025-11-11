@@ -11,6 +11,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=255, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
     user_id = models.CharField(max_length=50, unique=True)
+    blood_group = models.CharField(max_length=5, blank=True, null=True) 
 
     gender = models.CharField(max_length=10, blank=True, null=True)
     profession = models.CharField(max_length=100, blank=True, null=True)
