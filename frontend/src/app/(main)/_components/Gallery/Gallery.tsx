@@ -29,11 +29,10 @@ const Gallery = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Our <span className="text-orange-600">Gallery</span>
+            Gallery of <span className="text-red-600"> Deduction</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Explore our visual journey through photos and videos showcasing our
-            activities, events, and community engagement across different
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto text-justify">
+            Explore Our Visual Journey: Photos and Videos Showcasing Our Service, Events, and Community Impact Across the Nation.
             categories.
           </p>
         </div>
@@ -56,14 +55,14 @@ const Gallery = () => {
           </Card>
         </div>
 
-        <div className="relative">
+        <div className="relative -mx-4 md:mx-0">
           <div className="absolute inset-0 bg-gradient-to-r from-green-200/30 to-orange-200/30 rounded-3xl blur-3xl -z-10"></div>
 
           <div className="w-full">
-            <div className="relative max-w-5xl mx-auto">
+            <div className="relative max-w-7xl mx-auto px-4 md:px-8">
               <button
                 onClick={() => swiperInstance?.slidePrev()}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={filteredVideos.length === 0}
               >
                 <ChevronLeft className="w-5 h-5 text-gray-700" />
@@ -71,7 +70,7 @@ const Gallery = () => {
 
               <button
                 onClick={() => swiperInstance?.slideNext()}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={filteredVideos.length === 0}
               >
                 <ChevronRight className="w-5 h-5 text-gray-700" />
@@ -80,12 +79,14 @@ const Gallery = () => {
               {filteredVideos.length > 0 ? (
                 <Swiper
                   modules={[Navigation, Pagination]}
-                  spaceBetween={20}
+                  spaceBetween={16}
                   slidesPerView={1}
+                  centeredSlides={false}
                   breakpoints={{
                     640: {
-                      slidesPerView: 1.2,
+                      slidesPerView: 1.5,
                       spaceBetween: 20,
+                      centeredSlides: false,
                     },
                     768: {
                       slidesPerView: 2,
@@ -108,7 +109,7 @@ const Gallery = () => {
                   className="pb-12"
                 >
                   {filteredVideos.map((video, index) => (
-                    <SwiperSlide key={video.id}>
+                    <SwiperSlide key={video.id} className="!h-auto">
                       <VideoCard video={video} index={index} />
                     </SwiperSlide>
                   ))}
