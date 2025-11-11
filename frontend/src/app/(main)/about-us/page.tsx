@@ -11,7 +11,7 @@ import {
   WhyWeExistSection,
   TempleServiceSection,
   OurCallSection,
-  CommunityServiceSection,
+  // CommunityServiceSection,
   GoalsSection,
 } from './_components';
 
@@ -37,7 +37,7 @@ const AboutUsPage = () => {
       
       <OurCallSection ourCall={aboutPageData.sections.ourCall} />
       
-      <CommunityServiceSection />
+      {/* <CommunityServiceSection /> */}
       
       <GoalsSection goals={aboutPageData.sections.goals} />
       
