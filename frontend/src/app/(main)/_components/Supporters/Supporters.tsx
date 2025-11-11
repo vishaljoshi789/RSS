@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { pageContent, supporterImages, videoInfo } from "./SupporterInfo";
 import NormalButton from "@/components/common/RssButton/RssButton";
-import { Play, Target } from "lucide-react";
+import { Landmark, Play, Target } from "lucide-react";
 import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
+import { Badge } from "@/components/ui/badge";
 
 const Supporters = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -22,8 +23,11 @@ const Supporters = () => {
               {pageContent.organizationName}
             </span>
           </div>
-          <h2 className="text-3xl lg:text-5xl font-bold text-foreground mb-4 lg:mb-6">
-            {pageContent.mainTitle}
+          {/* <h2 className="text-3xl lg:text-5xl font-bold text-foreground mb- lg:mb-6 ">
+            The
+          </h2> */}
+          <h2 className="text-3xl lg:text-5xl font-bold text-foreground mb-4 lg:mb-6 ">
+            Rashtriya Seva <span className="text-red-600">Sangh</span>
           </h2>
           <p className="text-base lg:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             {pageContent.mainSubtitle}
@@ -40,7 +44,7 @@ const Supporters = () => {
                 <h2 className="text-2xl lg:text-4xl font-bold text-foreground mb-4 lg:mb-6">
                   {pageContent.introSection.title}
                 </h2>
-                <p className="text-base lg:text-lg text-muted-foreground leading-relaxed">
+                <p className="text-base lg:text-lg text-muted-foreground  text-justify leading-relaxed">
                   {pageContent.introSection.description}
                 </p>
               </div>
@@ -106,8 +110,18 @@ const Supporters = () => {
         </div>
 
         <div className="text-center mb-8 lg:mb-12">
+          <div className="text-center ">
+          <Badge
+            variant="secondary"
+            className="mb-6 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20"
+          >
+            <Landmark className="w-4 h-4 mr-2" />
+            संस्थागत नींव
+          </Badge>
+        </div>
+
           <h2 className="text-2xl lg:text-4xl font-bold text-foreground mb-6 lg:mb-8">
-            Recognised By
+            Our Recognition
           </h2>
 
           <div className="flex justify-center mb-8 lg:mb-10">
@@ -136,7 +150,7 @@ const Supporters = () => {
           </div>
 
           {row2.length > 0 && (
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-12 max-w-4xl mx-auto">
+            <div className="grid grid-cols-4 gap-4 sm:gap-6 lg:gap-12 max-w-4xl mx-auto">
               {row2.map((supporter) => (
                 <div
                   key={supporter.id}
