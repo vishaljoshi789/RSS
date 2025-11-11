@@ -721,3 +721,17 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   text-align: center;
 }
+
+/* Indian Tricolor Flowing Animation */
+@keyframes tricolor-diagonal {
+  0% {
+    background-position: -200% -200%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+.animate-tricolor-flow {
+  animation: tricolor-diagonal 3s ease-in-out infinite;
+}
