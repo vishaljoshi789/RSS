@@ -14,7 +14,7 @@ const GoalsSection: React.FC<GoalsSectionProps> = ({ goals }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-6">
-            हमारे लक्ष्य
+            हमारा लक्ष्य: राष्ट्रधर्म की पूर्ति
           </div>
           
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-5 leading-tight">
@@ -22,7 +22,7 @@ const GoalsSection: React.FC<GoalsSectionProps> = ({ goals }) => {
           </h2>
           
           <p className="text-base sm:text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            हमारे संगठन के मुख्य लक्ष्य और उद्देश्य जो समाज के कल्याण के लिए हैं
+            राष्ट्रीय सेवा संघ की *सेवा और राष्ट्रवाद* की भावना को दर्शाते हुए, हमारे मुख्य उद्देश्य निम्नलिखित हैं। हम *&apos;संकल्पों से संगठित चेतना&apos;* के सिद्धांत पर चलते हुए एक *वैदिक, संगठित एवं सशक्त भारत* के निर्माण हेतु समर्पित हैं।
           </p>
         </div>
         
