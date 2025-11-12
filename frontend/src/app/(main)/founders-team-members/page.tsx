@@ -3,14 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   foundersTeam,
@@ -20,7 +12,7 @@ import {
   pageContent,
   type TeamMember,
 } from "./teamInfo";
-import { Users, MapPin, Crown, Filter, User } from "lucide-react";
+import { Users, MapPin, Crown, Filter } from "lucide-react";
 import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 const FoundersTeamPage = () => {

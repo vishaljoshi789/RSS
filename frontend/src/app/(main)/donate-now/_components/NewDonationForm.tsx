@@ -28,9 +28,6 @@ import {
   Loader2,
   IndianRupee,
   Users,
-  Building,
-  BookOpen,
-  Stethoscope,
   Wrench,
 } from "lucide-react";
 import {
