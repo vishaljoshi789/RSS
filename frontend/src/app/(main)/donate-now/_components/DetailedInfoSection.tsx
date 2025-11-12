@@ -43,7 +43,7 @@ const DetailedInfoSection = () => {
     <section className="py-6 sm:py-12 mb-6 sm:mb-8 max-w-7xl mx-auto">
       {/* Sanskrit Quote */}
       <div className="text-center mb-6 sm:mb-12 px-2">
-        <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-primary mb-3 sm:mb-4 leading-snug">
+        <h2 className="text-md sm:text-2xl md:text-4xl font-bold text-primary mb-3 sm:mb-4 leading-snug">
           ।। सर्वेषामप्युपायानां दानं श्रेष्ठतमं मतम् ।।
         </h2>
         <p className="text-xs sm:text-sm md:text-base text-muted-foreground italic">
@@ -63,7 +63,7 @@ const DetailedInfoSection = () => {
                 राष्ट्रीय सेवा संघ धर्मार्थ ट्रस्ट (रजि०)
               </h3>
               <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] sm:text-xs">
-                सनातनी हिंदू रक्षा अभियान (भारत)
+                सनातन रक्षा अभियान (भारत)
               </Badge>
             </div>
           </div>

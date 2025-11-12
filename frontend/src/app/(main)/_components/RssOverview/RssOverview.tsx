@@ -62,7 +62,7 @@ const RssOverview = () => {
               मूल सिद्धांत
             </Badge>
             <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Foundational <span className="text-red-600">Principles</span>
+              Core <span className="text-red-600">Values</span>
             </h2>
             <p className="text-md text-muted-foreground max-w-3xl mx-auto">
               Discover How Our Values, Vision, and Mission Contribute to Nation Building.

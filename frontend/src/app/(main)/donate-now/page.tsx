@@ -6,10 +6,10 @@ const DonateNowPage = () => {
     <div className="min-h-screen bg-background lg:pt-2 mt-16">
       <div className="px-0">
         <HeroSection />
+        <DonationForm />
         <ImpactSection />
         <DetailedInfoSection />
         <EmotionalAppealSection />
-        <DonationForm />
       </div>
     </div>
   );

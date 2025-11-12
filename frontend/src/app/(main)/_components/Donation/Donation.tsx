@@ -196,7 +196,7 @@ const Donation = () => {
             <CardHeader className="text-center pb-3 pt-6 relative">
               <div className="inline-block mx-auto mb-3">
                 <Badge className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-5 py-1.5 text-sm md:text-base">
-                  💫 सेवा ही धर्म है
+                  सेवा ही धर्म है
                 </Badge>
               </div>
               <CardTitle className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
@@ -210,9 +210,8 @@ const Donation = () => {
                   <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed text-center">
                     क्योंकि हम जानते हैं — आप केवल दर्शक नहीं,{" "}
                     <strong className="text-primary text-lg md:text-xl lg:text-2xl block mt-2">
-                      बल्कि धर्म और देश के रक्षक
+                      बल्कि धर्म और देश के रक्षक भी हैं।
                     </strong>
-                    {" "}भी हैं।
                   </p>
                 </div>
 
@@ -220,9 +219,8 @@ const Donation = () => {
                   <p className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed text-center">
                     आपका एक छोटा सहयोग हमारे लिए एक नई आशा, और किसी पीड़ित के लिए{" "}
                     <strong className="text-primary text-lg md:text-xl lg:text-2xl block mt-2">
-                      संपूर्ण जीवन
+                      संपूर्ण जीवन बन सकता है।
                     </strong>
-                    {" "}बन सकता है।
                   </p>
                 </div>
               </div>
@@ -230,11 +228,11 @@ const Donation = () => {
               {/* Bottom section */}
               <div className="space-y-3 text-center">
                 <p className="text-base md:text-lg lg:text-xl text-muted-foreground italic">
-                  ✨ यह केवल संगठन नहीं, यह आपकी आत्मा का उत्तर है।
+                यह केवल संगठन नहीं, यह आपकी आत्मा का उत्तर है।
                 </p>
                 <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-xl p-4 md:p-5 border-2 border-primary/30 shadow-md">
                   <p className="text-lg md:text-xl lg:text-2xl font-bold text-foreground">
-                    🔥 यह केवल दान नहीं, यह धर्मयुद्ध में आपकी उपस्थिति है!
+                    यह केवल दान नहीं, यह धर्मयुद्ध में आपकी उपस्थिति है!
                   </p>
                 </div>
               </div>
