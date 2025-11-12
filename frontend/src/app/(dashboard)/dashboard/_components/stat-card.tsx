@@ -452,41 +452,43 @@ const StatCard: React.FC<StatCardProps> = ({
             </div>
 
             {/* Referral Link Section */}
-            <div className="space-y-2 sm:space-y-3">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-2">रेफरल लिंक</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2 sm:mb-3">
-                  अपनी रेफरल लिंक साझा करें और अधिक सदस्यों को जोड़ें।
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 truncate rounded-md border bg-muted px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]">
-                  {referralLink || "रेफरल लिंक उपलब्ध नहीं"}
+            {user?.is_verified && (
+              <div className="space-y-2 sm:space-y-3">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-2">रेफरल लिंक</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-2 sm:mb-3">
+                    अपनी रेफरल लिंक साझा करें और अधिक सदस्यों को जोड़ें।
+                  </p>
                 </div>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="shrink-0 h-8 w-8 sm:h-10 sm:w-10 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]"
-                  disabled={!referralLink || copyState !== "idle"}
-                  onClick={handleCopy}
-                  title={
-                    copyState === "success"
-                      ? "Copied!"
-                      : copyState === "error"
-                      ? "Failed to copy"
-                      : "Copy referral link"
-                  }
-                >
-                  {copyState === "success" ? (
-                    <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
-                  ) : copyState === "error" ? (
-                    <X className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
-                  ) : (
-                    <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
-                  )}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 truncate rounded-md border bg-muted px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]">
+                    {referralLink || "रेफरल लिंक उपलब्ध नहीं"}
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="shrink-0 h-8 w-8 sm:h-10 sm:w-10 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]"
+                    disabled={!referralLink || copyState !== "idle"}
+                    onClick={handleCopy}
+                    title={
+                      copyState === "success"
+                        ? "Copied!"
+                        : copyState === "error"
+                        ? "Failed to copy"
+                        : "Copy referral link"
+                    }
+                  >
+                    {copyState === "success" ? (
+                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
+                    ) : copyState === "error" ? (
+                      <X className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+                    ) : (
+                      <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Action Buttons Section */}
             <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4 border-t">

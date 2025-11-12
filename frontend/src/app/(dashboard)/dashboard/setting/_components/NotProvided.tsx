@@ -2,7 +2,6 @@
 
 import React from "react";
 import { FileQuestion, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface NotProvidedProps {
   className?: string;

@@ -100,17 +100,6 @@ export default function SettingsPage() {
     }
   }, [user]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleFieldEdit = (fieldName: string) => {
     setEditingField(fieldName);
   };
@@ -156,9 +145,10 @@ export default function SettingsPage() {
   const handleFieldCancel = (fieldName: string) => {
     // Reset to original value
     if (user) {
+      const userValue = user[fieldName as keyof typeof user];
       setFormData((prev) => ({
         ...prev,
-        [fieldName]: (user as any)[fieldName] || "",
+        [fieldName]: (typeof userValue === 'string' || typeof userValue === 'number') ? String(userValue) : "",
       }));
     }
     setEditingField(null);

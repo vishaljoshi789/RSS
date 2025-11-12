@@ -28,6 +28,11 @@ interface PaginationData {
   previous: string | null;
 }
 
+export type UserUpdateData = 
+  | Partial<User> 
+  | FormData 
+  | Record<string, string | number | boolean | null | undefined | File | Blob>;
+
 export interface UserStats {
   total_user: number;
   verified_user: number;
@@ -121,7 +126,7 @@ export function useUsers(page: number = 1, page_size: number = 30) {
 
   const updateUser = async (
     userId: number, 
-    data: Partial<User> | FormData | Record<string, any>,
+    data: UserUpdateData,
     options?: { useFormData?: boolean }
   ) => {
     try {
@@ -137,7 +142,7 @@ export function useUsers(page: number = 1, page_size: number = 30) {
         const formData = new FormData();
         Object.entries(data).forEach(([key, value]) => {
           if (value !== null && value !== undefined) {
-            if (typeof File !== 'undefined' && value instanceof File) {
+            if ((value instanceof File) || (value instanceof Blob)) {
               formData.append(key, value);
             } else {
               formData.append(key, String(value));
@@ -148,14 +153,14 @@ export function useUsers(page: number = 1, page_size: number = 30) {
         headers = { "Content-Type": "multipart/form-data" };
       } else {
         
-        const hasFile = typeof File !== 'undefined' && Object.values(data).some(
-          (value): value is File => value instanceof File
+        const hasFile = Object.values(data).some(
+          (value) => (value instanceof File) || (value instanceof Blob)
         );
         if (hasFile) {
           const formData = new FormData();
           Object.entries(data).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
-              if (typeof File !== 'undefined' && value instanceof File) {
+              if ((value instanceof File) || (value instanceof Blob)) {
                 formData.append(key, value);
               } else {
                 formData.append(key, String(value));
@@ -290,7 +295,7 @@ export function useUpdateCurrentUser() {
   const updateCurrentUser = useCallback(
     async (
       userId: number,
-      data: Partial<User> | FormData | Record<string, any>,
+      data: UserUpdateData,
       options?: { useFormData?: boolean }
     ) => {
       try {
@@ -309,7 +314,7 @@ export function useUpdateCurrentUser() {
           const formData = new FormData();
           Object.entries(data).forEach(([key, value]) => {
             if (value !== null && value !== undefined) {
-              if (typeof File !== 'undefined' && value instanceof File) {
+              if ((value instanceof File) || (value instanceof Blob)) {
                 formData.append(key, value);
               } else {
                 formData.append(key, String(value));
@@ -320,14 +325,14 @@ export function useUpdateCurrentUser() {
           headers = { "Content-Type": "multipart/form-data" };
         } else {
           
-          const hasFile = typeof File !== 'undefined' && Object.values(data).some(
-            (value): value is File => value instanceof File
+          const hasFile = Object.values(data).some(
+            (value) => (value instanceof File) || (value instanceof Blob)
           );
           if (hasFile) {
             const formData = new FormData();
             Object.entries(data).forEach(([key, value]) => {
               if (value !== null && value !== undefined) {
-                if (typeof File !== 'undefined' && value instanceof File) {
+                if ((value instanceof File) || (value instanceof Blob)) {
                   formData.append(key, value);
                 } else {
                   formData.append(key, String(value));

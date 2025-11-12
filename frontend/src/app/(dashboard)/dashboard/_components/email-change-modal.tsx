@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +27,6 @@ export const hasRssIndiaEmail = (user: User | null): boolean => {
 };
 
 export default function EmailChangeModal({ user }: EmailChangeModalProps) {
-  const router = useRouter();
   const { setUserData } = useAuth();
   const { updateCurrentUser, isUpdating } = useUpdateCurrentUser();
   const [newEmail, setNewEmail] = useState("");

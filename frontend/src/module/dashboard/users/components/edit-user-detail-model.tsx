@@ -204,11 +204,12 @@ export function EditUserDetailModal({
       );
       
       setShowVerifyDialog(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error verifying user:", error);
+      const axiosError = error as { response?: { data?: { message?: string; error?: string } } };
       toast.error(
-        error?.response?.data?.message ||
-        error?.response?.data?.error ||
+        axiosError?.response?.data?.message ||
+        axiosError?.response?.data?.error ||
         "Failed to update verification status"
       );
     } finally {
