@@ -19,12 +19,10 @@ const Logo = () => {
     "ਰਾਸ਼ਟਰੀ ਸੇਵਾ ਸੰਘ", // Punjabi
     "ରାଷ୍ଟ୍ରୀୟ ସେବା ସଂଘ", // Odia
     "राष्ट्रीय सेवा संघ (Nepali)", // Nepali (similar to Hindi)
-    "راشٹریہ سیوا سنگھ", // Urdu
     "राष्ट्रीय सेवा संघ", // Marathi (same as Hindi)
     "জাতীয় সেবা সংঘ", // Assamese
     "राष्ट्रिय सेवा संघ", // Sanskrit
     "राष्ट्रीय सेवा संघ", // Maithili
-    "رەشتریا سیوا سنگ", // Kashmiri (Perso-Arabic)
     "Rāṣṭrīya Sēvā Saṅgha", // Transliteration (IAST)
   ];
 
@@ -57,7 +55,7 @@ const Logo = () => {
         <div className="block">
           <h1 className="font-lato font-bold text-sm sm:text-base lg:text-lg xl:text-lg leading-tight">
             <span className="relative inline-block">
-              <span className="bg-gradient-to-r from-orange-500 via-white to-green-600 bg-clip-text text-transparent whitespace-nowrap animate-tricolor-flow bg-[length:200%_100%]">
+              <span className="bg-gradient-to-r from-green-500 via-gray-300 to-orange-600 font-extrabold  bg-clip-text text-transparent whitespace-nowrap animate-tricolor-flow bg-[length:200%_100%]">
                 RASHTRIYA SEVA SANGH
               </span>
             </span>
@@ -66,7 +64,7 @@ const Logo = () => {
             {languages.map((lang, index) => (
               <p
                 key={index}
-                className={`font-nunito text-[10px] text-gray-600 tracking-tight absolute inset-0 transition-all duration-700 ${
+                className={`font-nunito text-[10px] text-center text-gray-600 tracking-tight absolute inset-0 transition-all duration-700 ${
                   currentLanguage === index
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-2"

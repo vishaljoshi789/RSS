@@ -25,7 +25,7 @@ const Founder = () => {
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-3 lg:mb-4">
             Our core <span className="text-red-600"> Team</span>
           </h2>
-          <p className="text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+          <p className="text-base lg:text-lg text-muted-foreground  whitespace-nowrap max-w-2xl mx-auto px-4">
             The Dedicated Leadership Driving Our Seva.
           </p>
         </div>
@@ -208,7 +208,7 @@ const Founder = () => {
                 Be Part of the Change
               </span>
             </div>
-            <h4 className="text-xl lg:text-3xl font-bold text-foreground mb-4 lg:mb-5">
+            <h4 className="text-md lg:text-3xl font-bold text-foreground mb-4 lg:mb-5">
               सेवा का संकल्प, राष्ट्र की शक्ति
             </h4>
             <p className="text-base lg:text-xl text-muted-foreground leading-relaxed mb-4 lg:mb-6 px-2">

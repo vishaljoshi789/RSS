@@ -24,7 +24,7 @@ const truncateText = (text: string, maxWords: number) => {
 const Divine = () => {
   return (
     <section
-      className="py-16 px-4 bg-gradient-to-b from-background via-muted/20 to-background"
+      className=" px-4 bg-gradient-to-b from-background via-muted/20 to-background"
       id="our-work"
     >
       <div className="max-w-7xl mx-auto">
@@ -41,7 +41,7 @@ const Divine = () => {
             Our Divine <span className="text-red-600"> Mission</span>
           </h2>
 
-          <p className="text-md md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-md md:text-xl text-muted-foreground  max-w-3xl mx-auto leading-relaxed">
             {missionSectionData.subtitle}
           </p>
         </div>

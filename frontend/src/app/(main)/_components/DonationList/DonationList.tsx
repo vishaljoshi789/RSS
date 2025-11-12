@@ -303,7 +303,7 @@ const DonationList = () => {
               onClick={loadMore}
               className="px-8 py-3 font-semibold"
             >
-              Load More
+              See More
             </NormalButton>
           </div>
         )}
