@@ -31,7 +31,9 @@ export default function EmailChangeModal({ user }: EmailChangeModalProps) {
   const { updateCurrentUser, isUpdating } = useUpdateCurrentUser();
   const [newEmail, setNewEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; confirm?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; confirm?: string }>(
+    {}
+  );
 
   const open = hasRssIndiaEmail(user);
 
@@ -73,15 +75,13 @@ export default function EmailChangeModal({ user }: EmailChangeModalProps) {
 
     if (result.success && result.data) {
       setUserData(result.data);
-      toast.success("Email updated successfully! Please verify your new email.");
-      
+      toast.success("Email updated successfully! Refreshing page...");
+
       // Clear form
       setNewEmail("");
       setConfirmEmail("");
-      
-      // Optionally logout user to verify new email
-      // logout();
-      // router.push("/auth/login");
+
+      window.location.reload();
     } else {
       toast.error(result.error || "Failed to update email");
     }
@@ -91,7 +91,7 @@ export default function EmailChangeModal({ user }: EmailChangeModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-md"
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
@@ -99,16 +99,18 @@ export default function EmailChangeModal({ user }: EmailChangeModalProps) {
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-6 w-6 text-red-500" />
-            <DialogTitle className="text-xl">Urgent: Email Change Required</DialogTitle>
+            <DialogTitle className="text-xl">
+              Urgent: Email Change Required
+            </DialogTitle>
           </div>
-          <DialogDescription className="pt-3 text-base">
+          {/* <DialogDescription className="pt-3 text-base">
             Your current email address uses the <span className="font-semibold text-red-600">@rssindia.org</span> domain, 
             which is no longer supported. Please update your email address immediately to continue using the platform.
-          </DialogDescription>
+          </DialogDescription> */}
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="current-email" className="text-sm font-medium">
               Current Email
             </Label>
@@ -122,7 +124,7 @@ export default function EmailChangeModal({ user }: EmailChangeModalProps) {
                 className="pl-10 bg-muted"
               />
             </div>
-          </div>
+          </div> */}
 
           <div className="space-y-2">
             <Label htmlFor="new-email" className="text-sm font-medium">
@@ -174,16 +176,13 @@ export default function EmailChangeModal({ user }: EmailChangeModalProps) {
 
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
             <p className="text-sm text-yellow-800">
-              <strong>Important:</strong> After updating your email, you may need to verify 
-              the new address. Please ensure you have access to the new email account.
+              <strong>Important:</strong> After updating your email, you may
+              need to verify the new address. Please ensure you have access to
+              the new email account.
             </p>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isUpdating}
-          >
+          <Button type="submit" className="w-full" disabled={isUpdating}>
             {isUpdating ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
