@@ -57,7 +57,7 @@ const Logo = () => {
         <div className="block">
           <h1 className="font-lato font-bold text-sm sm:text-base lg:text-lg xl:text-lg leading-tight">
             <span className="relative inline-block">
-              <span className="bg-gradient-to-r from-orange-500 via-white to-green-600 bg-clip-text text-transparent animate-tricolor-flow bg-[length:200%_100%]">
+              <span className="bg-gradient-to-r from-orange-500 via-white to-green-600 bg-clip-text text-transparent whitespace-nowrap animate-tricolor-flow bg-[length:200%_100%]">
                 RASHTRIYA SEVA SANGH
               </span>
             </span>

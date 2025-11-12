@@ -66,7 +66,7 @@ const Navbar = () => {
     >
       <div className="absolute inset-0 bg-background/95 backdrop-blur-md"></div>
 
-      <div className="relative max-w-7xl mx-auto w-full h-20 px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto w-full h-20 px-1 sm:px-1 lg:px-4">
         <div className="flex items-stretch justify-between h-full">
           <div className="flex items-center justify-center relative">
             <Logo />
@@ -76,7 +76,7 @@ const Navbar = () => {
             <DesktopNav />
           </div>
 
-          <div className="flex items-center justify-center relative gap-4">
+          <div className="flex items-center justify-center relative ">
             {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
