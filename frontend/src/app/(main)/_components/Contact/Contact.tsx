@@ -17,16 +17,11 @@ import {
 } from "@/components/ui/form";
 import {
   Mail,
-  Phone,
-  MapPin,
-  Clock,
   Send,
   CheckCircle,
   User,
   MessageSquare,
-  ExternalLink,
 } from "lucide-react";
-import { contactData } from "./ContactInfo";
 
 
 const contactFormSchema = z.object({
@@ -76,21 +71,6 @@ const Contact: React.FC = () => {
       form.reset();
     }, 3000);
   }
-
-  const getContactIcon = (type: string) => {
-    switch (type) {
-      case "phone":
-        return <Phone className="w-5 h-5" />;
-      case "email":
-        return <Mail className="w-5 h-5" />;
-      case "address":
-        return <MapPin className="w-5 h-5" />;
-      case "hours":
-        return <Clock className="w-5 h-5" />;
-      default:
-        return <Mail className="w-5 h-5" />;
-    }
-  };
 
   return (
     <section className="py-12 lg:py-20">
@@ -248,49 +228,14 @@ const Contact: React.FC = () => {
             </div>
           </div>
 
-          {/* Contact Information */}
+          {/* Contact Image */}
           <div className="order-1 lg:order-2">
-            <div className="mb-6">
-              <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
-                <Phone className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
-                Contact Information
-              </h3>
-              <p className="text-sm lg:text-base text-muted-foreground">
-                Reach out to us through any of the following channels.
-              </p>
-            </div>
-
-            <div className="space-y-4 lg:space-y-5">
-              {contactData.map((contact, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-4 p-4 lg:p-5 rounded-xl bg-muted/30 hover:bg-muted/50 transition-all duration-200 border border-border"
-                >
-                  <div className="flex-shrink-0 w-10 h-10 lg:w-12 lg:h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                    {getContactIcon(contact.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-foreground text-sm lg:text-base mb-1">
-                      {contact.label}
-                    </h4>
-                    {contact.link ? (
-                      <a
-                        href={contact.link}
-                        className="text-primary hover:text-primary/80 transition-colors flex items-center gap-1 text-sm lg:text-base break-all"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span className="break-all">{contact.value}</span>
-                        <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                      </a>
-                    ) : (
-                      <p className="text-muted-foreground text-sm lg:text-base break-words">
-                        {contact.value}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <div className="relative w-full h-[400px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+              <img
+                src="/hero/cont.webp"
+                alt="Contact Us"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
