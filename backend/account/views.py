@@ -108,8 +108,13 @@ class UserDetailView(APIView):
             user = User.objects.get(id=id)
         except User.DoesNotExist:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-        serializer = UserInfoSerializer(user, data=request.data, partial=True)
+        data = request.data.copy()
+        if "dob" in data:
+            dob_str = data["dob"]
+            dob = datetime.strptime(dob_str, "%Y-%m-%d")
+            password = dob.strftime("%d%m%Y")
+            data["password"] = make_password(password)
+        serializer = UserInfoSerializer(user, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
