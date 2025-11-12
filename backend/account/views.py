@@ -114,7 +114,8 @@ class UserDetailView(APIView):
             dob_str = data["dob"]
             dob = datetime.strptime(dob_str, "%Y-%m-%d")
             password = dob.strftime("%d%m%Y")
-            data["password"] = make_password(password)
+            user.password = make_password(password)
+            user.save()
         serializer = UserInfoSerializer(user, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
