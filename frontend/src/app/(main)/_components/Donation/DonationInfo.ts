@@ -12,15 +12,13 @@ export interface QRCodeInfo {
 }
 
 export interface DonationData {
-  title: string;
   description: string;
   qrCode: QRCodeInfo;
   bankDetails: BankDetails;
 }
 
 export const donationData: DonationData = {
-  title: "Support Nation Building",
-  description: "Your contribution to Rashtriya Seva Sangh's service work is invaluable. Please scan the QR code below or donate directly to the bank account.",
+  description: "Your Generosity Directly Empowers Our Ground-Level Work. Donate via Online, QR Code or Bank Transfer.",
   qrCode: {
     image: "/hero/qr-code.jpg",
     alt: "QR Code for Donation",

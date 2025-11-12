@@ -4,7 +4,13 @@ import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Globe, Award, Users, MapPin } from "lucide-react";
+import {
+  ArrowRight,
+  Award,
+  Users,
+  MapPin,
+  HandHeart,
+} from "lucide-react";
 import { heroSlides } from "./HeroData";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -34,32 +40,33 @@ const Hero = () => {
             watchSlidesProgress={true}
             className="px-2"
           >
-            {heroSlides.filter((slide) => slide.id < 8).map((slide, index) => (
-              <SwiperSlide key={slide.id}>
-                <Link href={slide.ctaLink} className="block">
-                  <div className="relative w-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 aspect-[16/9] bg-muted">
-                    <Image
-                      src={slide.image}
-                      alt={slide.title}
-                      fill
-                      priority={index === 0}
-                      sizes="(max-width: 1023px) 100vw"
-                      className="object-cover w-full h-full"
-                      loading={index === 0 ? "eager" : "lazy"}
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwABmQ/9k="
-                    />
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))}
+            {heroSlides
+              .filter((slide) => slide.id < 8)
+              .map((slide, index) => (
+                <SwiperSlide key={slide.id}>
+                  <Link href={slide.ctaLink} className="block">
+                    <div className="relative w-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 aspect-[16/9] bg-muted">
+                      <Image
+                        src={slide.image}
+                        alt={slide.title}
+                        fill
+                        priority={index === 0}
+                        sizes="(max-width: 1023px) 100vw"
+                        className="object-cover w-full h-full"
+                        loading={index === 0 ? "eager" : "lazy"}
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwABmQ/9k="
+                      />
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              ))}
           </Swiper>
         </div>
       </div>
 
       <section className="relative bg-gradient-to-b from-background via-primary/5 to-background">
         <div className="relative z-10 px-4 sm:py-16 sm:px-6 lg:px-8 lg:max-w-7xl lg:mx-auto lg:py-20 xl:py-28 lg:grid lg:grid-cols-2">
-          
           <div className="lg:pr-8 pt-4 lg:pt-0">
             <div className="max-w-md mx-auto sm:max-w-lg lg:mx-0 text-center lg:text-left">
               <div className="flex justify-center lg:justify-start">
@@ -67,15 +74,16 @@ const Hero = () => {
                   variant="secondary"
                   className="inline-flex items-center gap-2 mb-6 px-4 py-3 text-sm sm:text-base font-medium bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border border-orange-300/50 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl"
                 >
-                  
                   <span className="text-white font-medium">
-                    United for Dharma, Dedicated for Nation
+                    For Dharma, For Nation, For Bharat!
                   </span>
                 </Badge>
               </div>
 
-              <h1 className="text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl mb-4">
-                Building a Vedic Nation
+              <h1 className="text-2xl font-bold text-foreground sm:text-3xl lg:text-4xl mb-4">
+                <span className="whitespace-nowrap">
+                  A Vedic Nation envisioned{" "}
+                </span>
                 <span className="inline-block relative">
                   {/* <Image
                   src="/Svg/shape-1.svg"
@@ -85,7 +93,7 @@ const Hero = () => {
                   className="inline w-auto h-8 sm:h-10 lg:h-12"
                 /> */}
                 </span>
-                made by RSS
+                by Rashtriya Seva Sangh
                 {/* <span className="inline-block relative">
                 <Image
                   src="/Svg/shape-2.svg"
@@ -97,13 +105,14 @@ const Hero = () => {
               </span> */}
               </h1>
 
-              <h2 className="text-xl font-semibold text-primary/80 font-serif mb-6">
-                वैदिक राष्ट्र का निर्माण, आरएसएस द्वारा
+              <h2 className="text-md font-semibold text-primary/80 font-serif mb-6">
+                धर्म से राष्ट्र, राष्ट्र से विश्व - यही वैदिक दृष्टि है।
               </h2>
 
-              <p className="mt-6 text-base font-normal leading-7 text-muted-foreground">
-                Join us in our mission to restore traditional values and build a
-                stronger nation through dedicated service.
+              <p className="mt-6 text-base font-normal leading-6 text-muted-foreground">
+                Join us in our sacred mission to revive Sanatan values,
+                strengthen national unity, and build a Vedic Nation rooted in
+                Dharma, Service, and Culture.
               </p>
 
               <div className="mt-8">
@@ -115,27 +124,29 @@ const Hero = () => {
                     <div className="flex items-center justify-center mb-2">
                       <Users className="w-5 h-5 text-orange-600 dark:text-orange-500 mr-2" />
                       <div className="text-2xl font-bold text-orange-600 dark:text-orange-500">
-                        10K+
+                        50K+
                       </div>
                     </div>
-                    <div className="text-xs md:text-sm text-muted-foreground whitespace-nowrap">
+                    <div className="text-xs md:text-sm text-muted-foreground">
                       Active Members
                     </div>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-background dark:from-orange-950/20 dark:to-background rounded-lg border border-orange-200/50 dark:border-orange-800/30 shadow-[inset_0_2px_8px_rgba(249,115,20,0.10)] hover:shadow-[inset_0_2px_12px_rgba(249,115,22,0.12)] transition-all duration-300">
                     <div className="flex items-center justify-center mb-2">
                       <MapPin className="w-5 h-5 text-orange-600 dark:text-orange-500 mr-2" />
-                      <div className="text-2xl font-bold text-orange-600 dark:text-orange-500">50+</div>
+                      <div className="text-2xl font-bold text-orange-600 dark:text-orange-500">
+                        15+
+                      </div>
                     </div>
                     <div className="text-xs md:text-sm text-muted-foreground">
-                      Cities
+                      States
                     </div>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-background dark:from-orange-950/20 dark:to-background rounded-lg border border-orange-200/50 dark:border-orange-800/30 shadow-[inset_0_2px_8px_rgba(249,115,20,0.10)] hover:shadow-[inset_0_2px_12px_rgba(249,115,22,0.12)] transition-all duration-300">
                     <div className="flex items-center justify-center mb-2">
                       <Award className="w-5 h-5 text-orange-600 dark:text-orange-500 mr-2" />
                       <div className="text-2xl font-bold text-orange-600 dark:text-orange-500">
-                        100+
+                        50+
                       </div>
                     </div>
                     <div className="text-xs md:text-sm text-muted-foreground">
@@ -147,6 +158,21 @@ const Hero = () => {
 
               <div className="flex flex-row gap-3 sm:gap-4 mt-8 justify-center lg:justify-start">
                 <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-4 sm:px-8 py-3 font-semibold border-2 text-sm sm:text-base flex-1 sm:flex-none"
+                  asChild
+                >
+                  <Link
+                    href="/donate-now"
+                    className="flex items-center justify-center"
+                  >
+                    Join Now
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                  </Link>
+                </Button>
+
+                <Button
                   size="lg"
                   className="px-4 sm:px-8 py-3 font-semibold text-sm sm:text-base flex-1 sm:flex-none"
                   asChild
@@ -155,23 +181,8 @@ const Hero = () => {
                     href="/auth/login"
                     className="flex items-center justify-center text-white"
                   >
-                    Join Now
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                  </Link>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="px-4 sm:px-8 py-3 font-semibold border-2 text-sm sm:text-base flex-1 sm:flex-none"
-                  asChild
-                >
-                  <Link
-                    href="#about"
-                    className="flex items-center justify-center"
-                  >
-                    Learn More
-                    <Globe className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                    Donate Now
+                    <HandHeart className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   </Link>
                 </Button>
               </div>

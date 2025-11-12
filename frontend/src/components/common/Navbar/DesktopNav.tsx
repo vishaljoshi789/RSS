@@ -15,7 +15,7 @@ import ListItem from './ListItem';
 const DesktopNav = () => {
   return (
     <div className="hidden xl:flex items-center justify-center">
-      <div className="bg-muted rounded-full px-6 py-3 h-12 flex items-center justify-center">
+      <div className="rounded-full px-6 py-3 h-12 flex items-center justify-center">
         <NavigationMenu viewport={false}>
           <NavigationMenuList className="gap-4">
             {navigationItems.map((item) => (
@@ -29,7 +29,7 @@ const DesktopNav = () => {
                       </div>
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <ul className="grid gap-2 p-4 w-[300px] bg-background rounded-2xl border shadow-lg">
+                      <ul className="grid gap-2 p-4 w-[300px] rounded-2xl border shadow-lg">
                         
                         <ListItem
                           key={`${item.id}-main`}

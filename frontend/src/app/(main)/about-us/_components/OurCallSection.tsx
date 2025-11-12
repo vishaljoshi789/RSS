@@ -1,41 +1,90 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 
 interface OurCallSectionProps {
   ourCall: {
     title: string;
-    points: string[];
-    conclusion: string;
+    intro: string;
+    motto: string;
+    mottoTranslation: string;
+    commitment: string;
+    whyWeExist: {
+      title: string;
+      points: string[];
+    };
+    against: string;
   };
 }
 
 const OurCallSection: React.FC<OurCallSectionProps> = ({ ourCall }) => {
   return (
-    <section className="py-8 sm:py-12 lg:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-foreground">
-            {ourCall.title}
-          </h2>
-          <p className="text-lg sm:text-xl mb-6 sm:mb-8 text-muted-foreground">आज समय है —</p>
-        </div>
-        
-        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
-          {ourCall.points.map((point, index) => (
-            <Card key={index} className="p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">{point}</p>
-            </Card>
-          ))}
-        </div>
-
-        <Card className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-xl">
-          <CardContent className="p-6 sm:p-8 lg:p-12 text-center">
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6">न दैन्यं न पलायनम्</h3>
-            <p className="text-base sm:text-lg lg:text-xl leading-relaxed">
-              {ourCall.conclusion}
+    <section className="py-12 sm:py-16 lg:py-20 bg-background">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="space-y-8 lg:space-y-10">
+          {/* Title and Introduction */}
+          <div className="text-center space-y-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-tight">
+              {ourCall.title}
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-medium">
+              {ourCall.intro.split('*').map((part, idx) => 
+                idx % 2 === 1 ? <strong key={idx} className="text-foreground font-bold">{part}</strong> : part
+              )}
             </p>
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Motto Quote */}
+          <div className="relative p-8 sm:p-10 bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 text-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            </div>
+            <div className="relative z-10 text-center space-y-3">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
+                &quot;{ourCall.motto}&quot;
+              </h3>
+              <p className="text-lg sm:text-xl opacity-90 italic">
+                ({ourCall.mottoTranslation})
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed pt-4">
+                {ourCall.commitment.split('*').map((part, idx) => 
+                  idx % 2 === 1 ? <strong key={idx} className="font-bold underline">{part}</strong> : part
+                )}
+              </p>
+            </div>
+          </div>
+
+          {/* Why We Exist */}
+          <div className="space-y-6">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground text-center">
+              {ourCall.whyWeExist.title}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+              {ourCall.whyWeExist.points.map((point, index) => (
+                <div
+                  key={index}
+                  className="p-5 sm:p-6 border border-gray-200 bg-gradient-to-br from-background to-muted/30 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                      {point.split('*').map((part, idx) => 
+                        idx % 2 === 1 ? <strong key={idx} className="text-foreground font-bold">{part}</strong> : part
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Against Section */}
+          <div className="p-6 sm:p-8 border-l-4 border-red-500 bg-gradient-to-r from-red-50 to-transparent dark:from-red-950/20 rounded-r-xl">
+            <p className="text-base sm:text-lg text-foreground leading-relaxed font-medium">
+              {ourCall.against.split('*').map((part, idx) => 
+                idx % 2 === 1 ? <strong key={idx} className="text-red-600 dark:text-red-400 font-bold">{part}</strong> : part
+              )}
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );

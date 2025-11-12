@@ -60,10 +60,32 @@ interface RazorpayOptions {
   notes?: Record<string, unknown>;
   theme?: {
     color?: string;
+    backdrop_color?: string;
   };
   modal?: {
     ondismiss?: () => void;
+    escape?: boolean;
+    backdropclose?: boolean;
+    animation?: boolean;
+    confirm_close?: boolean;
   };
+  readonly?: {
+    contact?: boolean;
+    email?: boolean;
+    name?: boolean;
+  };
+  hidden?: {
+    contact?: boolean;
+    email?: boolean;
+  };
+  send_sms_hash?: boolean;
+  allow_rotation?: boolean;
+  retry?: {
+    enabled?: boolean;
+    max_count?: number;
+  };
+  timeout?: number;
+  remember_customer?: boolean;
 }
 
 interface PaymentResponse {
@@ -316,10 +338,10 @@ export function useDonationPayment() {
             "",
           amount: orderResponse.amount || 0,
           currency: orderResponse.currency || "INR",
-          name: "RSS - Rashtriya Swayamsevak Sangh",
-          description: `Donation - ${formData.payment_for}`,
-          image: "/logo/logo.png",
-          order_id: orderResponse.order_id,
+          name: "राष्ट्रीय सेवा संघ",
+          description: `दान - ${formData.payment_for}`,
+          image: `${window.location.origin}/logo/logo.png`,
+          order_id: orderResponse.order_id, 
           handler: async (response: PaymentResponse) => {
             try {
               setCurrentStep("verifying");
@@ -402,18 +424,39 @@ export function useDonationPayment() {
           notes: {
             payment_for: formData.payment_for,
             notes: formData.notes || "",
+            donor_name: formData.name,
+            donor_email: formData.email,
+            donor_phone: formData.phone,
           },
           theme: {
             color: "#FF9933",
+            backdrop_color: "rgba(0, 0, 0, 0.6)",
           },
           modal: {
             ondismiss: () => {
               console.log("Payment cancelled by user");
               setIsProcessing(false);
-              setError("Payment cancelled by user");
+              setError("भुगतान रद्द कर दिया गया");
               setCurrentStep("idle");
             },
+            escape: true,
+            backdropclose: false,
+            animation: true,
+            confirm_close: true,
           },
+          readonly: {
+            contact: true,
+            email: true,
+            name: true,
+          },
+          send_sms_hash: true,
+          allow_rotation: true,
+          retry: {
+            enabled: true,
+            max_count: 4,
+          },
+          timeout: 900,
+          remember_customer: false,
         };
 
         if (typeof window.Razorpay === "undefined") {

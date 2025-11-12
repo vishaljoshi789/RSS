@@ -80,19 +80,25 @@ export const supporterImages: SupporterInfo[] = [
     name: "Supporter 7", 
     imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-09-at-7.54.30-PM-scaled.jpeg",
     alt: "RSS Supporter"
-  }
+  },
+  {
+    id: 8,
+    name: "Supporter 7", 
+    imageUrl: "/logo/gov-08.png",
+    alt: "RSS Supporter"
+  },
 ];
 
 export const pageContent: PageContent = {
-  mainTitle: "राष्ट्रीय सेवा संघ का परिचय",
-  mainSubtitle: "सेवा, समर्पण और राष्ट्र के प्रति हमारी अटूट प्रतिबद्धता को समझें",
+  mainTitle: "The Rashtriya Seva Sangh",
+  mainSubtitle: "Explore Our Core Commitment to Service (Seva) and the Unbreakable Spirit of India.",
   introSection: {
-    title: "राष्ट्रीय सेवा संघ का संपूर्ण परिचय",
-    description: "हमारे संगठन के उद्देश्य, कार्यप्रणाली और भविष्य की योजनाओं के बारे में विस्तार से जानें। देखें कि कैसे हम सभी मिलकर एक मजबूत और समृद्ध भारत का निर्माण कर सकते हैं।",
+    title: "हमारा ध्येय: राष्ट्र निर्माण की नींव",
+    description: "राष्ट्रीय सेवा संघ का लक्ष्य सेवा, समर्पण और राष्ट्रवाद के मूल सिद्धांतों के आधार पर एक मजबूत और समृद्ध वैदिक भारत का निर्माण करना है। हमारी कार्यप्रणाली संगठन,वैदिक शिक्षा और जमीनी सेवा के माध्यम से समाज के हर वर्ग को सशक्त बनाने पर केंद्रित है। हमारे उद्देश्यों, संचालन के तरीकों और भविष्य की विस्तृत योजनाओं को जानकर, आप समझ सकते हैं कि कैसे हम सभी मिलकर वैदिक राष्ट्र निर्माण की इस महान यात्रा को सफल बना सकते हैं।",
     joinButtonText: "Join Our Mission",
     learnMoreButtonText: "Learn More"
   },
-  organizationName: "राष्ट्रीय सेवा संघ"
+  organizationName: "संगठन परिचय"
 };
 
 

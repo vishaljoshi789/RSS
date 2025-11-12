@@ -11,14 +11,12 @@ export interface HighlightCounter {
 }
 
 export interface HighlightsSection {
-  title: string;
   subtitle?: string;
   counters: HighlightCounter[];
 }
 
 export const highlightsData: HighlightsSection = {
-  title: "Highlights",
-  subtitle: "राष्ट्रीय सेवा संघ की उपलब्धियां",
+  subtitle: "Witness the Transformative Power of Our Ground-Level Seva and National Initiatives.",
   counters: [
     {
       id: "states",
@@ -43,7 +41,7 @@ export const highlightsData: HighlightsSection = {
     {
       id: "volunteers",
       title: "ACTIVE VOLUNTEERS",
-      value: 3000,
+      value: 1000,
       suffix: "+",
       duration: 4000,
       icon: "🙋‍♂️",
@@ -57,7 +55,6 @@ export const highlightsData: HighlightsSection = {
 export const formatNumber = (num: number): string => {
   return num.toLocaleString('en-IN');
 };
-
 
 export const animationConfig = {
   duration: 4000,

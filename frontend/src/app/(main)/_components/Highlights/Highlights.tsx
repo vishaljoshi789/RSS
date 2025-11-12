@@ -124,7 +124,8 @@ const Highlights = () => {
           </Badge>
 
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">
-            {highlightsData.title}
+            Our <span className="text-red-600">Milestones</span>
+
           </h2>
 
           {highlightsData.subtitle && (
@@ -194,11 +195,10 @@ const Highlights = () => {
           <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
             <Award className="w-12 h-12 text-primary mx-auto mb-4" />
             <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              आपकी सहभागिता से बढ़ते आंकड़े
+              आपकी सहभागिता से निरंतर बढ़ते आंकड़े
             </h3>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              राष्ट्रीय सेवा संघ की बढ़ती सफलता में आपका योगदान अमूल्य है। हमारे
-              साथ जुड़कर इन आंकड़ों को और बेहतर बनाने में सहायता करें।
+              राष्ट्रीय सेवा संघ की बढ़ती सफलता में आपका योगदान अमूल्य है। आइए, इन आँकड़ों को मिलकर नई ऊँचाइयों पर ले चलें
             </p>
           </div>
         </div>

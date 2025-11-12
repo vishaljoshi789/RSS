@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { aboutData } from "./AboutInfo";
-import NormalButton from "@/components/common/RssButton/RssButton";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import NormalButton from "@/components/common/RssButton/RssButton";
 
 const About = () => {
   return (
@@ -13,7 +14,8 @@ const About = () => {
           <div className="relative inline-block">
             <h2 className="text-3xl lg:text-4xl font-bold text-primary mb-2 relative pb-4">
               {/* {aboutData.title} */}
-              <span className="text-primary">About </span><span className="text-black">Us</span>
+              <span className="text-black">About </span>
+              <span className="text-red-600">Us</span>
               {/* <Image
                 src="/Svg/text/gradient-underline.svg"
                 alt="decorative underline"
@@ -49,12 +51,46 @@ const About = () => {
               <h3 className="text-xl font-bold text-gray-900 mb-3">
                 संगठन परिचय
               </h3>
-              <p className="text-sm lg:text-base text-gray-700 leading-relaxed">
-                {aboutData.content.description}
-              </p>
+              <div className="space-y-4">
+                <div className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg border border-orange-200">
+                  <p className="text-sm lg:text-base font-bold text-primary text-justify leading-relaxed">
+                    {aboutData.content.description[0]}
+                  </p>
+                </div>
+
+                {aboutData.content.description.slice(1).map((para, index) => (
+                  <p
+                    key={index + 1}
+                    className="text-sm lg:text-base text-gray-700 text-justify leading-relaxed"
+                  >
+                    {para}
+                  </p>
+                ))}
+              </div>
             </div>
 
-            <div className="pt-2 flex justify-center lg:justify-start">
+            {/* Highlights Section */}
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+              {aboutData.highlights.map((highlight, index) => {
+                const IconComponent =
+                  iconMap[highlight.icon as keyof typeof iconMap];
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg border border-orange-200 hover:shadow-md transition-all duration-300"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-md">
+                      <IconComponent className="w-5 h-5 text-white" />
+                    </div>
+                    <p className="text-sm font-medium text-gray-800">
+                      {highlight.text}
+                    </p>
+                  </div>
+                );
+              })}
+            </div> */}
+
+            <div className="flex hidden justify-center lg:justify-start">
               <NormalButton
                 variant="primary"
                 showArrow
@@ -67,9 +103,25 @@ const About = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  Learn More
+                  {aboutData.ctaText}
                 </Link>
               </NormalButton>
+            </div>
+            <div className="flex block justify-center lg:hidden">
+              <Button
+                variant="default"
+                size="lg"
+                className="px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-all duration-300"
+              >
+                <Link
+                  href={aboutData.ctaLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 py-3"
+                >
+                  {aboutData.ctaText}
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -123,7 +175,7 @@ const About = () => {
                     <h3 className="text-sm font-semibold text-orange-600 uppercase tracking-wider mb-2">
                       Our Commitment
                     </h3>
-                    <p className="text-base lg:text-lg text-gray-800 leading-relaxed font-medium">
+                    <p className="text-base lg:text-lg text-gray-800 text-justify leading-relaxed font-medium">
                       {aboutData.content.conclusion}
                     </p>
                   </div>

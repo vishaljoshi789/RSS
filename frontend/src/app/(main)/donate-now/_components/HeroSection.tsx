@@ -32,7 +32,7 @@ const HeroSection = () => {
           
           <div className="max-w-4xl mx-auto mb-6 sm:mb-8 px-2">
             <p className="text-base sm:text-lg md:text-xl text-white/95 font-medium leading-relaxed mb-3 sm:mb-4">
-              सनातनी हिंदू रक्षा अभियान (भारत)
+              सनातन रक्षा अभियान (भारत)
             </p>
             <p className="text-xs sm:text-base md:text-lg text-white/85 leading-relaxed">
               धार्मिक मूल्यों की रक्षा, बहन बेटियों की सुरक्षा, मठ मंदिरों का संरक्षण, शिक्षा स्वास्थ्य एवं रोजगार की स्थिति सुधार, धार्मिक संस्कारों को बचाने हेतु गुरुकुल संचालन एवं भारतीय संस्कृति को पुनः गौरव प्रदान करने में अपना योगदान दें।

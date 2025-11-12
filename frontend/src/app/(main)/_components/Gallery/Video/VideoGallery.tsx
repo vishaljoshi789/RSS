@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -43,10 +42,9 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
     }}>
 
       <DialogTrigger asChild>
-        <Card className="group cursor-pointer bg-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden">
-          <CardContent className="p-0">
-            
-            <div className="relative aspect-video">
+        <div className="group cursor-pointer bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-primary/30 w-full">
+          {/* Video Thumbnail Section */}
+          <div className="relative aspect-video">
               {!imageError ? (
                 <>
                   <Image
@@ -128,22 +126,21 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               </div>
             </div>
 
-            
-            <div className="p-4 lg:absolute lg:bottom-0 lg:left-0 lg:right-0 lg:p-4 lg:text-white lg:bg-gradient-to-t lg:from-black/80 lg:via-black/50 lg:to-transparent lg:transform lg:translate-y-2 lg:group-hover:translate-y-0 lg:transition-transform lg:duration-300">
-              <h3 className="font-bold text-gray-900 lg:text-white text-base lg:text-lg mb-1 leading-tight line-clamp-2 lg:drop-shadow-lg">
-                {video.title}
-              </h3>
-              <p className="text-gray-600 lg:text-white/90 text-sm mb-2 line-clamp-2 lg:line-clamp-1 lg:drop-shadow-md lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity lg:duration-300">
-                {video.description}
-              </p>
+          {/* Video Details Section */}
+          <div className="p-3 md:p-4 bg-white">
+            <h3 className="font-bold text-gray-900 text-sm md:text-base lg:text-lg mb-2 leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+              {video.title}
+            </h3>
+            <p className="text-gray-600 text-xs md:text-sm mb-2 md:mb-3 line-clamp-2 leading-relaxed">
+              {video.description}
+            </p>
 
-              <div className="flex items-center gap-2 text-xs text-gray-500 lg:text-white/80">
-                <Calendar className="w-3 h-3" />
-                <span>{formatDate(video.uploadDate)}</span>
-              </div>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <Calendar className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
+              <span className="text-xs">{formatDate(video.uploadDate)}</span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </DialogTrigger>
 
       <DialogContent className="max-w-7xl w-[95vw] sm:w-[90vw] p-0 bg-black border-0 gap-0">
