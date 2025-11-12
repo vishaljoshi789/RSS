@@ -99,6 +99,11 @@ REST_FRAMEWORK = {
     ]
 }
 
+AUTHENTICATION_BACKENDS = [
+    'users.auth_backends.MultiFieldAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),   # Token lifetime
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
