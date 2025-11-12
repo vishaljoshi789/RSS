@@ -15,7 +15,7 @@ const TempleServiceSection: React.FC = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           <div className="order-2 lg:order-1">
-            <Card className="overflow-hidden border bg-gradient-to-br from-background to-muted/30">
+            <div className="overflow-hidden border bg-gradient-to-br from-background to-muted/30">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent z-10"></div>
                 <Image
@@ -28,7 +28,7 @@ const TempleServiceSection: React.FC = () => {
                   blurDataURL={IMAGE_BLUR_DATA_URL}
                 />
               </div>
-            </Card>
+            </div>
           </div>
 
           <div className="space-y-6 order-1 lg:order-2">

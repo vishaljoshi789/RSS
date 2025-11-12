@@ -4,7 +4,7 @@ import Image from "next/image";
 import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 export const metadata: Metadata = {
-  title: "Authentication - RSS Rashtriya Swayamsevak Sangh",
+  title: "Authentication - RSS RASHTRIYA SEVA SANGH",
   description:
     "Login or Register to join the RSS community and contribute to nation building",
 };
@@ -38,7 +38,7 @@ export default function AuthLayout({
               <div>
                 <h1 className="text-lg font-bold">राष्ट्रीय स्वयंसेवक संघ</h1>
                 <p className="text-xs text-primary-foreground/80">
-                  Rashtriya Swayamsevak Sangh
+                  RASHTRIYA SEVA SANGH
                 </p>
               </div>
             </div>

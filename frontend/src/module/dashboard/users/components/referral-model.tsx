@@ -58,7 +58,7 @@ export default function ReferralModal({ userData, referralCount }: ReferralModal
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Join RSS - Rashtriya Swayamsevak Sangh",
+          title: "Join RSS - RASHTRIYA SEVA SANGH",
           text: `Join me in RSS using my referral ID: ${referralId}`,
           url: referralLink,
         });

@@ -22,7 +22,9 @@ import { AppSidebar } from "./_components/app-sidebar";
 
 export default function DashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const axiosInstance = useAxios();
-  const { setUserData } = useAuth();
+  const { user , setUserData } = useAuth();
+
+  console.log(user);
   const pathname = usePathname();
 
   useEffect(() => {

@@ -1,5 +1,4 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Shield,
@@ -60,7 +59,7 @@ const impactItems = [
 
 const ImpactSection = () => {
   return (
-    <section className="mb-6 sm:mb-8 max-w-7xl mx-auto">
+    <section className="py-6 sm:py-12 mb-6 sm:mb-8 max-w-7xl mx-auto px-2 sm:px-0">
       <div className="text-center mb-4 sm:mb-6 px-2">
         <Badge variant="outline" className="mb-2 sm:mb-3 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm">
           <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-primary" />
@@ -73,35 +72,38 @@ const ImpactSection = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {impactItems.map((item, index) => (
-          <Card
+          <div
             key={index}
-            className="group overflow-hidden border hover:border-primary/50 transition-all hover:shadow-md"
+            className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
           >
-            <div className={`h-1 `}></div>
-            <CardHeader className="pb-2 p-3 sm:p-6">
-              <div className="flex items-start justify-between mb-2">
-                <div className="p-1.5 sm:p-2 bg-muted rounded-lg flex items-center justify-center">
+            
+            {/* Header */}
+            <div className="p-3 sm:p-6 pb-2">
+              <div className="flex items-start justify-between mb-3 sm:mb-4">
+                <div className="p-1.5 sm:p-2.5 bg-muted rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                   <div className="[&_svg]:w-5 [&_svg]:h-5 sm:[&_svg]:w-8 sm:[&_svg]:h-8">
                     {item.icon}
                   </div>
                 </div>
                 <Badge
                   variant="secondary"
-                  className="text-[10px] sm:text-xs bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5"
+                  className="text-[10px] sm:text-xs bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5 sm:py-1"
                 >
                   {item.stats}
                 </Badge>
               </div>
-              <CardTitle className="text-sm sm:text-base font-bold text-foreground">
+              <h3 className="text-sm sm:text-base lg:text-lg font-bold text-foreground mb-2">
                 {item.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3 sm:pb-4 px-3 sm:px-6">
-              <p className="text-xs sm:text-sm text-muted-foreground">
+              </h3>
+            </div>
+            
+            {/* Content */}
+            <div className="px-3 sm:px-6 pb-3 sm:pb-6">
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {item.description}
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
     </section>

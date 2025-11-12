@@ -13,6 +13,7 @@ import {
   OurCallSection,
   // CommunityServiceSection,
   GoalsSection,
+  YourRoleSection,
 } from './_components';
 
 const AboutUsPage = () => {
@@ -40,6 +41,8 @@ const AboutUsPage = () => {
       {/* <CommunityServiceSection /> */}
       
       <GoalsSection goals={aboutPageData.sections.goals} />
+      
+      <YourRoleSection yourRole={aboutPageData.sections.yourRole} />
       
     </div>
   );

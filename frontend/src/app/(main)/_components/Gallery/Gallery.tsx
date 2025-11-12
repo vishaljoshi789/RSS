@@ -3,18 +3,12 @@
 import React, { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import PhotoGallery from "./Photo/PhotoGallery";
-import  { VideoCard } from "./Video/VideoGallery";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Images,
-  VideoIcon,
-} from "lucide-react";
+import { VideoCard } from "./Video/VideoGallery";
+import { ChevronLeft, ChevronRight, Images, VideoIcon } from "lucide-react";
 import { getVideosByCategory } from "./Video/Video";
 import type { Swiper as SwiperType } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-
 
 const Gallery = () => {
   const [activeCategory] = useState("all");
@@ -32,8 +26,8 @@ const Gallery = () => {
             Gallery of <span className="text-red-600"> Deduction</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto text-justify">
-            Explore Our Visual Journey: Photos and Videos Showcasing Our Service, Events, and Community Impact Across the Nation.
-            categories.
+            Explore Our Visual Journey: Photos and Videos Showcasing Our
+            Service, Events, and Community Impact Across the Nation. categories.
           </p>
         </div>
 
@@ -60,6 +54,12 @@ const Gallery = () => {
 
           <div className="w-full">
             <div className="relative max-w-7xl mx-auto px-4 md:px-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-green-100 rounded-xl">
+                  <VideoIcon className="w-6 h-6 text-green-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Video Gallery</h2>
+              </div>
               <button
                 onClick={() => swiperInstance?.slidePrev()}
                 className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"

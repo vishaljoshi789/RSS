@@ -240,72 +240,76 @@ const UserTransactionHistory = () => {
 
   return (
     <Card>
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Receipt className="w-5 h-5" />
+          <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg">
+            <Receipt className="w-4 h-4 sm:w-5 sm:h-5" />
             Your Recent Transactions
           </CardTitle>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6">
         {payments.length === 0 ? (
-          <div className="text-center py-8">
-            <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions yet</h3>
-            <p className="text-gray-500 mb-4">Your payment history will appear here once you make a donation or payment.</p>
+          <div className="text-center py-6 sm:py-8">
+            <DollarSign className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-1 sm:mb-2">No transactions yet</h3>
+            <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4 px-4">Your payment history will appear here once you make a donation or payment.</p>
             <Button 
               onClick={() => router.push('/donate-now')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm h-8 sm:h-10"
+              size="sm"
             >
-              <DollarSign className="w-4 h-4" />
+              <DollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
               Make a Donation
             </Button>
           </div>
         ) : (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Transaction ID</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Payment Method</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {payments.map((payment) => (
-                  <TableRow key={payment.id}>
-                    <TableCell className="font-medium font-mono text-xs">
-                      {payment.order_id}
-                    </TableCell>
-                    <TableCell className="font-semibold">
-                      {formatCurrency(payment.amount/100)}
-                    </TableCell>
-                    <TableCell>{getTypeBadge(payment.payment_for)}</TableCell>
-                    <TableCell>{getPaymentMethodIcon(payment)}</TableCell>
-                    <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {formatDate(payment.timestamp)}
-                    </TableCell>
+          <div className="rounded-md border overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs sm:text-sm min-w-[120px]">Transaction ID</TableHead>
+                    <TableHead className="text-xs sm:text-sm">Amount</TableHead>
+                    <TableHead className="text-xs sm:text-sm hidden md:table-cell">Type</TableHead>
+                    <TableHead className="text-xs sm:text-sm hidden lg:table-cell">Payment Method</TableHead>
+                    <TableHead className="text-xs sm:text-sm">Status</TableHead>
+                    <TableHead className="text-xs sm:text-sm hidden sm:table-cell min-w-[120px]">Date</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {payments.map((payment) => (
+                    <TableRow key={payment.id}>
+                      <TableCell className="font-medium font-mono text-[10px] sm:text-xs">
+                        {payment.order_id}
+                      </TableCell>
+                      <TableCell className="font-semibold text-xs sm:text-sm">
+                        {formatCurrency(payment.amount/100)}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">{getTypeBadge(payment.payment_for)}</TableCell>
+                      <TableCell className="hidden lg:table-cell">{getPaymentMethodIcon(payment)}</TableCell>
+                      <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                      <TableCell className="text-xs sm:text-sm text-muted-foreground hidden sm:table-cell">
+                        {formatDate(payment.timestamp)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         )}
         
         {payments.length > 5 && (
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t">
             <Button 
               variant="ghost" 
-              className="w-full flex items-center gap-2"
+              className="w-full flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm h-8 sm:h-10"
               onClick={() => router.push('/dashboard/payments')}
+              size="sm"
             >
               View All Transactions
-              <ArrowUpRight className="w-4 h-4" />
+              <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
           </div>
         )}

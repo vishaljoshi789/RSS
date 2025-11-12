@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -94,67 +93,70 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-br from-orange-50 via-white to-green-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Get in <span className="text-orange-600">Touch</span>
+    <section className="py-12 lg:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-10 lg:mb-16">
+          <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-4 lg:mb-6">
+            <Mail className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
+            <span className="text-sm lg:text-base text-primary font-semibold">
+              संपर्क करें
+            </span>
+          </div>
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-3 lg:mb-4">
+            Get in <span className="text-primary">Touch</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Have questions about our programs or want to get involved? We&apos;d love
-            to hear from you. Reach out to us and let&apos;s start a conversation
-            about making a positive impact together.
+          <p className="text-base lg:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Have questions about our programs or want to get involved? We&apos;d love to hear from you.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-
-          <Card className="hidden md:block shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-            <CardHeader className="pb-6">
-              <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <MessageSquare className="w-6 h-6 text-orange-600" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+          {/* Contact Form */}
+          <div className="order-2 lg:order-1">
+            <div className="mb-6">
+              <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
                 Send us a Message
-              </CardTitle>
-              <p className="text-gray-600">
-                Fill out the form below and we&apos;ll get back to you as soon as
-                possible.
+              </h3>
+              <p className="text-sm lg:text-base text-muted-foreground">
+                Fill out the form below and we&apos;ll get back to you as soon as possible.
               </p>
-            </CardHeader>
-            <CardContent>
+            </div>
+
+            <div>
               {isSubmitted ? (
-                <div className="text-center py-8">
-                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <div className="text-center py-12 px-6 bg-muted/30 rounded-xl border border-border">
+                  <CheckCircle className="w-16 h-16 lg:w-20 lg:h-20 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-2">
                     Message Sent Successfully!
                   </h3>
-                  <p className="text-gray-600">
-                    Thank you for reaching out. We&apos;ll get back to you within 24
-                    hours.
+                  <p className="text-sm lg:text-base text-muted-foreground">
+                    Thank you for reaching out. We&apos;ll get back to you within 24 hours.
                   </p>
                 </div>
               ) : (
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
+                    className="space-y-5 lg:space-y-6"
                   >
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-gray-700 font-semibold">
+                          <FormLabel className="flex items-center gap-2 text-foreground font-semibold text-sm lg:text-base">
                             <User className="w-4 h-4" />
                             Full Name
                           </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Enter your full name"
-                              className="h-12 bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+                              className="h-11 lg:h-12 bg-background border-border focus:border-primary focus:ring-primary text-sm lg:text-base"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-red-500" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -164,7 +166,7 @@ const Contact: React.FC = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-gray-700 font-semibold">
+                          <FormLabel className="flex items-center gap-2 text-foreground font-semibold text-sm lg:text-base">
                             <Mail className="w-4 h-4" />
                             Email Address
                           </FormLabel>
@@ -172,11 +174,11 @@ const Contact: React.FC = () => {
                             <Input
                               type="email"
                               placeholder="Enter your email address"
-                              className="h-12 bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+                              className="h-11 lg:h-12 bg-background border-border focus:border-primary focus:ring-primary text-sm lg:text-base"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-red-500" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -186,18 +188,18 @@ const Contact: React.FC = () => {
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-gray-700 font-semibold">
+                          <FormLabel className="flex items-center gap-2 text-foreground font-semibold text-sm lg:text-base">
                             <MessageSquare className="w-4 h-4" />
                             Subject
                           </FormLabel>
                           <FormControl>
                             <Input
                               placeholder="What's this about?"
-                              className="h-12 bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500"
+                              className="h-11 lg:h-12 bg-background border-border focus:border-primary focus:ring-primary text-sm lg:text-base"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-red-500" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -207,18 +209,18 @@ const Contact: React.FC = () => {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-gray-700 font-semibold">
+                          <FormLabel className="flex items-center gap-2 text-foreground font-semibold text-sm lg:text-base">
                             <MessageSquare className="w-4 h-4" />
                             Message
                           </FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Tell us more about your inquiry..."
-                              className="min-h-[120px] bg-gray-50 border-gray-200 focus:border-orange-500 focus:ring-orange-500 resize-none"
+                              className="min-h-[120px] lg:min-h-[140px] bg-background border-border focus:border-primary focus:ring-primary resize-none text-sm lg:text-base"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-red-500" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -226,7 +228,7 @@ const Contact: React.FC = () => {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full h-12 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="w-full h-11 lg:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-sm lg:text-base shadow-lg hover:shadow-xl transition-all duration-300"
                     >
                       {isSubmitting ? (
                         <div className="flex items-center gap-2">
@@ -243,47 +245,53 @@ const Contact: React.FC = () => {
                   </form>
                 </Form>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <div className="space-y-8">
-            <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                  <Phone className="w-6 h-6 text-orange-600" />
-                  Contact Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {contactData.map((contact, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                      {getContactIcon(contact.type)}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">
-                        {contact.label}
-                      </h4>
-                      {contact.link ? (
-                        <a
-                          href={contact.link}
-                          className="text-orange-600 hover:text-orange-700 transition-colors flex items-center gap-1"
-                        >
-                          {contact.value}
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      ) : (
-                        <p className="text-gray-600">{contact.value}</p>
-                      )}
-                    </div>
+          {/* Contact Information */}
+          <div className="order-1 lg:order-2">
+            <div className="mb-6">
+              <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+                <Phone className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
+                Contact Information
+              </h3>
+              <p className="text-sm lg:text-base text-muted-foreground">
+                Reach out to us through any of the following channels.
+              </p>
+            </div>
+
+            <div className="space-y-4 lg:space-y-5">
+              {contactData.map((contact, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-4 p-4 lg:p-5 rounded-xl bg-muted/30 hover:bg-muted/50 transition-all duration-200 border border-border"
+                >
+                  <div className="flex-shrink-0 w-10 h-10 lg:w-12 lg:h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                    {getContactIcon(contact.type)}
                   </div>
-                ))}
-              </CardContent>
-            </Card>
-
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-foreground text-sm lg:text-base mb-1">
+                      {contact.label}
+                    </h4>
+                    {contact.link ? (
+                      <a
+                        href={contact.link}
+                        className="text-primary hover:text-primary/80 transition-colors flex items-center gap-1 text-sm lg:text-base break-all"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span className="break-all">{contact.value}</span>
+                        <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      </a>
+                    ) : (
+                      <p className="text-muted-foreground text-sm lg:text-base break-words">
+                        {contact.value}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

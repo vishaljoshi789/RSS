@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Login - RSS Rashtriya Swayamsevak Sangh',
+  title: 'Login - RSS RASHTRIYA SEVA SANGH',
   description: 'Login to your RSS account and access exclusive content',
 };
 

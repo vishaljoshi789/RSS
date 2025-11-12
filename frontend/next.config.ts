@@ -32,6 +32,7 @@ const DEFAULT_IMAGE_HOSTS = new Set<string>([
   "logodix.com",
   "etimg.etb2bimg.com",
   "www.brandcolorcode.com",
+  "images.unsplash.com",
 ]);
 
 const envHosts = (process.env.NEXT_PUBLIC_ALLOWED_IMAGE_HOSTS ?? "")

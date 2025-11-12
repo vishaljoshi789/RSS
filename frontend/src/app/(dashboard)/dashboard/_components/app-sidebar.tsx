@@ -226,7 +226,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   sideOffset={4}
                 >
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard/settings">
+                    <Link href="/dashboard/setting">
                       <Settings className="h-4 w-4 mr-2" />
                       <span>Settings</span>
                     </Link>

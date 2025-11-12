@@ -9,6 +9,7 @@ export interface User {
   user_id: string;
   gender?: string;
   profession?: string;
+  blood_group?: string;
   
  
   image?: string;
@@ -22,6 +23,7 @@ export interface User {
   sub_district?: string;
   district?: string;
   city?: string;
+  division?: string;
   state?: string;
   country?: string;
   postal_code?: string;

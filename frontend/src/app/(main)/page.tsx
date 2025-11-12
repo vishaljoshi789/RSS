@@ -1,6 +1,6 @@
 
 import About from "./_components/About/About";
-// import Contact from "./_components/Contact/Contact";
+import Contact from "./_components/Contact/Contact";
 import Divine from "./_components/DivineMission/Divine";
 import Donation from "./_components/Donation/Donation";
 import DonationList2 from "./_components/DonationList/DonationList";
@@ -11,6 +11,7 @@ import Highlights from "./_components/Highlights/Highlights";
 import Press from "./_components/Press/Press";
 import RssOverview from "./_components/RssOverview/RssOverview";
 import Supporters from "./_components/Supporters/Supporters";
+import Testimonials from "./_components/testimonials";
 
 export default function Home() {
   return (
@@ -30,7 +31,8 @@ export default function Home() {
 
     <Press />
 
-    {/* <Contact /> */}
+    <Contact />
+    <Testimonials />
   </main>
   );
 }

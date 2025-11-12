@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "@/types/auth.types";
 import {
   Dialog,
@@ -9,11 +9,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import useAxios from "@/hooks/use-axios";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -99,6 +111,11 @@ export function EditUserDetailModal({
   onSave,
   loading = false,
 }: EditUserDetailModalProps) {
+  const axios = useAxios();
+  const [showVerifyDialog, setShowVerifyDialog] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [pendingVerificationValue, setPendingVerificationValue] = useState(false);
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -157,6 +174,55 @@ export function EditUserDetailModal({
       });
     }
   }, [user, form]);
+
+  const handleVerificationChange = (checked: boolean) => {
+    if (checked && !user?.is_verified) {
+      setPendingVerificationValue(true);
+      setShowVerifyDialog(true);
+    } else if (!checked && user?.is_verified) {
+      setPendingVerificationValue(false);
+      setShowVerifyDialog(true);
+    } else {
+      form.setValue("is_verified", checked);
+    }
+  };
+
+  const handleVerifyConfirm = async () => {
+    if (!user) return;
+    
+    try {
+      setIsVerifying(true);
+      
+      await axios.post(`/account/verify/${user.id}/`);
+      
+      form.setValue("is_verified", pendingVerificationValue);
+      
+      toast.success(
+        pendingVerificationValue
+          ? "User verified successfully!"
+          : "User verification removed successfully!"
+      );
+      
+      setShowVerifyDialog(false);
+    } catch (error: any) {
+      console.error("Error verifying user:", error);
+      toast.error(
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to update verification status"
+      );
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleVerifyCancel = () => {
+    setShowVerifyDialog(false);
+    // Revert to current value
+    if (user) {
+      form.setValue("is_verified", user.is_verified);
+    }
+  };
 
   const onSubmit = async (data: FormValues) => {
     if (!user) return;
@@ -328,7 +394,7 @@ export function EditUserDetailModal({
 
               <Separator className="my-6" />
 
-              {/* Address Information */}
+              
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-muted-foreground" />
@@ -443,7 +509,7 @@ export function EditUserDetailModal({
 
               <Separator className="my-6" />
 
-              {/* Government IDs */}
+              
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-5 w-5 text-muted-foreground" />
@@ -499,7 +565,7 @@ export function EditUserDetailModal({
 
               <Separator className="my-6" />
 
-              {/* User Roles */}
+              
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-muted-foreground" />
@@ -632,7 +698,7 @@ export function EditUserDetailModal({
 
               <Separator className="my-6" />
 
-              {/* Account Status */}
+              
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
@@ -672,7 +738,7 @@ export function EditUserDetailModal({
                         <FormControl>
                           <Checkbox
                             checked={field.value}
-                            onCheckedChange={field.onChange}
+                            onCheckedChange={handleVerificationChange}
                             className="mt-0.5 data-[state=checked]:bg-blue-600"
                           />
                         </FormControl>
@@ -682,7 +748,7 @@ export function EditUserDetailModal({
                             Verified
                           </FormLabel>
                           <FormDescription className="text-xs">
-                            Identity verified
+                            Identity verified (requires confirmation)
                           </FormDescription>
                         </div>
                       </FormItem>
@@ -755,6 +821,66 @@ export function EditUserDetailModal({
           </div>
         </div>
       </DialogContent>
+
+      
+      <AlertDialog open={showVerifyDialog} onOpenChange={setShowVerifyDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-blue-600" />
+              {pendingVerificationValue ? "Verify User" : "Remove Verification"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingVerificationValue ? (
+                <>
+                  Are you sure you want to verify <strong>{user?.name}</strong>?
+                  <br />
+                  <br />
+                  <span className="text-sm">
+                    This will mark the user&apos;s identity as verified and may grant them
+                    additional privileges on the platform.
+                  </span>
+                </>
+              ) : (
+                <>
+                  Are you sure you want to remove verification status from{" "}
+                  <strong>{user?.name}</strong>?
+                  <br />
+                  <br />
+                  <span className="text-sm">
+                    This will mark the user as unverified and may restrict some features.
+                  </span>
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleVerifyCancel} disabled={isVerifying}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleVerifyConfirm}
+              disabled={isVerifying}
+              className={
+                pendingVerificationValue
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-red-600 hover:bg-red-700"
+              }
+            >
+              {isVerifying ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  {pendingVerificationValue ? "Verify User" : "Remove Verification"}
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }

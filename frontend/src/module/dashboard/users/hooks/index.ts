@@ -4,6 +4,22 @@ import { useState, useEffect, useCallback } from "react";
 import { User } from "@/types/auth.types";
 import useAxios from "@/hooks/use-axios";
 
+/**
+ * Custom hooks for user management
+ * 
+ * Features:
+ * - useUsers: List and manage multiple users
+ * - useUserById: Fetch single user by ID
+ * - useUserStats: Get user statistics
+ * - useUpdateCurrentUser: Update current logged-in user profile
+ * 
+ * All hooks automatically handle:
+ * - FormData conversion for file uploads
+ * - File object detection
+ * - Error handling with detailed messages
+ * - Loading states
+ */
+
 interface PaginationData {
   count: number;
   total_pages: number;
@@ -103,9 +119,59 @@ export function useUsers(page: number = 1, page_size: number = 30) {
   }, [page, page_size, axios]);
 
 
-  const updateUser = async (userId: number, data: Partial<User>) => {
+  const updateUser = async (
+    userId: number, 
+    data: Partial<User> | FormData | Record<string, any>,
+    options?: { useFormData?: boolean }
+  ) => {
     try {
-      const response = await axios.put(`/account/detail/${userId}/`, data);
+      let payload: Partial<User> | FormData;
+      let headers: Record<string, string> = {};
+
+      
+      if (data instanceof FormData) {
+        payload = data;
+        headers = { "Content-Type": "multipart/form-data" };
+      } else if (options?.useFormData) {
+        
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== null && value !== undefined) {
+            if (typeof File !== 'undefined' && value instanceof File) {
+              formData.append(key, value);
+            } else {
+              formData.append(key, String(value));
+            }
+          }
+        });
+        payload = formData;
+        headers = { "Content-Type": "multipart/form-data" };
+      } else {
+        
+        const hasFile = typeof File !== 'undefined' && Object.values(data).some(
+          (value): value is File => value instanceof File
+        );
+        if (hasFile) {
+          const formData = new FormData();
+          Object.entries(data).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+              if (typeof File !== 'undefined' && value instanceof File) {
+                formData.append(key, value);
+              } else {
+                formData.append(key, String(value));
+              }
+            }
+          });
+          payload = formData;
+          headers = { "Content-Type": "multipart/form-data" };
+        } else {
+          payload = data as Partial<User>;
+        }
+      }
+
+      const response = await axios.put(`/account/detail/${userId}/`, payload, {
+        headers: Object.keys(headers).length > 0 ? headers : undefined,
+      });
       
       setUsers(prevUsers => 
         prevUsers.map((user) => user.id === userId ? { ...user, ...response.data } : user)
@@ -116,11 +182,13 @@ export function useUsers(page: number = 1, page_size: number = 30) {
         console.error("Error updating user:", err);
       }
       const errorResponse = err as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; error?: string; detail?: string } };
         message?: string;
       };
       const errorMessage =
+        errorResponse.response?.data?.error ||
         errorResponse.response?.data?.message ||
+        errorResponse.response?.data?.detail ||
         errorResponse.message ||
         "Failed to update user";
       return { success: false, error: errorMessage };
@@ -207,6 +275,113 @@ export function useUsers(page: number = 1, page_size: number = 30) {
     refetch: fetchUsers,
     updateUser,
     searchUser,
+  };
+}
+
+/**
+ * Hook for updating the current logged-in user's profile
+ * Automatically handles FormData conversion for file uploads
+ */
+export function useUpdateCurrentUser() {
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const axios = useAxios();
+
+  const updateCurrentUser = useCallback(
+    async (
+      userId: number,
+      data: Partial<User> | FormData | Record<string, any>,
+      options?: { useFormData?: boolean }
+    ) => {
+      try {
+        setIsUpdating(true);
+        setError(null);
+
+        let payload: Partial<User> | FormData;
+        let headers: Record<string, string> = {};
+
+        
+        if (data instanceof FormData) {
+          payload = data;
+          headers = { "Content-Type": "multipart/form-data" };
+        } else if (options?.useFormData) {
+          
+          const formData = new FormData();
+          Object.entries(data).forEach(([key, value]) => {
+            if (value !== null && value !== undefined) {
+              if (typeof File !== 'undefined' && value instanceof File) {
+                formData.append(key, value);
+              } else {
+                formData.append(key, String(value));
+              }
+            }
+          });
+          payload = formData;
+          headers = { "Content-Type": "multipart/form-data" };
+        } else {
+          
+          const hasFile = typeof File !== 'undefined' && Object.values(data).some(
+            (value): value is File => value instanceof File
+          );
+          if (hasFile) {
+            const formData = new FormData();
+            Object.entries(data).forEach(([key, value]) => {
+              if (value !== null && value !== undefined) {
+                if (typeof File !== 'undefined' && value instanceof File) {
+                  formData.append(key, value);
+                } else {
+                  formData.append(key, String(value));
+                }
+              }
+            });
+            payload = formData;
+            headers = { "Content-Type": "multipart/form-data" };
+          } else {
+            payload = data as Partial<User>;
+          }
+        }
+ 
+        const response = await axios.put(`/account/detail/${userId}/`, payload, {
+          headers: Object.keys(headers).length > 0 ? headers : undefined,
+        });
+
+        return { 
+          success: true, 
+          message: "Profile updated successfully", 
+          data: response.data 
+        };
+      } catch (err) {
+        if (err instanceof Error) {
+          console.error("Error updating current user:", err);
+        }
+        const errorResponse = err as {
+          response?: { data?: { message?: string; error?: string; detail?: string } };
+          message?: string;
+        };
+        const errorMessage =
+          errorResponse.response?.data?.error ||
+          errorResponse.response?.data?.message ||
+          errorResponse.response?.data?.detail ||
+          errorResponse.message ||
+          "Failed to update profile";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [axios]
+  );
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  return {
+    updateCurrentUser,
+    isUpdating,
+    error,
+    clearError,
   };
 }
 

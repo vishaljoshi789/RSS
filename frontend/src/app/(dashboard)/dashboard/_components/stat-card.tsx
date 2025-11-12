@@ -285,32 +285,32 @@ const StatCard: React.FC<StatCardProps> = ({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="space-y-6">
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {stats.map((stat) => (
             <Card key={stat.label}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-4 sm:px-6 pt-4 sm:pt-6">
+                <CardTitle className="text-xs sm:text-sm font-medium">
                   {stat.label}
                 </CardTitle>
                 <stat.icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6">
                 {loading ? (
                   <Skeleton className="h-8 w-20" />
                 ) : (
-                  <div className="text-2xl font-semibold">{stat.value}</div>
+                  <div className="text-xl sm:text-2xl font-semibold">{stat.value}</div>
                 )}
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <Card className="">
-          <CardHeader>
-            <CardTitle>Referral Overview</CardTitle>
-            <CardDescription>
+        <Card>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg sm:text-xl">Referral Overview</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
               {loading
                 ? "Fetching referral details..."
                 : `Showing ${referrals.length} referred candidates`}
@@ -319,34 +319,34 @@ const StatCard: React.FC<StatCardProps> = ({
           <CardContent className="p-0">
             {error && (
               <Alert variant="destructive" className="mx-4 mb-4">
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription className="text-xs sm:text-sm">{error}</AlertDescription>
               </Alert>
             )}
 
-            <div className="h-[380px] flex flex-col">
+            <div className="h-[300px] sm:h-[380px] flex flex-col">
               {loading ? (
-                <div className="space-y-3 p-6 flex-1">
-                  {[0, 1, 2, 3, 4, 5, 6, 7].map((key) => (
-                    <Skeleton key={key} className="h-12 w-full" />
+                <div className="space-y-3 p-4 sm:p-6 flex-1">
+                  {[0, 1, 2, 3, 4].map((key) => (
+                    <Skeleton key={key} className="h-10 sm:h-12 w-full" />
                   ))}
                 </div>
               ) : referrals.length === 0 ? (
-                <div className="p-6 text-sm text-muted-foreground flex-1 flex items-center justify-center">
+                <div className="p-4 sm:p-6 text-xs sm:text-sm text-muted-foreground flex-1 flex items-center justify-center">
                   <div className="text-center">
-                    <p className="text-lg font-medium mb-2">कोई रेफरल डेटा उपलब्ध नहीं है।</p>
-                    <p className="text-sm">जब आप किसी को रेफर करेंगे तो वे यहाँ दिखाई देंगे।</p>
+                    <p className="text-base sm:text-lg font-medium mb-2">कोई रेफरल डेटा उपलब्ध नहीं है।</p>
+                    <p className="text-xs sm:text-sm">जब आप किसी को रेफर करेंगे तो वे यहाँ दिखाई देंगे।</p>
                   </div>
                 </div>
               ) : (
                 <div className="flex-1 overflow-hidden">
-                  <div className="h-full overflow-y-auto">
+                  <div className="h-full overflow-x-auto overflow-y-auto">
                     <Table>
                       <TableHeader className="sticky top-0 bg-background z-10 border-b">
                         <TableRow>
-                          <TableHead className="bg-background">नाम</TableHead>
-                          <TableHead className="bg-background">ईमेल</TableHead>
-                          <TableHead className="bg-background">स्थिति</TableHead>
-                          <TableHead className="w-[120px] bg-background">जॉइनिंग</TableHead>
+                          <TableHead className="bg-background text-xs sm:text-sm min-w-[120px]">नाम</TableHead>
+                          <TableHead className="bg-background text-xs sm:text-sm min-w-[150px] hidden sm:table-cell">ईमेल</TableHead>
+                          <TableHead className="bg-background text-xs sm:text-sm">स्थिति</TableHead>
+                          <TableHead className="bg-background text-xs sm:text-sm w-[100px] sm:w-[120px]">जॉइनिंग</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -355,24 +355,24 @@ const StatCard: React.FC<StatCardProps> = ({
                             referral.id ?? referral.email ?? `referral-${idx}`;
                           return (
                             <TableRow key={rowKey} className="hover:bg-muted/50">
-                              <TableCell className="font-medium">
+                              <TableCell className="font-medium text-xs sm:text-sm">
                                 {referral.name
                                   ? referral.name.charAt(0).toUpperCase() +
                                     referral.name.slice(1).toLowerCase()
                                   : "N/A"}
                               </TableCell>
-                              <TableCell>{referral.email || "-"}</TableCell>
+                              <TableCell className="text-xs sm:text-sm hidden sm:table-cell">{referral.email || "-"}</TableCell>
                               <TableCell>
                                 <div className="flex flex-wrap gap-1">
                                   <Badge
                                     variant="outline"
-                                    className="text-green-600"
+                                    className="text-green-600 text-[10px] sm:text-xs"
                                   >
                                     Success
                                   </Badge>
                                 </div>
                               </TableCell>
-                              <TableCell>
+                              <TableCell className="text-xs sm:text-sm">
                                 {referral.date_joined
                                   ? format(
                                       new Date(referral.date_joined),
@@ -387,7 +387,7 @@ const StatCard: React.FC<StatCardProps> = ({
                     </Table>
                   </div>
                   {referrals.length > 0 && (
-                    <div className="border-t bg-muted/30 px-4 py-2 text-xs text-muted-foreground text-center sticky bottom-0">
+                    <div className="border-t bg-muted/30 px-4 py-2 text-[10px] sm:text-xs text-muted-foreground text-center sticky bottom-0">
                       कुल {referrals.length} रेफरल रिकॉर्ड दिखाई जा रहे हैं।
                     </div>
                   )}
@@ -400,73 +400,73 @@ const StatCard: React.FC<StatCardProps> = ({
 
       <div className="lg:sticky lg:top-24">
         <Card className="h-fit">
-          <CardHeader className="space-y-4">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-14 w-14">
+          <CardHeader className="space-y-3 sm:space-y-4 px-4 sm:px-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <Avatar className="h-12 w-12 sm:h-14 sm:w-14">
                 {userImageUrl && (
                   <AvatarImage src={userImageUrl} alt={user?.name || "User"} />
                 )}
-                <AvatarFallback className="text-base font-medium">
+                <AvatarFallback className="text-sm sm:text-base font-medium">
                   {displayInitials}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <CardTitle className="text-xl">
+              <div className="min-w-0 flex-1">
+                <CardTitle className="text-base sm:text-xl truncate">
                   {user?.name
                     ? user.name.charAt(0).toUpperCase() +
                       user.name.slice(1).toLowerCase()
                     : "User"}
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-xs sm:text-sm truncate">
                   {user?.email || "ईमेल उपलब्ध नहीं"}
                 </CardDescription>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {user?.is_verified && (
-                <Badge variant="outline" className="text-green-600">
+                <Badge variant="outline" className="text-green-600 text-[10px] sm:text-xs">
                   Verified
                 </Badge>
               )}
               {user?.is_member_account && (
-                <Badge variant="outline" className="text-blue-600">
+                <Badge variant="outline" className="text-blue-600 text-[10px] sm:text-xs">
                   Member
                 </Badge>
               )}
               {user?.is_admin_account && (
-                <Badge variant="outline" className="text-red-600">
+                <Badge variant="outline" className="text-red-600 text-[10px] sm:text-xs">
                   Admin
                 </Badge>
               )}
             </div>
           </CardHeader>
           
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
             {/* User ID Section */}
             <div className="space-y-2">
-              <p className="text-sm font-medium text-foreground">User ID</p>
-              <div className="rounded-md border bg-muted px-3 py-2 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]">
-                <p className="font-mono text-sm text-foreground">{user?.user_id ?? "N/A"}</p>
+              <p className="text-xs sm:text-sm font-medium text-foreground">User ID</p>
+              <div className="rounded-md border bg-muted px-2 sm:px-3 py-1.5 sm:py-2 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]">
+                <p className="font-mono text-xs sm:text-sm text-foreground truncate">{user?.user_id ?? "N/A"}</p>
               </div>
             </div>
 
             {/* Referral Link Section */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <div>
-                <p className="text-sm font-medium text-foreground mb-2">रेफरल लिंक</p>
-                <p className="text-xs text-muted-foreground mb-3">
+                <p className="text-xs sm:text-sm font-medium text-foreground mb-1 sm:mb-2">रेफरल लिंक</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground mb-2 sm:mb-3">
                   अपनी रेफरल लिंक साझा करें और अधिक सदस्यों को जोड़ें।
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 truncate rounded-md border bg-muted px-3 py-2 text-xs shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]">
+                <div className="flex-1 truncate rounded-md border bg-muted px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]">
                   {referralLink || "रेफरल लिंक उपलब्ध नहीं"}
                 </div>
                 <Button
                   size="icon"
                   variant="outline"
-                  className="shrink-0 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]"
+                  className="shrink-0 h-8 w-8 sm:h-10 sm:w-10 shadow-[inset_0_2px_4px_0_rgba(0,0,0,0.06)]"
                   disabled={!referralLink || copyState !== "idle"}
                   onClick={handleCopy}
                   title={
@@ -478,28 +478,28 @@ const StatCard: React.FC<StatCardProps> = ({
                   }
                 >
                   {copyState === "success" ? (
-                    <Check className="h-4 w-4 text-green-600" />
+                    <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
                   ) : copyState === "error" ? (
-                    <X className="h-4 w-4 text-red-600" />
+                    <X className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
                   ) : (
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
                   )}
                 </Button>
               </div>
             </div>
 
             {/* Action Buttons Section */}
-            <div className="space-y-3 pt-4 border-t">
-              <p className="text-sm font-medium text-foreground">Quick Actions</p>
-              <div className="space-y-2">
+            <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4 border-t">
+              <p className="text-xs sm:text-sm font-medium text-foreground">Quick Actions</p>
+              <div className="space-y-1.5 sm:space-y-2">
                 {user?.is_member_account && (
                   <Button 
                     onClick={getpdf} 
                     variant="default"
-                    className="w-full justify-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+                    className="w-full justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-xs sm:text-sm h-8 sm:h-9"
                     size="sm"
                   >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-3 w-3 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     ID Card PDF
@@ -509,17 +509,17 @@ const StatCard: React.FC<StatCardProps> = ({
                   <Button 
                     onClick={getVolunteerCertificate}
                     variant="default"
-                    className="w-full justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                    className="w-full justify-center gap-1.5 sm:gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-xs sm:text-sm h-8 sm:h-9"
                     size="sm"
                   >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-3 w-3 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                     </svg>
                     Volunteer Certificate
                   </Button>
                 )}
                 {!user?.is_member_account && !user?.is_volunteer && (
-                  <p className="text-sm text-muted-foreground text-center py-4">
+                  <p className="text-xs sm:text-sm text-muted-foreground text-center py-3 sm:py-4">
                     No documents available
                   </p>
                 )}
@@ -527,25 +527,25 @@ const StatCard: React.FC<StatCardProps> = ({
             </div>
 
             {/* Additional Info Section */}
-            <div className="space-y-3 pt-4 border-t">
-              <p className="text-sm font-medium text-foreground">Profile Status</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center">
+            <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4 border-t">
+              <p className="text-xs sm:text-sm font-medium text-foreground">Profile Status</p>
+              <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+                <div className="flex justify-between items-center gap-2">
                   <span className="text-muted-foreground">Account Type:</span>
-                  <span className="font-medium">
+                  <span className="font-medium text-right">
                     {user?.is_admin_account ? "Admin" : 
                      user?.is_member_account ? "Member" : "Volunteer"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-2">
                   <span className="text-muted-foreground">Verification:</span>
-                  <span className={`font-medium ${user?.is_verified ? 'text-green-600' : 'text-orange-500'}`}>
+                  <span className={`font-medium text-right ${user?.is_verified ? 'text-green-600' : 'text-orange-500'}`}>
                     {user?.is_verified ? "Verified" : "Pending"}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-2">
                   <span className="text-muted-foreground">Referrals:</span>
-                  <span className="font-medium text-blue-600">{totalReferrals}</span>
+                  <span className="font-medium text-blue-600 text-right">{totalReferrals}</span>
                 </div>
               </div>
             </div>

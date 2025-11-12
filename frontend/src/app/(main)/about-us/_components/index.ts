@@ -8,3 +8,4 @@ export { default as TempleServiceSection } from './TempleServiceSection';
 export { default as OurCallSection } from './OurCallSection';
 export { default as CommunityServiceSection } from './CommunityServiceSection';
 export { default as GoalsSection } from './GoalsSection';
+export { default as YourRoleSection } from './YourRoleSection';
