@@ -76,7 +76,7 @@ class UserMemberView(APIView):
     
 class UserListView(ListAPIView):
     permission_classes = [IsAdminOrIsStaff]
-    queryset = User.objects.annotate(referral_count=Count('user_referrals'))
+    queryset = User.objects.annotate(referral_count=Count('user_referrals')).order_by('-date_joined')
     serializer_class = UserInfoSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
     filterset_fields = ['is_verified', 'is_blocked', 'is_member_account', 'is_volunteer', 'is_business_account', 'is_staff_account', 'is_admin_account', 'user_id', 'id', 'email']
