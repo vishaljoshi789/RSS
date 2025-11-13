@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronUp, LogOut, Settings } from "lucide-react";
+import { ChevronUp, HomeIcon, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import {
   Sidebar,
   SidebarContent,
@@ -27,6 +28,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 import {
@@ -42,6 +44,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [mounted, setMounted] = React.useState(false);
+  const { setOpenMobile, isMobile } = useSidebar();
 
   const roles = React.useMemo(() => deriveDashboardRoles(user), [user]);
 
@@ -73,6 +76,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       return pathname === "/dashboard";
     }
     return pathname.startsWith(url);
+  };
+
+  const handleMenuClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   };
 
   return (
@@ -139,6 +148,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <Link
                           href={item.url}
                           className="flex items-center gap-3 w-full"
+                          onClick={handleMenuClick}
                         >
                           <div
                             className={`
@@ -229,6 +239,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <Link href="/dashboard/setting">
                       <Settings className="h-4 w-4 mr-2" />
                       <span>Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/">
+                      <HomeIcon className="h-4 w-4 mr-2" />
+                      <span>Home</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
