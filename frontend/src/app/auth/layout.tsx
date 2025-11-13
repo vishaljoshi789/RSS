@@ -15,11 +15,11 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen overflow-hidden bg-gradient-to-br from-primary/5 via-background to-primary/10 flex">
+    <div className="min-h-screen overflow-y-auto bg-gradient-to-br from-primary/5 via-background to-primary/10 flex">
       <div className="hidden lg:flex lg:w-1/2 bg-primary text-primary-foreground relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-primary/90" />
 
-        <div className="relative z-10 flex flex-col justify-center px-8 py-12">
+        <div className="relative z-10 flex flex-col justify-center px-6 xl:px-8 py-12">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-primary-foreground/20 rounded-lg flex items-center justify-center">
