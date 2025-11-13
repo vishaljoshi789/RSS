@@ -94,11 +94,11 @@ class GetDocumentView(APIView):
             layout = ID_CARD_LAYOUT
             data = {
             "name": user.name,
-            "reg_no": f'R{user.user_id}',
+            "reg_no": f'{user.user_id}',
             "in": user.volunteer.designation if user.is_volunteer else "Member",
             "mob": user.phone,
             "date": user.volunteer.joined_date.strftime("%d-%m-%Y") if user.is_volunteer else user.date_joined.strftime("%d-%m-%Y"),
-            "block": f'{user.sub_district}, {user.city}',
+            "block": f'{user.blood_group}',
             "district": user.district,
             "state": user.state,
             }
@@ -111,7 +111,7 @@ class GetDocumentView(APIView):
             data = {
                 "image": user.volunteer.image,
                 "name": user.volunteer.hindi_name if user.volunteer.hindi_name else user.name,
-                "reg_no": f'R{user.user_id}',
+                "reg_no": f'{user.user_id}',
                 "reg_date": user.volunteer.joined_date.strftime("%d-%m-%Y"),
                 "valid_till": user.volunteer.joined_date.replace(year=user.volunteer.joined_date.year + 1).strftime("%d-%m-%Y"),
             }

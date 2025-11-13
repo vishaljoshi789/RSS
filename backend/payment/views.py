@@ -136,7 +136,7 @@ class OrderVerifyView(APIView):
                         "name": user.name,
                         "address": f'{user.city}, {user.district}, {user.state}',
                         "joining_date": user.date_joined.strftime("%d-%m-%Y"),
-                        "reg_no": f'R{user.user_id}',
+                        "reg_no": f'{user.user_id}',
                     }
                     pdf_buffer = generate_pdf(template_path, data, document_type=None, layout=layout)
                     email_subject = "Welcome to RSS - Membership Confirmation"
