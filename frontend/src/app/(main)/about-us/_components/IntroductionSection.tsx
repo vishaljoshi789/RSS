@@ -28,19 +28,35 @@ const IntroductionSection: React.FC<IntroductionSectionProps> = ({ introduction 
               </blockquote>
               
               <div className="flex justify-center overflow-hidden">
-                <div className="inline-flex animate-marquee whitespace-nowrap">
-                  <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
-                    <span className="font-bold text-primary">स्थापना:</span>
-                    <span className="ml-2">{introduction.foundingDate}</span>
-                  </Badge>
-                  <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
-                    <span className="font-bold text-primary">स्थापना:</span>
-                    <span className="ml-2">{introduction.foundingDate}</span>
-                  </Badge>
-                  <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
-                    <span className="font-bold text-primary">स्थापना:</span>
-                    <span className="ml-2">{introduction.foundingDate}</span>
-                  </Badge>
+                <div className="flex w-max animate-marquee whitespace-nowrap">
+                  <div className="flex items-center">
+                    <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
+                      <span className="font-bold text-primary">स्थापना:</span>
+                      <span className="ml-2">{introduction.foundingDate}</span>
+                    </Badge>
+                    <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
+                      <span className="font-bold text-primary">स्थापना:</span>
+                      <span className="ml-2">{introduction.foundingDate}</span>
+                    </Badge>
+                    <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
+                      <span className="font-bold text-primary">स्थापना:</span>
+                      <span className="ml-2">{introduction.foundingDate}</span>
+                    </Badge>
+                  </div>
+                  <div className="flex items-center" aria-hidden>
+                    <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
+                      <span className="font-bold text-primary">स्थापना:</span>
+                      <span className="ml-2">{introduction.foundingDate}</span>
+                    </Badge>
+                    <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
+                      <span className="font-bold text-primary">स्थापना:</span>
+                      <span className="ml-2">{introduction.foundingDate}</span>
+                    </Badge>
+                    <Badge className="bg-gradient-to-r from-primary/20 to-secondary/20 text-foreground border-primary/30 px-5 py-2.5 text-sm font-semibold rounded-lg mx-4">
+                      <span className="font-bold text-primary">स्थापना:</span>
+                      <span className="ml-2">{introduction.foundingDate}</span>
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
