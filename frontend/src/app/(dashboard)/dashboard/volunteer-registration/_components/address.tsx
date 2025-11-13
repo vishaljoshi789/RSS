@@ -111,7 +111,7 @@ const AddressForm = ({ data, setData, onNext, onBack }: AddressFormProps) => {
     maxLength?: number
   ) => (
     <div>
-      <Label htmlFor={name} className="mb-2">
+      <Label htmlFor={name} className="mb-2 text-sm sm:text-base">
         {label} {required && '*'}
       </Label>
 
@@ -137,6 +137,7 @@ const AddressForm = ({ data, setData, onNext, onBack }: AddressFormProps) => {
           title={title}
           required={required}
           maxLength={maxLength}
+          className="h-9 sm:h-10"
         />
       )}
     </div>
@@ -145,10 +146,10 @@ const AddressForm = ({ data, setData, onNext, onBack }: AddressFormProps) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 max-w-lg mx-auto p-6 bg-white dark:bg-neutral-900 rounded-2xl shadow-sm"
+      className="space-y-4 sm:space-y-5"
     >
       <div>
-        <Label htmlFor="hindi_name" className="mb-2">
+        <Label htmlFor="hindi_name" className="mb-2 text-sm sm:text-base">
           नाम (हिंदी में) / Name in Hindi *
         </Label>
         <Input
@@ -158,34 +159,36 @@ const AddressForm = ({ data, setData, onNext, onBack }: AddressFormProps) => {
           onChange={handleHindiNameChange}
           placeholder="अपना नाम हिंदी में लिखें"
           required
-          className="font-hindi"
+          className="font-hindi h-9 sm:h-10"
         />
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           कृपया केवल हिंदी (देवनागरी) में लिखें
         </p>
       </div>
       {renderInput('Street', 'street', true, 'House No., Street name')}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {renderInput('Sub-District', 'sub_district', false, 'Sub-district or Block')}
         {renderInput('District', 'district', false, 'District')}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {renderInput('City', 'city', true, 'City or Town')}
         {renderInput('State', 'state', false, 'State')}
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {renderInput('Country', 'country', true, 'Country')}
         {renderInput('Postal Code', 'postal_code', true, 'e.g. 110001', '^\\d{5,6}$', 'Enter a valid 5 or 6-digit postal code', 6)}
+      </div>
+      <div>
         {renderInput('Mandal', 'mandal', true, 'Enter your mandal')}
       </div>
 
-      <div className="flex justify-between pt-6">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4 sm:pt-6 border-t">
         {onBack && (
-          <Button type="button" variant="outline" onClick={onBack}>
+          <Button type="button" variant="outline" onClick={onBack} className="h-9 sm:h-10 w-full sm:w-auto order-2 sm:order-1">
             Back
           </Button>
         )}
-        <Button type="submit">Next</Button>
+        <Button type="submit" className="h-9 sm:h-10 w-full sm:w-auto order-1 sm:order-2">Next</Button>
       </div>
     </form>
   );
