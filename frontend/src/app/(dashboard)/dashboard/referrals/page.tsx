@@ -126,14 +126,14 @@ function ReferralsPageContent() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-          <UserSearch className="h-8 w-8" />
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
+          <UserSearch className="h-6 w-6 sm:h-8 sm:w-8" />
           Referral Lookup
         </h1>
-        <p className="text-muted-foreground">
-          किसी भी उपयोगकर्ता की रेफरल जानकारी देखने के लिए उनकी User ID दर्ज
+        <p className="text-sm sm:text-base text-muted-foreground">
+          किसी भी उपयोगकर्ता की रेफ़रल जानकारी देखने के लिए उनकी User ID दर्ज
           करें
         </p>
       </div>
@@ -147,7 +147,7 @@ function ReferralsPageContent() {
       />
 
       {(loading || userData) && (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <ReferralsTable
             referrals={referrals}
             loading={loading}
