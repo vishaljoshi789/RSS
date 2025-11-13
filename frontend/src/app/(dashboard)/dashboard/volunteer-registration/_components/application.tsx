@@ -222,12 +222,11 @@ const ApplicationForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Card className="shadow-sm border border-gray-200">
-        <CardContent className="grid gap-4 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <div className="space-y-4 sm:space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="wing">Wing</Label>
+              <Label htmlFor="wing" className="text-sm sm:text-base">Wing</Label>
               <Select
                 value={selectedWingName || ""}
                 onValueChange={(value) => {
@@ -237,7 +236,7 @@ const ApplicationForm = ({
                 }}
                 disabled={wingsLoading}
               >
-                <SelectTrigger id="wing">
+                <SelectTrigger id="wing" className="h-9 sm:h-10">
                   <SelectValue placeholder="Select a wing" />
                 </SelectTrigger>
                 <SelectContent> 
@@ -251,7 +250,7 @@ const ApplicationForm = ({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="level">Level</Label>
+              <Label htmlFor="level" className="text-sm sm:text-base">Level</Label>
               <Select
                 value={
                   selectedLevelName && selectedLevel
@@ -265,7 +264,7 @@ const ApplicationForm = ({
                 }}
                 disabled={!selectedWingName || levelsLoading}
               >
-                <SelectTrigger id="level">
+                <SelectTrigger id="level" className="h-9 sm:h-10">
                   <SelectValue placeholder="Select a level" />
                 </SelectTrigger>
                 <SelectContent>
@@ -282,16 +281,15 @@ const ApplicationForm = ({
             </div>
           </div>
 
-          {/* Designation and Phone Number in same row - 2 columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="designation">Designation</Label>
+              <Label htmlFor="designation" className="text-sm sm:text-base">Designation</Label>
               <Select
                 value={selectedDesignation?.toString() || ""}
                 onValueChange={(value) => setSelectedDesignation(Number(value))}
                 disabled={!selectedLevelName || designationsLoading}
               >
-                <SelectTrigger id="designation">
+                <SelectTrigger id="designation" className="h-9 sm:h-10">
                   <SelectValue placeholder="Select a designation" />
                 </SelectTrigger>
                 <SelectContent>
@@ -308,7 +306,7 @@ const ApplicationForm = ({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="phone_number">Phone Number</Label>
+              <Label htmlFor="phone_number" className="text-sm sm:text-base">Phone Number</Label>
               <Input
                 id="phone_number"
                 type="tel"
@@ -316,105 +314,104 @@ const ApplicationForm = ({
                 value={data.phone_number || ""}
                 maxLength={10}
                 onChange={(e) => handleChange("phone_number", e.target.value)}
+                className="h-9 sm:h-10"
                 required
               />
             </div>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="referred_by_volunteer" className="flex items-center gap-1">
+            <Label htmlFor="referred_by_volunteer" className="flex items-center gap-1 text-sm sm:text-base">
               Referred By <span className="text-destructive">*</span>
             </Label>
             <Input
               id="referred_by_volunteer"
               type="text"
               required
-              placeholder="Enter name or User ID of person who referred you"
+              placeholder="Enter name or User ID"
               value={data.referred_by_volunteer || ""}
               onChange={(e) => handleChange("referred_by_volunteer", e.target.value)}
+              className="h-9 sm:h-10"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               <span className="font-medium">Required:</span> Enter the name or User ID of the person who referred you to join RSS.
             </p>
           </div>
 
-          <div className="grid gap-3">
-            <Label>Uploads</Label>
+          <div className="grid gap-3 sm:gap-4">
+            <Label className="text-base sm:text-lg font-semibold">Document Uploads</Label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="grid gap-1">
-                <Label className="text-sm font-medium">Aadhar Front *</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid gap-2">
+                <Label className="text-sm sm:text-base font-medium">Aadhar Front *</Label>
                 <Input
                   id="aadharFront"
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleFileChange(e, "aadhar_card_front")}
-                  className="cursor-pointer"
+                  className="cursor-pointer h-9 sm:h-10 text-sm"
                   required
                 />
                 {aadharCardFront && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <FileText className="h-3 w-3" /> {aadharCardFront.name}
                   </Badge>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Upload Aadhar card front side (Image only) - Required
+                  Upload Aadhar card front side (Image only)
                 </p>
               </div>
 
-              <div className="grid gap-1">
-                <Label className="text-sm font-medium">Aadhar Back *</Label>
+              <div className="grid gap-2">
+                <Label className="text-sm sm:text-base font-medium">Aadhar Back *</Label>
                 <Input
                   id="aadharBack"
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleFileChange(e, "aadhar_card_back")}
-                  className="cursor-pointer"
+                  className="cursor-pointer h-9 sm:h-10 text-sm"
                   required
                 />
                 {aadharCardBack && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <FileText className="h-3 w-3" /> {aadharCardBack.name}
                   </Badge>
                 )}
                 <p className="text-xs text-muted-foreground">
-                  Upload Aadhar card back side (Image only) - Required
+                  Upload Aadhar card back side (Image only)
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="image">Profile Photo *</Label>
-                <div className="flex items-start flex-col gap-2">
-                  <Input
-                    id="image"
-                    type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp"
-                    onChange={(e) => handleFileChange(e, "image")}
-                    className="cursor-pointer"
-                    required
-                  />
-                  {image && (
-                    <Badge variant="outline" className="gap-1">
-                      <FileText className="h-3 w-3" /> {image.name}
-                    </Badge>
-                  )}
-                </div>
+              <div className="grid gap-2 sm:col-span-2">
+                <Label htmlFor="image" className="text-sm sm:text-base font-medium">Profile Photo *</Label>
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={(e) => handleFileChange(e, "image")}
+                  className="cursor-pointer h-9 sm:h-10 text-sm"
+                  required
+                />
+                {image && (
+                  <Badge variant="outline" className="gap-1 text-xs w-fit">
+                    <FileText className="h-3 w-3" /> {image.name}
+                  </Badge>
+                )}
                 <p className="text-xs text-muted-foreground">
-                  Upload your profile photo (JPG, PNG, WEBP) - Required
+                  Upload your profile photo (JPG, PNG, WEBP)
                 </p>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      <div className="flex justify-end gap-3">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4 border-t">
         {onBack && (
-          <Button variant="outline" onClick={onBack}>
+          <Button variant="outline" onClick={onBack} className="h-9 sm:h-10 w-full sm:w-auto">
             Back
           </Button>
         )}
-        <Button type="submit">Next</Button>
+        <Button type="submit" className="h-9 sm:h-10 w-full sm:w-auto">Next</Button>
       </div>
     </form>
   );
