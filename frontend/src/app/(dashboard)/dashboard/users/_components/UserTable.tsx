@@ -280,24 +280,24 @@ export function UserTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           <Input
             placeholder="Search by name, email, phone, or user ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-10"
+            className="pl-8 sm:pl-10 pr-8 sm:pr-10 h-9 sm:h-10 text-sm"
             autoComplete="off"
             type="text"
             disabled={isSearching}
           />
           {isSearching && (
-            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
+            <Loader2 className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground animate-spin" />
           )}
         </div>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-[160px] lg:w-[180px] h-9 sm:h-10 text-sm">
             <SelectValue placeholder="Filter by type" />
           </SelectTrigger>
           <SelectContent>
@@ -313,27 +313,27 @@ export function UserTable({
         </Select>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>
+              <TableHead className="text-xs sm:text-sm">User</TableHead>
+              <TableHead className="text-xs sm:text-sm">
                 <Button
                   variant="ghost"
                   onClick={toggleSortOrder}
-                  className="h-8 p-0 hover:bg-transparent"
+                  className="h-8 p-0 hover:bg-transparent text-xs sm:text-sm"
                 >
                   Name
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                  <ArrowUpDown className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Profession</TableHead>
-              <TableHead>Gender</TableHead>
-              <TableHead>Roles</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="hidden md:table-cell text-xs sm:text-sm">Email</TableHead>
+              <TableHead className="hidden sm:table-cell text-xs sm:text-sm">Phone</TableHead>
+              <TableHead className="hidden lg:table-cell text-xs sm:text-sm">Profession</TableHead>
+              <TableHead className="hidden xl:table-cell text-xs sm:text-sm">Gender</TableHead>
+              <TableHead className="text-xs sm:text-sm">Roles</TableHead>
+              <TableHead className="text-right text-xs sm:text-sm">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -341,7 +341,7 @@ export function UserTable({
               <TableRow>
                 <TableCell
                   colSpan={8}
-                  className="text-center py-8 text-muted-foreground"
+                  className="text-center py-6 sm:py-8 text-xs sm:text-sm text-muted-foreground"
                 >
                   No users found
                 </TableCell>
@@ -353,49 +353,63 @@ export function UserTable({
                 return (
                   <TableRow key={user.id}>
                     <TableCell>
-                      <Avatar className="h-10 w-10">
+                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                         {userImageUrl && (
                           <AvatarImage src={userImageUrl} alt={user.name || "User"} />
                         )}
-                        <AvatarFallback>
+                        <AvatarFallback className="text-xs sm:text-sm">
                           {getInitials(user.name)}
                         </AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        {user.name}
-                        {user.referred_by && (
-                          <Badge 
-                            variant="outline" 
-                            className="bg-pink-50 text-pink-700 border-pink-200 text-xs px-1.5 py-0.5"
-                          >
-                            Referred
-                          </Badge>
-                        )}
-                        {user.is_verified && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Verified User</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
+                    <TableCell className="font-medium text-xs sm:text-sm">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="truncate">{user.name}</span>
+                          {user.referred_by && (
+                            <Badge 
+                              variant="outline" 
+                              className="bg-pink-50 text-pink-700 border-pink-200 text-xs px-1.5 py-0.5 hidden sm:inline-flex"
+                            >
+                              Referred
+                            </Badge>
+                          )}
+                          {user.is_verified && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 flex-shrink-0" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Verified User</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                        </div>
+                        <div className="md:hidden space-y-0.5">
+                          <div className="text-xs text-muted-foreground truncate">
+                            <Link href={`mailto:${user.email}`} className="hover:underline">
+                              {user.email}
+                            </Link>
+                          </div>
+                          <div className="sm:hidden text-xs text-muted-foreground">
+                            {user.phone ? (
+                              <a href={`tel:${user.phone}`} className="hover:underline">{user.phone}</a>
+                            ) : "N/A"}
+                          </div>
+                        </div>
                       </div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="hidden md:table-cell text-xs sm:text-sm text-muted-foreground">
                       <Link
                         href={`mailto:${user.email}`}
-                        className="hover:text-blue-600 hover:underline"
+                        className="hover:text-blue-600 hover:underline truncate block"
                       >
                         {user.email}
                       </Link>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell text-xs sm:text-sm">
                       {user.phone ? (
                         <a
                           href={`tel:${user.phone}`}
@@ -407,10 +421,10 @@ export function UserTable({
                         "N/A"
                       )}
                     </TableCell>
-                    <TableCell className="capitalize">
+                    <TableCell className="hidden lg:table-cell capitalize text-xs sm:text-sm">
                       {user.profession || "N/A"}
                     </TableCell>
-                    <TableCell className="capitalize">
+                    <TableCell className="hidden xl:table-cell capitalize text-xs sm:text-sm">
                       {user.gender || "N/A"}
                     </TableCell>
                     <TableCell>
@@ -423,17 +437,17 @@ export function UserTable({
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1 sm:gap-2">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8"
+                                className="h-7 w-7 sm:h-8 sm:w-8"
                                 onClick={() => onView(user)}
                               >
-                                <Eye className="h-4 w-4" />
+                                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -448,10 +462,10 @@ export function UserTable({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8"
+                                className="h-7 w-7 sm:h-8 sm:w-8"
                                 onClick={() => onEdit(user)}
                               >
-                                <Edit className="h-4 w-4" />
+                                <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
