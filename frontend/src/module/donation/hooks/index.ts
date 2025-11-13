@@ -361,8 +361,13 @@ export function useDonationPayment() {
                 setCurrentStep("completed");
 
                 const userCountry = user?.country || "N/A";
-                const resolvedState = (formData as any).state || user?.state || "N/A";
-                const resolvedDistrict = (formData as any).district || (user as any)?.district || "N/A";
+                const resolvedState = formData.state || user?.state || "N/A";
+                const userDistrict = (() => {
+                  if (!user) return undefined;
+                  const maybe = (user as unknown as Record<string, unknown>)["district"];
+                  return typeof maybe === "string" ? maybe : undefined;
+                })();
+                const resolvedDistrict = formData.district || userDistrict || "N/A";
                 const userCity = user?.city || "N/A";
                 const userPostalCode = user?.postal_code || "N/A";
 
@@ -428,8 +433,8 @@ export function useDonationPayment() {
             donor_name: formData.name,
             donor_email: formData.email,
             donor_phone: formData.phone,
-            state: (formData as any).state || "",
-            district: (formData as any).district || "",
+            state: formData.state || "",
+            district: formData.district || "",
           },
           theme: {
             color: "#FF9933",
@@ -487,7 +492,7 @@ export function useDonationPayment() {
         setCurrentStep("idle");
       }
     },
-    [createOrder, verifyPayment, user?.country, user?.state, user?.city, user?.postal_code]
+    [createOrder, verifyPayment, user]
   );
 
   const mannualPayment = useCallback(

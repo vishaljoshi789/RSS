@@ -230,12 +230,14 @@ export function EditUserDetailModal({
 
   const onSubmit = async (data: FormValues) => {
     if (!user) return;
-    const payload: Partial<User> = { ...data } as unknown as Partial<User>;
+    let payload: Partial<User> = { ...data } as unknown as Partial<User>;
     if (restrictRoles) {
-      // Staff users can only modify volunteer and member.
-      delete (payload as any).is_admin_account;
-      delete (payload as any).is_staff_account;
-      delete (payload as any).is_field_worker;
+      // Staff users can only modify volunteer and member: omit elevated role fields
+      const rest: Partial<User> = { ...payload };
+      delete rest.is_admin_account;
+      delete rest.is_staff_account;
+      delete rest.is_field_worker;
+      payload = rest;
     }
     await onSave(user.id, payload);
   };

@@ -8,7 +8,7 @@ import {
   IntroductionSection,
   WhoWeAreSection,
   WhyDifferentSection,
-  WhyWeExistSection,
+  // WhyWeExistSection,
   TempleServiceSection,
   OurCallSection,
   // CommunityServiceSection,
