@@ -52,7 +52,6 @@ const VolunteerManagement = () => {
           </TabsTrigger>
         </TabsList>
 
-
         <TabsContent value="wings" className="space-y-4">
           <WingManagement />
         </TabsContent>

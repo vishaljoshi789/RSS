@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import { createVolunteerAPI } from "../api";
@@ -6,7 +6,7 @@ import { Designation, DesignationFormData } from "../types";
 
 export const useDesignations = (levelName?: string, wingName?: string) => {
   const axios = useAxios();
-  const api = createVolunteerAPI(axios);
+  const api = useMemo(() => createVolunteerAPI(axios), [axios]);
 
   const [designations, setDesignations] = useState<Designation[]>([]);
   const [loading, setLoading] = useState(false);

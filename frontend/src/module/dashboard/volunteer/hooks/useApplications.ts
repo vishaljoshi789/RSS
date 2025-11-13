@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import { createVolunteerAPI } from "../api";
@@ -8,7 +8,7 @@ import { Application, ApplicationFilters, ApplicationFormData, PaginatedResponse
 
 export function useApplications(filters?: ApplicationFilters) {
   const axios = useAxios();
-  const api = createVolunteerAPI(axios);
+  const api = useMemo(() => createVolunteerAPI(axios), [axios]);
   
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);

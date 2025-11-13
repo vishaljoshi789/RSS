@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import useAxios from "@/hooks/use-axios";
 import { createVolunteerAPI } from "../api";
@@ -6,7 +6,7 @@ import { Wing, WingFormData } from "../types";
 
 export const useWings = () => {
   const axios = useAxios();
-  const api = createVolunteerAPI(axios);
+  const api = useMemo(() => createVolunteerAPI(axios), [axios]);
 
   const [wings, setWings] = useState<Wing[]>([]);
   const [loading, setLoading] = useState(false);
