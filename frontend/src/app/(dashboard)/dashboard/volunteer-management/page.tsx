@@ -16,39 +16,43 @@ import { RoleGuard } from "@/components/auth/RoleGuard";
 const VolunteerManagement = () => {
   return (
     <RoleGuard allowedRoles="auto" showUnauthorized={true}>
-      <div className="space-y-6 p-6">
+      <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
             Volunteer Management
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manage volunteer hierarchy, designations, and assignments
           </p>
         </div>
       </div>
 
       <Tabs defaultValue="wings" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="wings" className="gap-2">
-            <Briefcase className="h-4 w-4" />
-            Wings
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto gap-2 bg-muted p-2">
+          <TabsTrigger value="wings" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2">
+            <Briefcase className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Wings</span>
+            <span className="sm:hidden">Wings</span>
           </TabsTrigger>
-          <TabsTrigger value="levels" className="gap-2">
-            <Award className="h-4 w-4" />
-            Levels
+          <TabsTrigger value="levels" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2">
+            <Award className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Levels</span>
+            <span className="sm:hidden">Levels</span>
           </TabsTrigger>
-          <TabsTrigger value="designations" className="gap-2">
-            <UserCheck className="h-4 w-4" />
-            Designations
+          <TabsTrigger value="designations" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2">
+            <UserCheck className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Designations</span>
+            <span className="sm:hidden">Pads</span>
           </TabsTrigger>
-          <TabsTrigger value="assignments" className="gap-2">
-            <Users className="h-4 w-4" />
-            Assignments
+          <TabsTrigger value="assignments" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2">
+            <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Assignments</span>
+            <span className="sm:hidden">Assign</span>
           </TabsTrigger>
-          <TabsTrigger value="volunteers" className="gap-2">
-            <Users className="h-4 w-4" />
-            Volunteers
+          <TabsTrigger value="volunteers" className="gap-1 sm:gap-2 text-xs sm:text-sm py-2 col-span-2 sm:col-span-1">
+            <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>Volunteers</span>
           </TabsTrigger>
         </TabsList>
 
