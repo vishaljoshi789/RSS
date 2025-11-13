@@ -198,22 +198,22 @@ export default function SettingsPage() {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
           Account Settings
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Manage your profile information and account settings
         </p>
       </div>
 
       {/* Urgent Email Change Banner */}
       {hasRssIndiaEmail && (
-        <div className="mb-6 bg-red-50 border-2 border-red-500 rounded-lg p-4 animate-pulse">
-          <div className="flex items-start gap-3">
+        <div className="mb-4 sm:mb-6 bg-red-50 border-2 border-red-500 rounded-lg p-3 sm:p-4 animate-pulse">
+          <div className="flex items-start gap-2 sm:gap-3">
             <div className="flex-shrink-0">
               <svg
-                className="h-6 w-6 text-red-600"
+                className="h-5 w-5 sm:h-6 sm:w-6 text-red-600"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
