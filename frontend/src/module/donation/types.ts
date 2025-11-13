@@ -6,6 +6,8 @@ export interface DonationFormData {
   amount: number;
   payment_for: string;
   notes?: string;
+  state?: string;
+  district?: string;
 }
 
 export interface ManualPaymentFormData extends DonationFormData {
