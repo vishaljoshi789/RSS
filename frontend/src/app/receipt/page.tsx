@@ -18,6 +18,7 @@ function ReceiptContent() {
     receiptNumber: '',
     country: '',
     state: '',
+    district: '',
     city: '',
     postal_code: '',
   });
@@ -33,6 +34,7 @@ function ReceiptContent() {
       receiptNumber: searchParams.get('receiptNumber') || '',
       country: searchParams.get('country') || '',
       state: searchParams.get('state') || '',
+      district: searchParams.get('district') || '',
       city: searchParams.get('city') || '',
       postal_code: searchParams.get('postal_code') || '',
     });
