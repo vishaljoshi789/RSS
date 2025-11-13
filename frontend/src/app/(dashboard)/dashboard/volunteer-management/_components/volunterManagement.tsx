@@ -232,26 +232,27 @@ export default function VolunteerTable() {
 
   return (
     <div>
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-x-auto rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Wing</TableHead>
-              <TableHead>Level</TableHead>
-              <TableHead>Designation</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-xs sm:text-sm">ID</TableHead>
+              <TableHead className="text-xs sm:text-sm">Name</TableHead>
+              <TableHead className="hidden md:table-cell text-xs sm:text-sm">Email</TableHead>
+              <TableHead className="hidden sm:table-cell text-xs sm:text-sm">Phone</TableHead>
+              <TableHead className="hidden lg:table-cell text-xs sm:text-sm">Wing</TableHead>
+              <TableHead className="hidden lg:table-cell text-xs sm:text-sm">Level</TableHead>
+              <TableHead className="hidden md:table-cell text-xs sm:text-sm">Designation</TableHead>
+              <TableHead className="text-xs sm:text-sm">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.map((r: VolunteerWithUser) => (
               <TableRow key={r.id}>
-                <TableCell>{r.id}</TableCell>
-                <TableCell className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
+                <TableCell className="text-xs sm:text-sm">{r.id}</TableCell>
+                <TableCell className="text-xs sm:text-sm">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                  <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
                     {r.user?.image ? (
                       <AvatarImage src={r.user.image} alt={r.user?.name} />
                     ) : (
@@ -262,37 +263,46 @@ export default function VolunteerTable() {
                       </AvatarFallback>
                     )}
                   </Avatar>
-                  <div className="flex flex-col">
-                    <span className="font-medium">
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-medium truncate">
                       {r.user?.name || r.user?.username}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground truncate">
                       {r.user?.profession}
                     </span>
+                    <div className="sm:hidden mt-1 space-y-0.5 text-xs text-muted-foreground">
+                      <div className="md:hidden">{r.user?.email}</div>
+                      <div className="sm:hidden">{r.phone_number || r.user?.phone}</div>
+                      <div className="lg:hidden">{r.wing_name || "—"} • {r.level_name || "—"}</div>
+                      <div className="md:hidden">{r.designation_title || "—"}</div>
+                    </div>
+                  </div>
                   </div>
                 </TableCell>
-                <TableCell>{r.user?.email}</TableCell>
-                <TableCell>{r.phone_number || r.user?.phone}</TableCell>
-                <TableCell>{r.wing_name || "—"}</TableCell>
-                <TableCell>{r.level_name || "—"}</TableCell>
-                <TableCell>{r.designation_title || "—"}</TableCell>
+                <TableCell className="hidden md:table-cell text-xs sm:text-sm">{r.user?.email}</TableCell>
+                <TableCell className="hidden sm:table-cell text-xs sm:text-sm">{r.phone_number || r.user?.phone}</TableCell>
+                <TableCell className="hidden lg:table-cell text-xs sm:text-sm">{r.wing_name || "—"}</TableCell>
+                <TableCell className="hidden lg:table-cell text-xs sm:text-sm">{r.level_name || "—"}</TableCell>
+                <TableCell className="hidden md:table-cell text-xs sm:text-sm">{r.designation_title || "—"}</TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => handleOpenEdit(r)}
                       title="Edit"
+                      className="h-8 w-8 sm:h-9 sm:w-9"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => handleDeleteClick(r)}
                       title="Delete"
+                      className="h-8 w-8 sm:h-9 sm:w-9"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-destructive" />
                     </Button>
                   </div>
                 </TableCell>
