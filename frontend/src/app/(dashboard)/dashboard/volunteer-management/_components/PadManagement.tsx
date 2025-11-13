@@ -198,54 +198,55 @@ const PadManagement = () => {
   return (
     <>
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Pad (Designation) Management</CardTitle>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Pad
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+            <CardTitle className="text-lg sm:text-xl">Pad (Designation) Management</CardTitle>
+            <Button onClick={() => setIsCreateDialogOpen(true)} size="sm" className="w-full sm:w-auto">
+              <Plus className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm">Add Pad</span>
             </Button>
           </div>
-          <div className="relative mt-4">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="relative mt-3 sm:mt-4">
+            <Search className="absolute left-2 sm:left-3 top-1/2 h-3 w-3 sm:h-4 sm:w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search pads..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-8 sm:pl-10 h-9 sm:h-10 text-sm"
             />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 sm:p-6">
+          <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Wing</TableHead>
-                <TableHead>Level</TableHead>
-                <TableHead>Total Positions</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-xs sm:text-sm">Title</TableHead>
+                <TableHead className="hidden md:table-cell text-xs sm:text-sm">Wing</TableHead>
+                <TableHead className="hidden sm:table-cell text-xs sm:text-sm">Level</TableHead>
+                <TableHead className="hidden lg:table-cell text-xs sm:text-sm">Total Positions</TableHead>
+                <TableHead className="text-right text-xs sm:text-sm">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12">
+                  <TableCell colSpan={5} className="text-center py-8 sm:py-12">
                     <div className="flex flex-col items-center justify-center text-muted-foreground">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
-                      <p>Loading designations...</p>
+                      <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-primary mb-3 sm:mb-4"></div>
+                      <p className="text-xs sm:text-sm">Loading designations...</p>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : filteredDesignations.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12">
+                  <TableCell colSpan={5} className="text-center py-8 sm:py-12">
                     <div className="flex flex-col items-center justify-center text-muted-foreground">
-                      <Award className="h-12 w-12 mb-4 opacity-50" />
-                      <h3 className="font-semibold text-lg mb-1">
+                      <Award className="h-8 w-8 sm:h-12 sm:w-12 mb-3 sm:mb-4 opacity-50" />
+                      <h3 className="font-semibold text-sm sm:text-lg mb-1">
                         No designations found
                       </h3>
-                      <p className="text-sm mb-4">
+                      <p className="text-xs sm:text-sm mb-3 sm:mb-4">
                         {searchTerm
                           ? `No designations match "${searchTerm}"`
                           : "Create wings and levels first, then add designations"}
@@ -254,9 +255,10 @@ const PadManagement = () => {
                         <Button
                           onClick={() => setIsCreateDialogOpen(true)}
                           size="sm"
+                          className="w-full sm:w-auto"
                         >
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add Designation
+                          <Plus className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="text-xs sm:text-sm">Add Designation</span>
                         </Button>
                       )}
                     </div>
@@ -265,37 +267,55 @@ const PadManagement = () => {
               ) : (
                 filteredDesignations.map((designation) => (
                   <TableRow key={designation.id}>
-                    <TableCell className="font-medium">
-                      {designation.title}
+                    <TableCell className="font-medium text-xs sm:text-sm">
+                      <div>{designation.title}</div>
+                      <div className="sm:hidden mt-1 space-y-1">
+                        <div className="text-xs text-muted-foreground">
+                          {getLevelName(designation.level)}
+                        </div>
+                        <div className="md:hidden text-xs text-muted-foreground">
+                          {getWingName(designation.level)}
+                        </div>
+                        <div className="lg:hidden">
+                        <Badge variant="outline" className="text-xs">
+                          {designation.total_positions} positions
+                        </Badge>
+                        </div>
+                      </div>
                     </TableCell>
-                    <TableCell>{getWingName(designation.level)}</TableCell>
-                    <TableCell>{getLevelName(designation.level)}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
+                    <TableCell className="hidden md:table-cell text-xs sm:text-sm">{getWingName(designation.level)}</TableCell>
+                    <TableCell className="hidden sm:table-cell text-xs sm:text-sm">{getLevelName(designation.level)}</TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      <Badge variant="outline" className="text-xs">
                         {designation.total_positions}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => openEditDialog(designation)}
+                        className="h-8 w-8 sm:h-9 sm:w-9"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => openDeleteDialog(designation)}
+                        className="h-8 w-8 sm:h-9 sm:w-9"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
               )}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 
