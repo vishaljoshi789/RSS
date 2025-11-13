@@ -8,7 +8,7 @@ from rest_framework import status
 
 from dashboard.permissions import IsAdminOrIsStaff
 from .models import Volunteer, Wing, Level, Designation, Application
-from .serializers import VolunteerSerializer, WingSerializer, LevelSerializer, DesignationSerializer, ApplicationSerializer, ApplicationDetailSerializer
+from .serializers import VolunteerSerializer, WingSerializer, LevelSerializer, DesignationSerializer, ApplicationSerializer, ApplicationDetailSerializer, Volunteer
 from .filters import VolunteerFilter, LevelFilter, DesignationFilter
 from account.models import User
 
@@ -105,6 +105,15 @@ class VolunteerDetailView(RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return [IsAdminOrIsStaff()]
+        return [AllowAny()]
+    
+class VolunteerWorkingAreaListCreateView(ListCreateAPIView):
+    queryset = Volunteer.objects.all()
+    serializer_class = VolunteerSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['POST']:
             return [IsAdminOrIsStaff()]
         return [AllowAny()]
     
