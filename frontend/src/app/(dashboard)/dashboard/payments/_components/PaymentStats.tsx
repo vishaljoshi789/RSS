@@ -31,7 +31,7 @@ export function PaymentStats() {
   const statsConfig = [
     {
       title: "Total Revenue",
-      value: formatCurrency(stats.total_revenue || 0),
+      value: formatCurrency(stats.total_revenue/100 || 0),
       icon: DollarSign,
       description: "All-time revenue",
       color: "text-green-600",
@@ -40,7 +40,7 @@ export function PaymentStats() {
     },
     {
       title: "This Month",
-      value: formatCurrency(stats.monthly_revenue || 0),
+      value: formatCurrency(stats.monthly_revenue/100 || 0),
       icon: TrendingUp,
       description: "Current month revenue",
       color: "text-blue-600",
@@ -121,21 +121,21 @@ export function PaymentStats() {
         </Alert>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
         {statsConfig.map((stat, index) => {
           const Icon = stat.icon;
           return (
             <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-3 sm:p-4">
+                <CardTitle className="text-xs sm:text-sm font-medium">
                   {stat.title}
                 </CardTitle>
-                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <Icon className={`h-4 w-4 ${stat.color}`} />
+                <div className={`p-1.5 sm:p-2 rounded-lg ${stat.bgColor}`}>
+                  <Icon className={`h-3 w-3 sm:h-4 sm:w-4 ${stat.color}`} />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+              <CardContent className="p-3 sm:p-4 pt-0 sm:pt-0">
+                <div className="text-lg sm:text-2xl font-bold">{stat.value}</div>
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">
                     {stat.description}
