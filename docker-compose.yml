@@ -85,7 +85,6 @@ services:
     container_name: nextjs_app
     restart: always
     env_file:
-      - ./frontend/.env.local
       - ./frontend/.env.prod
     depends_on:
       - backend
