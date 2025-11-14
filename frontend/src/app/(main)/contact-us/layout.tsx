@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     description: 'राष्ट्रीय सेवा संघ भारतवर्ष से संपर्क करें और राष्ट्र सेवा में भागीदार बनें।',
     images: [
       {
-        url: 'https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.25-PM-e1756385010760.webp',
+        url: '/live/img-16.jpg',
         width: 800,
         height: 600,
         alt: 'RSS Contact - Temple Service',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'संपर्क करें | राष्ट्रीय सेवा संघ भारतवर्ष',
     description: 'राष्ट्रीय सेवा संघ भारतवर्ष से संपर्क करें और राष्ट्र सेवा में भागीदार बनें।',
-    images: ['https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.25-PM-e1756385010760.webp'],
+    images: ['/live/img-16.jpg'],
   },
 };
 

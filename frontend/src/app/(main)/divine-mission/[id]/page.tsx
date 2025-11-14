@@ -27,22 +27,22 @@ import { IMAGE_BLUR_DATA_URL } from "@/lib/image-placeholder";
 const getGalleryImages = () => [
   {
     id: 1,
-    url: "https://joinrss.org.in/wp-content/uploads/2025/08/Picsart_25-08-07_01-08-55-441.webp",
+    url: "/live/divine-01.webp",
     alt: "मिशन गतिविधि 1",
   },
   {
     id: 2,
-    url: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.26-PM-1-e1756385063931.webp",
+    url: "/live/divine-02.webp",
     alt: "मिशन गतिविधि 2",
   },
   {
     id: 3,
-    url: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.26-PM-e1756385049326.webp",
+    url: "/live/divine-03.webp",
     alt: "मिशन गतिविधि 3",
   },
   {
     id: 4,
-    url: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.25-PM-2-e1756385029423.webp",
+    url: "/live/divine-04.webp",
     alt: "मिशन गतिविधि 4",
   },
 ];

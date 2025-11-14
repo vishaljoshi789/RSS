@@ -71,7 +71,7 @@ export const aboutPageData: AboutPageData = {
   mainTitle: "वयं राष्ट्रे जागृयाम पुरोहिताः",
   subtitle: "राष्ट्रीय सेवा संघ भारतवर्ष",
   primaryImage: {
-    url: "https://joinrss.org.in/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-24-at-3.52.26-PM-1-2048x1279.jpeg",
+    url: "/live/map.webp",
     alt: "राष्ट्रीय सेवा संघ भारतवर्ष"
   },
   introduction: {

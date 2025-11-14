@@ -19,7 +19,7 @@ const TempleServiceSection: React.FC = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent z-10"></div>
                 <Image
-                  src="https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.25-PM-e1756385010760.webp"
+                  src="/live/img-16.jpg"
                   alt="Temple Visit - Devotees at Temple"
                   width={800}
                   height={600}
