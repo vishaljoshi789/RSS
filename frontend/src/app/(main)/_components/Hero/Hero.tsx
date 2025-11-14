@@ -164,7 +164,7 @@ const Hero = () => {
                   asChild
                 >
                   <Link
-                    href="/donate-now"
+                    href="/auth/login"
                     className="flex items-center justify-center"
                   >
                     Join Now
@@ -178,7 +178,7 @@ const Hero = () => {
                   asChild
                 >
                   <Link
-                    href="/auth/login"
+                    href="/donate-now"
                     className="flex items-center justify-center text-white"
                   >
                     Donate Now
@@ -192,10 +192,10 @@ const Hero = () => {
 
         <div className="hidden lg:block pb-8 lg:pb-0">
           <div className="flex flex-col items-center justify-center lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 lg:z-20">
-            <div className="w-full px-4 lg:px-8">
+            <div className="w-full px-4 lg:px-6 xl:px-8">
               <Swiper
                 modules={desktopModules}
-                spaceBetween={24}
+                spaceBetween={16}
                 freeMode={true}
                 autoplay={{
                   delay: 2000,
@@ -207,22 +207,26 @@ const Hero = () => {
                 watchSlidesProgress={true}
                 breakpoints={{
                   1024: {
-                    slidesPerView: 1.5,
+                    slidesPerView: 1.2,
+                    spaceBetween: 16,
                   },
                   1280: {
-                    slidesPerView: 2,
+                    slidesPerView: 1.5,
+                    spaceBetween: 20,
                   },
                   1440: {
-                    slidesPerView: 2.2,
+                    slidesPerView: 1.8,
+                    spaceBetween: 24,
                   },
                   1680: {
-                    slidesPerView: 2.4,
+                    slidesPerView: 2.2,
+                    spaceBetween: 24,
                   },
                 }}
               >
                 {heroSlides.map((slide, index) => (
-                  <SwiperSlide key={slide.id} style={{ width: "320px" }}>
-                    <div className="relative flex flex-col overflow-hidden transition-all duration-200 transform bg-background border border-border shadow w-80 h-[500px] group rounded-xl hover:shadow-lg hover:-translate-y-1 cursor-pointer">
+                  <SwiperSlide key={slide.id}>
+                    <div className="relative flex flex-col overflow-hidden transition-all duration-200 transform bg-background border border-border shadow w-full max-w-[320px] h-[480px] lg:h-[500px] group rounded-xl hover:shadow-lg hover:-translate-y-1 cursor-pointer">
                       <Link href={slide.ctaLink} className="block">
                         <div className="relative w-full overflow-hidden aspect-[4/3] bg-muted">
                           <Image

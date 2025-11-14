@@ -26,7 +26,7 @@ export const highlightsData: HighlightsSection = {
       duration: 4000,
       icon: "🗺️",
       color: "orange",
-      backgroundImage: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-05-at-3.03.54-PM-scaled.webp"
+      backgroundImage: "/live/img-08.jpg"
     },
     {
       id: "members",
@@ -36,7 +36,7 @@ export const highlightsData: HighlightsSection = {
       duration: 4000,
       icon: "👥",
       color: "blue",
-      backgroundImage: "https://joinrss.org.in/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-30-at-9.36.56-PM-e1754387362546.jpeg"
+      backgroundImage: "/live/img-09.jpg"
     },
     {
       id: "volunteers",
@@ -46,7 +46,7 @@ export const highlightsData: HighlightsSection = {
       duration: 4000,
       icon: "🙋‍♂️",
       color: "green",
-      backgroundImage: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-05-at-3.03.54-PM-1-scaled.webp"
+      backgroundImage: "/live/img-15.jpg"
     }
   ]
 };
