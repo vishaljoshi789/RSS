@@ -34,7 +34,7 @@ export const rssInfoData: RSSInfoTab[] = [
       'प्राचीन वैदिक परंपराओं के गौरव को पुनः स्थापित करना।',
       'संपूर्ण विश्व के लिए धर्म, शांति और सत्य का मार्गदर्शक बनना।'
     ],
-    image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimPhJjWLO1zIdfXiQ4voKFsHVTk1OIx4VMCSXgQysyEhrgkUQ28ME0ubyf5Pt818CWirwkGSbVqbwpMShID1IyWQBiuidCZdEEAiD7qWYveJ7RgK5cA1tihd9jPspAh8vS9e4M6SbpUVjO_xtA8e-TxJgu02sLCcPo8wy69JilZw3Rlwj_-48W4KNfMZfc/w576-h360/1_dBqKtPQz9DBTVFt1tlhpsg.jpg'
+    image: '/live/overview.jpg'
   },
   {
     id: 'mission',
@@ -53,7 +53,7 @@ export const rssInfoData: RSSInfoTab[] = [
       'वंचित और उपेक्षित वर्गों का उत्थान कर उन्हें सेवा का केंद्र बनाना।',
       'वैदिक जीवन मूल्यों के आधार पर भारत को पुनः विश्वगुरु की पदवी पर स्थापित करना।'
     ],
-    image: 'https://panchjanya.com/wp-content/uploads/2024/10/add-a-heading-2024-10-11t154411.401-750x394.webp'
+    image: '/live/overview.jpg'
   },
   {
     id: 'values',
@@ -71,6 +71,6 @@ export const rssInfoData: RSSInfoTab[] = [
       'आत्मनिर्भरता को राष्ट्र की असली ताकत मानना, जिससे हर व्यक्ति देश की सेवा करे।',
       'इन मूल्यों से भारत को धार्मिक, समरस और गौरवशाली विश्वगुरु बनाना।'
     ],
-    image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEimPhJjWLO1zIdfXiQ4voKFsHVTk1OIx4VMCSXgQysyEhrgkUQ28ME0ubyf5Pt818CWirwkGSbVqbwpMShID1IyWQBiuidCZdEEAiD7qWYveJ7RgK5cA1tihd9jPspAh8vS9e4M6SbpUVjO_xtA8e-TxJgu02sLCcPo8wy69JilZw3Rlwj_-48W4KNfMZfc/w576-h360/1_dBqKtPQz9DBTVFt1tlhpsg.jpg'
+    image: '/live/overview.jpg'
   }
 ];
