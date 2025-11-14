@@ -141,6 +141,17 @@ CORS_ALLOWED_ORIGINS = [
     "https://api.joinrss.org.in"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://72.60.223.136",
+    "http://joinrss.org.in",
+    "http://www.joinrss.org.in",
+    "https://joinrss.org.in",
+    "https://www.joinrss.org.in",
+    "https://api.joinrss.org.in"
+]
+
 CORS_ALLOW_CREDENTIALS = True
 
 RAZOR_KEY_ID = config('RAZORPAY_KEY_ID')
