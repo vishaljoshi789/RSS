@@ -21,14 +21,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('adminpanel/', admin.site.urls),
-    path('api/', include([
-        path('account/', include('account.urls')),
-        path('dashboard/', include('dashboard.urls')),
-        path('payment/', include('payment.urls')),
-        path('vyapari/', include('vyapari.urls')),
-        path('volunteer/', include('volunteer.urls')),
-        path('admin/', include('adminpanel.urls')),
-    ])),
+    path('account/', include('account.urls')),
+    path('dashboard/', include('dashboard.urls')),
+    path('payment/', include('payment.urls')),
+    path('vyapari/', include('vyapari.urls')),
+    path('volunteer/', include('volunteer.urls')),
+    path('admin/', include('adminpanel.urls')),
+
 ]
 
 if settings.DEBUG:
