@@ -33,10 +33,8 @@ import {
   ImageIcon,
   CreditCard,
   Download,
-  X,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import useAxios from "@/hooks/use-axios";
 
 import {
