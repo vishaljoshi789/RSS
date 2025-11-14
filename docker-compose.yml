@@ -113,6 +113,9 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
       - app_network
+    labels:
+      - com.github.nginx-proxy.nginx
+
 
   ### ─── ACME (LETSENCRYPT AUTO SSL) ───────────────────────────────────────────
   acme-companion:
@@ -121,6 +124,7 @@ services:
     restart: always
     environment:
       - DEFAULT_EMAIL=admin@joinrss.org.in
+      - NGINX_PROXY_CONTAINER=nginx_proxy
     volumes:
       - certs:/etc/acme.sh
       - vhost:/etc/nginx/vhost.d
@@ -128,6 +132,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - app_network
+
 
 volumes:
   pg_data:

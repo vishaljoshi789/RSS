@@ -30,7 +30,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
-    "72.60.223.136"
+    "72.60.223.136",
+    "joinrss.org.in",
+    "www.joinrss.org.in",
 ]
 
 
@@ -130,7 +132,11 @@ DEFAULT_CHARSET = 'utf-8'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://72.60.223.136"
+    "http://72.60.223.136",
+    "http://joinrss.org.in",
+    "http://www.joinrss.org.in",
+    "https://joinrss.org.in",
+    "https://www.joinrss.org.in",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
