@@ -55,6 +55,7 @@ export interface VolunteerWithUser {
   wing: number | null;
   level: number | null;
   designation: number | null;
+  working_areas: Array<string>;
 }
 
 
