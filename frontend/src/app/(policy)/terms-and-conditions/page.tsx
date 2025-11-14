@@ -117,7 +117,7 @@ export default function TermsAndConditionsPage() {
             <div className="space-y-3">
               <p className="text-base leading-relaxed text-muted-foreground">
                 <strong className="text-foreground">4.1.</strong> The Website
-                may allow users to make donations to support the Trust's
+                may allow users to make donations to support the Trust&apos;s
                 initiatives. By making a donation, you agree to provide accurate
                 and complete information.
               </p>

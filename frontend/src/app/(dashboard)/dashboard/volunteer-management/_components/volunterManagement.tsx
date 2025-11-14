@@ -25,7 +25,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { EditUserDetailModal } from "@/module/dashboard/users/components/edit-user-detail-model";
 import useAxios from "@/hooks/use-axios";
-import { useAuth } from "@/hooks/use-auth";
 import { VolunteerWithUser } from "@/module/dashboard/volunteer/types";
 import { useVolunteersList } from "@/module/dashboard/volunteer/hooks";
 import { useCountryApi } from "@/module/country/hooks";

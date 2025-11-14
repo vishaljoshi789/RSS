@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
           
           <section>
             <p className="text-base leading-relaxed text-muted-foreground">
-              Your privacy is important to us. It is Rashtriya Seva Sangh's
+              Your privacy is important to us. It is Rashtriya Seva Sangh&apos;s
               policy to respect your privacy regarding any information we may
               collect from you across our website,{" "}
               <a
