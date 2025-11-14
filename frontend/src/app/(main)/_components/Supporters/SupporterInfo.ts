@@ -32,7 +32,7 @@ export const videoInfo: VideoInfo = {
   title: "संगठन परिचय वीडियो",
   duration: "अवधि: 2 मिनट 50 सेकंड",
   description: "हमारी यात्रा और दृष्टिकोण",
-  videoSrc: "https://joinrss.org.in/wp-content/uploads/2025/09/InShot_20250915_180027869.mp4",
+  videoSrc: "/live/video.mp4",
   posterSrc: "/hero/hero-01.png",
   fullScreenButtonText: "पूर्ण स्क्रीन में देखें"
 };
@@ -42,48 +42,48 @@ export const supporterImages: SupporterInfo[] = [
   {
     id: 1,
     name: "Supporter 1",
-    imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/06/images-2.png",
+    imageUrl: "/logo/gov-01.png",
     alt: "RSS Supporter"
   },
   {
     id: 2,
     name: "Supporter 2", 
-    imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/06/Picsart_25-06-21_23-35-59-409-1-scaled.jpg",
+    imageUrl: "/logo/gov-02.jpg",
     alt: "RSS Supporter"
   },
   {
     id: 3,
     name: "Supporter 3",
-    imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/06/images.png", 
+    imageUrl: "/logo/gov-03.png", 
     alt: "RSS Supporter"
   },
   {
     id: 4,
     name: "Supporter 4",
-    imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/06/images-1.png",
+    imageUrl: "/logo/gov-04.png",
     alt: "RSS Supporter"
   },
   {
     id: 5,
     name: "Supporter 5",
-    imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/07/WhatsApp-Image-2025-07-26-at-6.20.21-PM-scaled.jpeg",
+    imageUrl: "/logo/gov-05.jpeg",
     alt: "RSS Supporter"
   },
   {
     id: 6,
     name: "Supporter 6",
-    imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-09-at-7.54.30-PM-1-scaled.jpeg",
+    imageUrl: "/logo/gov-06.jpeg",
     alt: "RSS Supporter"
   },
   {
     id: 7,
     name: "Supporter 7", 
-    imageUrl: "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-09-at-7.54.30-PM-scaled.jpeg",
+    imageUrl: "/logo/gov-07.jpeg",
     alt: "RSS Supporter"
   },
   {
     id: 8,
-    name: "Supporter 7", 
+    name: "Supporter 8", 
     imageUrl: "/logo/gov-08.png",
     alt: "RSS Supporter"
   },

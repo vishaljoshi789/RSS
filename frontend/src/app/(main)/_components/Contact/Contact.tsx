@@ -239,10 +239,10 @@ const Contact: React.FC = () => {
               <Image
                 src="/hero/cont.webp"
                 alt="Contact Us"
-                height={100}
-                width={100}
+                fill
                 quality={100}
-                className="w-full h-full object-cover"
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
           </div>

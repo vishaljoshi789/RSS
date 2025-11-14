@@ -30,7 +30,7 @@ const CommunityServiceSection: React.FC = () => {
           <div>
             <Card className="overflow-hidden border">
               <Image
-                src="https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-01-at-10.08.01-PM-scaled.jpeg"
+                src="/live/img-10.jpg"
                 alt="Blood Donation Camp - Community Service"
                 width={1200}
                 height={800}

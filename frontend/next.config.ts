@@ -56,6 +56,8 @@ const remotePatterns: RemotePatternConfig[] = Array.from(DEFAULT_IMAGE_HOSTS).fl
 const nextConfig: NextConfig = {
   images: {
     remotePatterns,
+    unoptimized: true,
+    qualities: [75, 90, 100],
   }
 };
 

@@ -165,58 +165,79 @@ const FoundersTeamPage = () => {
               </p>
             </div>
 
-            <div className="flex justify-center">
-              <div className="w-full max-w-5xl bg-background border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
-                <div className="flex items-center justify-center gap-2 mb-6">
-                  <Filter className="w-4 h-4 text-primary" />
-                  <span className="font-semibold text-foreground text-sm sm:text-base">
-                    राज्य के अनुसार फ़िल्टर करें
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
-                  <Button
-                    variant={selectedState === "all" ? "default" : "outline"}
-                    size="sm"
-                    className="h-auto py-2 px-4 text-sm font-medium rounded-lg transition-all hover:scale-105"
-                    onClick={() => setSelectedState("all")}
-                  >
-                    सभी राज्य
-                  </Button>
-                  {uniqueStates.map((state) => (
-                    <Button
-                      key={state}
-                      variant={selectedState === state ? "default" : "outline"}
-                      size="sm"
-                      className="h-auto py-2 px-4 text-sm font-medium rounded-lg transition-all hover:scale-105"
-                      onClick={() => setSelectedState(state)}
-                    >
-                      {state}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-              {filteredStateTeam.map((member) => (
-                <TeamMemberCard key={member.id} member={member} />
-              ))}
-            </div>
-
-            {filteredStateTeam.length === 0 && (
+            {stateTeam.length === 0 ? (
               <div className="text-center py-16 lg:py-20">
-                <div className="max-w-md mx-auto bg-muted/30 rounded-2xl p-8 lg:p-12 border border-border">
-                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="max-w-md mx-auto bg-gradient-to-br from-primary/5 to-primary/10 rounded-2xl p-8 lg:p-12 border border-primary/20 shadow-lg">
+                  <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
                     <Users className="w-10 h-10 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    कोई टीम सदस्य नहीं मिला
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
+                    जल्द ही आ रहा है
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    चुने गए राज्य के लिए कोई टीम सदस्य उपलब्ध नहीं है।
+                    राज्य टीम के सदस्यों की जानकारी जल्द ही यहां उपलब्ध होगी।
+                  </p>
+                  <p className="text-xs sm:text-sm text-muted-foreground/80 mt-4">
+                    Will be shown soon
                   </p>
                 </div>
               </div>
+            ) : (
+              <>
+                <div className="flex justify-center">
+                  <div className="w-full max-w-5xl bg-background border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
+                    <div className="flex items-center justify-center gap-2 mb-6">
+                      <Filter className="w-4 h-4 text-primary" />
+                      <span className="font-semibold text-foreground text-sm sm:text-base">
+                        राज्य के अनुसार फ़िल्टर करें
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
+                      <Button
+                        variant={selectedState === "all" ? "default" : "outline"}
+                        size="sm"
+                        className="h-auto py-2 px-4 text-sm font-medium rounded-lg transition-all hover:scale-105"
+                        onClick={() => setSelectedState("all")}
+                      >
+                        सभी राज्य
+                      </Button>
+                      {uniqueStates.map((state) => (
+                        <Button
+                          key={state}
+                          variant={selectedState === state ? "default" : "outline"}
+                          size="sm"
+                          className="h-auto py-2 px-4 text-sm font-medium rounded-lg transition-all hover:scale-105"
+                          onClick={() => setSelectedState(state)}
+                        >
+                          {state}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+                  {filteredStateTeam.map((member) => (
+                    <TeamMemberCard key={member.id} member={member} />
+                  ))}
+                </div>
+
+                {filteredStateTeam.length === 0 && (
+                  <div className="text-center py-16 lg:py-20">
+                    <div className="max-w-md mx-auto bg-muted/30 rounded-2xl p-8 lg:p-12 border border-border">
+                      <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Users className="w-10 h-10 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground mb-3">
+                        कोई टीम सदस्य नहीं मिला
+                      </h3>
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                        चुने गए राज्य के लिए कोई टीम सदस्य उपलब्ध नहीं है।
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </TabsContent>
         </Tabs>

@@ -251,7 +251,7 @@ const Press: React.FC = () => {
             ))}
           </div>
 
-          <Button className="mt-3 flex items-center justify-center mx-auto">
+          <Button className="mt-3 flex items-center justify-center mx-auto" onClick={() => alert("page comming soon")}>
             View All Highlights
           </Button>
         </div>

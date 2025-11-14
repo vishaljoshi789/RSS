@@ -48,7 +48,7 @@ export const blogPosts: BlogPost[] = [
       <p>इस वर्ष के महासम्मेलन की थीम है "भारत का भविष्य - युवा शक्ति"। देशभर से 5000+ सेवा कार्यकर्ता इस कार्यक्रम में भाग लेंगे।</p>
     `,
     image:
-      "https://joinrss.org.in/wp-content/uploads/2025/08/Picsart_25-08-07_01-08-55-441.webp",
+      "/live/img-10.jpg",
     category: "Events",
     author: {
       name: "राजेश कुमार",
@@ -73,7 +73,7 @@ export const blogPosts: BlogPost[] = [
       <p>इस योजना के तहत 100 से अधिक गांवों में शिक्षा केंद्र स्थापित किए जाएंगे।</p>
     `,
     image:
-      "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.26-PM-1-e1756385063931.webp",
+      "/live/img-11.jpg",
     category: "Social Work",
     author: {
       name: "प्रिया शर्मा",
@@ -95,7 +95,7 @@ export const blogPosts: BlogPost[] = [
       <p>राष्ट्रीय सेवा संघ के राष्ट्रव्यापी स्वच्छता अभियान का सफल समापन हुआ।</p>
     `,
     image:
-      "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.26-PM-e1756385049326.webp",
+      "/live/img-12.jpg",
     category: "Social Work",
     author: {
       name: "अमित वर्मा",
@@ -117,7 +117,7 @@ export const blogPosts: BlogPost[] = [
       <p>राष्ट्रीय सेवा संघ ने अपने डिजिटल परिवर्तन की दिशा में एक महत्वपूर्ण कदम उठाते हुए अपनी नई वेबसाइट लॉन्च की है।</p>
     `,
     image:
-      "https://joinrss.org.in/wp-content/uploads/2025/08/Picsart_25-08-07_01-08-55-441.webp",
+      "/live/img-13.jpg",
     category: "Updates",
     author: {
       name: "विकास पाटिल",
@@ -139,7 +139,7 @@ export const blogPosts: BlogPost[] = [
       <p>युवा शक्ति को सशक्त बनाने के उद्देश्य से राष्ट्रीय सेवा संघ युवा नेतृत्व कार्यशाला का आयोजन कर रहा है।</p>
     `,
     image:
-      "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.26-PM-1-e1756385063931.webp",
+      "/live/img-14.jpg",
     category: "Events",
     author: {
       name: "नेहा गुप्ता",
@@ -161,7 +161,7 @@ export const blogPosts: BlogPost[] = [
       <p>पर्यावरण संरक्षण के प्रति अपनी प्रतिबद्धता को दोहराते हुए, राष्ट्रीय सेवा संघ ने वृक्षारोपण में एक बड़ी उपलब्धि हासिल की है।</p>
     `,
     image:
-      "https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-06-at-1.21.26-PM-e1756385049326.webp",
+      "/live/img-15.jpg",
     category: "Social Work",
     author: {
       name: "संजय मेहता",
