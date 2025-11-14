@@ -193,13 +193,6 @@ const LoginForm = () => {
                   </FormItem>
                 )}
               />
-              
-              <Link 
-                href="/auth/forgot-password" 
-                className="text-xs text-primary hover:underline whitespace-nowrap"
-              >
-                पासवर्ड भूल गए?
-              </Link>
             </div>
 
             <Button 

@@ -22,6 +22,7 @@ import {
   User,
   CheckCircle,
   AlertCircle,
+  Receipt,
   Shield,
   Lock,
   Gift,
@@ -67,6 +68,7 @@ const NewDonationForm = () => {
     isProcessing,
     error,
     success,
+    receiptUrl,
     currentStep,
     reset,
   } = useDonationPayment();
@@ -226,6 +228,17 @@ const NewDonationForm = () => {
     setSelectedAmount(null);
   };
 
+  const handleViewReceipt = () => {
+    if (!receiptUrl) {
+      toast.error("Receipt is not ready yet. Please try again in a moment.");
+      return;
+    }
+
+    window.open(receiptUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const isReceiptReady = Boolean(receiptUrl);
+
   if (success) {
     return (
       <div className="max-w-4xl mx-auto p-3 sm:p-6">
@@ -269,6 +282,16 @@ const NewDonationForm = () => {
             </div>
 
             <div className="flex flex-col gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-11 sm:h-12 text-base sm:text-lg"
+                onClick={handleViewReceipt}
+                disabled={!isReceiptReady}
+              >
+                <Receipt className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                {isReceiptReady ? "Get Receipt" : "Preparing Receipt..."}
+              </Button>
               <Button
                 onClick={handleStartNewDonation}
                 className="w-full h-11 sm:h-12 text-base sm:text-lg btn-primary"
