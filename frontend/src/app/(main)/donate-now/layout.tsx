@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description: 'राष्ट्र सेवा में योगदान करें। आपका हर दान सामाजिक कल्याण, शिक्षा और राष्ट्रीय एकता के कार्यों में उपयोग होता है।',
     images: [
       {
-        url: 'https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-05-at-3.03.54-PM-scaled.webp',
+        url: '/logo/logo.png',
         width: 1200,
         height: 630,
         alt: 'राष्ट्रीय सेवा संघ - दान और सेवा',
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'दान करें - राष्ट्रीय सेवा संघ भारतवर्ष',
     description: 'राष्ट्र सेवा में योगदान करें। सुरक्षित और पारदर्शी दान प्रक्रिया।',
-    images: ['https://joinrss.org.in/wp-content/uploads/2025/08/WhatsApp-Image-2025-08-05-at-3.03.54-PM-scaled.webp'],
+    images: ['/live/logo.png'],
   },
   alternates: {
     canonical: '/donate-now',
