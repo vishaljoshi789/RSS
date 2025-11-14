@@ -21,12 +21,15 @@ export const useVolunteersList = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<PaginatedVolunteersResponse>(
+      const res = await axios.get<PaginatedVolunteersResponse | VolunteerWithUser[]>(
         "/volunteer/volunteers/"
       );
-      const payload = res.data as any;
-      const list: VolunteerWithUser[] =
-        payload?.results ?? (Array.isArray(payload) ? payload : []);
+
+      const data = res.data;
+      const list: VolunteerWithUser[] = Array.isArray(data)
+        ? data
+        : data.results ?? [];
+
       setVolunteers(list || []);
     } catch (err) {
       console.error("Failed to fetch volunteers:", err);
