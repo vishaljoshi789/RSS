@@ -357,7 +357,6 @@ export function useDonationPayment() {
               ) {
                 setSuccess(true);
                 setDonationId(verificationResponse.donation_id || null);
-                setReceiptUrl(verificationResponse.receipt_url || null);
                 setCurrentStep("completed");
 
                 const userCountry = user?.country || "N/A";
@@ -371,29 +370,32 @@ export function useDonationPayment() {
                 const userCity = user?.city || "N/A";
                 const userPostalCode = user?.postal_code || "N/A";
 
+                const receiptParams = new URLSearchParams({
+                  name: formData.name || "",
+                  phone: formData.phone || "",
+                  date: new Date().toLocaleDateString("en-IN"),
+                  mode: "Online payment",
+                  amount: String(formData.amount / 100),
+                  amountWords: convertNumberToWords(formData.amount / 100),
+                  receiptNumber:
+                    verificationResponse.payment_id ||
+                    verificationResponse.order_id ||
+                    "N/A",
+                  country: userCountry,
+                  state: resolvedState,
+                  district: resolvedDistrict,
+                  city: userCity,
+                  postal_code: userPostalCode,
+                });
+
+                const generatedReceiptUrl = `/receipt?${receiptParams.toString()}`;
+                const finalReceiptUrl =
+                  verificationResponse.receipt_url || generatedReceiptUrl;
+                setReceiptUrl(finalReceiptUrl);
+
                 setTimeout(() => {
-                  const receiptParams = new URLSearchParams({
-                    name: formData.name || "",
-                    phone: formData.phone || "",
-                    date: new Date().toLocaleDateString("en-IN"),
-                    mode: "Online payment",
-                    amount: String(formData.amount / 100),
-                    amountWords: convertNumberToWords(formData.amount / 100),
-                    receiptNumber:
-                      verificationResponse.payment_id ||
-                      verificationResponse.order_id ||
-                      "N/A",
-                    country: userCountry,
-                    state: resolvedState,
-                    district: resolvedDistrict,
-                    city: userCity,
-                    postal_code: userPostalCode,
-                  });
-
-                  const receiptUrlString = `/receipt?${receiptParams.toString()}`;
-
                   const link = document.createElement("a");
-                  link.href = receiptUrlString;
+                  link.href = finalReceiptUrl;
                   link.target = "_blank";
                   link.rel = "noopener noreferrer";
                   document.body.appendChild(link);
