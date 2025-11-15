@@ -30,7 +30,7 @@ class OrderCreateView(APIView):
             user = User.objects.filter(email=data['email']).first()
             if user and user.is_member_account:
                 return Response({"message": "User already a member."})
-        razorpay_order = razorpay_client.order.create(dict(amount=data['amount'], currency=data.get('currency', 'INR'), payment_capture='0'))
+        razorpay_order = razorpay_client.order.create(dict(amount=data['amount'], currency=data.get('currency', 'INR'), payment_capture='1'))
         razorpay_order_id = razorpay_order['id']
         data['order_id'] = razorpay_order_id
         data['payment_id'] = razorpay_order_id
