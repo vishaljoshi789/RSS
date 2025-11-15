@@ -123,7 +123,7 @@ class UserDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyUserView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrIsStaff]
 
     def post(self, request, id):
         try:
@@ -150,3 +150,31 @@ class VerifyUserView(APIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+        old_password = data.get("old_password")
+        new_password = data.get("new_password")
+        if not user.check_password(old_password):
+            return Response({"error": "Old password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save()
+        return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+    
+class ChangePasswordByAdminView(APIView):
+    permission_classes = [IsAdminOrIsStaff]
+
+    def post(self, request, id):
+        try:
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        data = request.data
+        new_password = data.get("new_password")
+        user.set_password(new_password)
+        user.save()
+        return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)

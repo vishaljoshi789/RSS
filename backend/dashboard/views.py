@@ -77,7 +77,7 @@ class UserReferralListView(ListAPIView):
             user = User.objects.get(user_id=user_id)
         except User.DoesNotExist:
             return User.objects.none()
-        return User.objects.filter(referred_by=user).order_by('-date_joined').annotate(referral_count=Count('referrals'))
+        return User.objects.filter(referred_by=user).order_by('-date_joined').annotate(referral_count=Count('user_referrals'))
     
 class GetDocumentView(APIView):
     permission_classes = [IsAuthenticated]
