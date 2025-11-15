@@ -16,4 +16,3 @@ staticfiles/
 *.swo
 dump.rdb
 celerybeat-schedule
-vhost

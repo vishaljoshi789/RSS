@@ -111,11 +111,11 @@ services:
       - certs:/etc/nginx/certs:rw
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
+      - ./vhost:/etc/nginx/vhost.d:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
       - app_network
-    labels:
-      - com.github.nginx-proxy.nginx
+
 
   acme-companion:
     image: nginxproxy/acme-companion
